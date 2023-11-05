@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     method = sys.argv[1]
     dt = sys.argv[2]
-    bm = '1000_STRING'
+    bm = sys.argv[3]
 
     # client = distributed.Client(processes=False)
 
@@ -56,5 +56,5 @@ if __name__ == '__main__':
         time_cost = datetime.now() - start
 
     metrics = get_metrics(adj, bl_gt)
-    with open(f'results/{method}.csv', 'a') as f:
+    with open(f'results/{bm}/{method}.csv', 'a') as f:
         f.writelines(f"{dt},{time_cost.total_seconds()},{metrics['AUPR']},{metrics['AUPRR']},{metrics['EP']},{metrics['EPR']}\n")

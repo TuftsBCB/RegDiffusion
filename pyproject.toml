@@ -1,6 +1,6 @@
 [build-system]
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
-requires = ["flit_core >=3.4,<4", "setuptools_scm"]
 
 [project]
 name = "regdiffusion"
@@ -11,12 +11,12 @@ authors = [
 maintainers = [
     { name = "Hao Zhu", email = "haozhu233@gmail.com" }
 ]
-license = {file = "LICENSE"}
-description = "Gene Regulatory Networks Inference using diffusion model"
-version = "0.0.1"
-requires-python = ">=3.7"
-classifiers = ["License :: OSI Approved :: Apache Software License"]
 readme = "README.md"
+license = {file = "LICENSE"}
+version = "0.0.1"
+description = "Gene Regulatory Networks Inference using diffusion model"
+
+classifiers = ["License :: OSI Approved :: Apache Software License"]
 
 dependencies = [
     "numpy>=1.16.5",
@@ -29,6 +29,3 @@ dependencies = [
 
 [project.urls]
 Home = "https://github.com/TuftsBCB/RegDiffusion"
-
-[tool.flit.module]
-name = "regdiffusion"

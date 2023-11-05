@@ -55,6 +55,38 @@ def soft_thresholding(x, tau):
         torch.zeros_like(x), torch.abs(x) - tau)
     
 class RegDiffusion(nn.Module):
+    ''' A RegDiffusion model
+    
+    Parameters
+    ----------
+    n_genes: int
+        Number of Genes
+    time_dim: int
+        Dimension of time step embedding
+    n_celltype: int
+        Number of cell types (Optional). Default None
+    celltype_dim: int
+        Dimension of cell types
+    hidden_dims: list[int]
+        List of integer for the dimensions of the hidden layers
+    adj_dropout: float
+        A single number between 0 and 1 specifying the percentage of 
+        values in the adjacency matrix that are dropped during training. 
+        
+    Methods
+    -------
+    get_adj_
+        Obtain current adjacency matrix 
+    get_adj
+        Obtain current adjacency matrix as a detached numpy array
+    I_minus_A
+        Calculate I - A
+    get_gene_emb
+        Obtain the first layer gene embedding
+    forward(x, t, ct)
+        Forward pass. Input is expression table x, time step t, and 
+        cell type ct. Output is the predicted z. 
+    '''
     def __init__(
         self, n_gene, time_dim, 
         n_celltype=None, celltype_dim=None, 

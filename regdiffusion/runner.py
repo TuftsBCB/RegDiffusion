@@ -46,6 +46,20 @@ def power_beta_schedule(timesteps, start_noise, end_noise, power=2):
 
 @torch.no_grad()
 def forward_pass(x_0, t, mean_schedule, std_schedule):
+    ''' Forward diffusion pass
+    
+    Parameters
+    ----------
+    x_0: torch.FloatTensor
+        Torch tensor for expression data. Rows are cells and columns
+        are genes
+    t: torch.LongTensor
+        Torch tensor for time steps. 
+    mean_schedule: torch.FloatTensor
+        Torch tensor for diffusion mean schedule
+    std_schedule: torch.FloatTensor
+        Torch tensor for diffusion std schedule
+    '''
     noise = torch.randn_like(x_0)
     mean_coef = mean_schedule.gather(dim=-1, index=t)
     std_coef = std_schedule.gather(dim=-1, index=t)
@@ -93,6 +107,18 @@ def runRegDiffusion(
         This function returns a tuple of the trained model and a list of 
         adjacency matrix at all evaluation points. 
     '''
+    
+    # Cleanup configs
+    if configs['device'] == 'mps':
+        if not torch.backends.mps.is_available():
+            print("You specified mps as your computing device but apprently", 
+                  "it's not available. Setting device to cpu for now. ")
+            configs['device'] = 'cpu'
+    elif configs['device'] == 'cuda':
+        if not torch.cuda.is_available():
+            print("You specified cuda as your computing device but apprently", 
+                  "it's not available. Setting device to cpu for now. ")
+            configs['device'] = 'cpu'
         
     # Logger -------------------------------------------------------------------
     if logger is None:

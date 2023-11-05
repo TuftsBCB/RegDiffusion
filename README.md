@@ -5,7 +5,9 @@ Welcome to the official repository for RegDiffusion, an innovative and high-perf
 The details of RegDiffusion is described in the following paper. 
 
 ```
-Fill in bioarxiv details
+From Noise to Knowledge: Probabilistic Diffusion-Based Neural Inference of Gene Regulatory Networks
+Hao Zhu, Donna K. Slonim
+bioRxiv 2023.11.05.565675; doi: https://doi.org/10.1101/2023.11.05.565675
 ```
 
 ## Installation

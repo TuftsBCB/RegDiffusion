@@ -29,3 +29,6 @@ dependencies = [
 
 [project.urls]
 Home = "https://github.com/TuftsBCB/RegDiffusion"
+
+[tool.flit.module]
+name = "regdiffusion"

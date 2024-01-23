@@ -328,8 +328,8 @@ def runDAZZLE(exp_array, configs,
                     print('Early stopping triggered')
                     break
     logger.finish()
-    vae = vae.cpu()
-    vae.classifier_pos_weight = vae.classifier_pos_weight.cpu()
+    # vae = vae.cpu()
+    # vae.classifier_pos_weight = vae.classifier_pos_weight.cpu()
     return vae, adjs
 
 def runDAZZLE_ensemble(exp_array, configs,

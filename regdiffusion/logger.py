@@ -51,6 +51,7 @@ class LightLogger:
         self.mem = {}
         self.current_log = None
         self.logging_vars = set()
+        self.early_stopping_min = None
     
     def set_configs(self, configs):
         self.configs = configs
@@ -75,6 +76,23 @@ class LightLogger:
         for k in log_dict.keys():
             self.mem[self.current_log]['log'][step][k] = log_dict[k]
             self.logging_vars.add(k)
+
+    def check_early_stopping(self, item, k=10):
+        end_idx = self.mem[self.current_log]['current_step']
+        window = []
+        start_idx = max(end_idx-k, 0)
+        for idx in range(start_idx, end_idx):
+            window.append(self.mem[self.current_log]['log'][idx][item])
+        if len(window) < k:
+            if len(window) != 0:
+                self.early_stopping_min = min(window)
+            return False
+        else:
+            if min(window) > self.early_stopping_min:
+                return True
+            else:
+                self.early_stopping_min = min(window)
+                return False
             
     def finish(self, save_now=True):
         if save_now:

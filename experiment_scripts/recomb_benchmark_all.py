@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from dazzle import load_beeline, extract_edges, get_metrics, DAZZLE, LightLogger, runDAZZLE, runDAZZLE_ensemble, DEFAULT_DAZZLE_CONFIGS, DEFAULT_DEEPSEM_CONFIGS
+from dazzle import load_beeline, extract_edges, get_metrics, DAZZLE, LightLogger, runDAZZLE, DEFAULT_DAZZLE_CONFIGS, DEFAULT_DEEPSEM_CONFIGS
 from regdiffusion import runRegDiffusion, DEFAULT_REGDIFFUSION_CONFIGS
 import torch
 import torch.nn.functional as F

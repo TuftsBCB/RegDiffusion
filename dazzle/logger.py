@@ -75,6 +75,14 @@ class LightLogger:
         for k in log_dict.keys():
             self.mem[self.current_log]['log'][step][k] = log_dict[k]
             self.logging_vars.add(k)
+
+    def check_last_k_log(self, item, k=10):
+        end_idx = self.mem[self.current_log]['current_step']
+        output = []
+        start_idx = max(end_idx-k, 0)
+        for idx in range(start_idx, end_idx):
+            output.append(self.mem[self.current_log]['log'][idx][item])
+        return output
             
     def finish(self, save_now=True):
         if save_now:

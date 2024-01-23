@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
@@ -7,6 +8,8 @@ from .models import RegDiffusion
 from .evaluate import get_metrics
 from tqdm import tqdm
 from .logger import LightLogger
+from datetime import datetime
+from .inferred_net import extract_edges, Inferred_GRN
 
 DEFAULT_REGDIFFUSION_CONFIGS = {
     'T': 5000,
@@ -24,10 +27,10 @@ DEFAULT_REGDIFFUSION_CONFIGS = {
     'hidden_dims': [16, 16, 16],
     'n_epoch': 250,
     'device': 'cuda',
-    'verbose': False,
     'train_split': 1.0,
     'train_split_seed': 123,
-    'eval_on_n_steps': 10
+    'eval_on_n_steps': 1,
+    'top_gene_percentile': 5
 }
 
 def linear_beta_schedule(timesteps, start_noise, end_noise):
@@ -67,10 +70,11 @@ def forward_pass(x_0, t, mean_schedule, std_schedule):
     return x_t, noise
 
 def runRegDiffusion(
-    exp_array, configs, 
+    exp_array, configs=None, 
+    gene_names=None, tf_names=None, 
     is_count=False, cell_types=None, 
-    ground_truth=None, 
-    logger=None, progress_bar=True):
+    ground_truth=None, logger=None
+):
     '''
     Initialize and Train a RegDiffusion model with configs
     
@@ -98,8 +102,6 @@ def runRegDiffusion(
     logger: LightLogger or None
         Either a predefined logger or None to start a new one. This 
         logger contains metric information logged during training. 
-    progress_bar: bool
-        Whether to display a progress bar on epochs. 
         
     Returns
     -------
@@ -107,14 +109,19 @@ def runRegDiffusion(
         This function returns a tuple of the trained model and a list of 
         adjacency matrix at all evaluation points. 
     '''
+
+    start_time = datetime.now()
+
+    if configs is None:
+        configs = DEFAULT_REGDIFFUSION_CONFIGS
+        print("Training configuration is not provided. Now the model is ", 
+              "trained with the default setting DEFAULT_REGDIFFUSION_CONFIGS.")
     
     # Cleanup configs
     if configs['device'] == 'mps':
-        if not torch.backends.mps.is_available():
-            print("You specified mps as your computing device but apprently", 
-                  "it's not available. Setting device to cpu for now. ")
-            configs['device'] = 'cpu'
-    elif configs['device'] == 'cuda':
+        raise Exception("We noticed unreliable training behavior on Apple's", 
+                        " silicon. Consider using other devices.")
+    elif configs['device'].startswith('cuda'):
         if not torch.cuda.is_available():
             print("You specified cuda as your computing device but apprently", 
                   "it's not available. Setting device to cpu for now. ")
@@ -202,54 +209,67 @@ def runRegDiffusion(
 
     model.to(configs['device'])
 
-    for epoch in tqdm(range(configs['n_epoch'])):
-        epoch_loss = []
-        for step, batch in enumerate(train_dataloader):
-            x_0, ct = batch
-            x_0 = x_0.to(configs['device'])
-            ct = ct.to(configs['device'])
-            opt.zero_grad()
-            t = torch.randint(
-                0, configs['T'], (x_0.shape[0],), 
-                device=configs['device']).long()
-
-            x_noisy, noise = forward_pass(x_0, t, mean_schedule, std_schedule)
-            z = model(x_noisy, t, ct)
-            loss = F.mse_loss(noise, z, reduction='mean')
-
-            adj_m = model.get_adj_()
-            loss_sparse = adj_m.mean() * configs['sparse_loss_coef']
-
-            if epoch > 3:
-                loss = loss + loss_sparse 
-            loss.backward()
-            opt.step()
-            epoch_loss.append(loss.item())
-        if epoch % configs['eval_on_n_steps'] == configs['eval_on_n_steps'] - 1:
-            if ground_truth is None:
-                eval_result = {}
-            else:
-                eval_result = get_metrics(model.get_adj(), ground_truth)
-            if configs['train_split'] < 1:
-                with torch.no_grad():
-                    test_epoch_loss = []
-                    for step, batch in enumerate(test_dataloader):
-                        x_0, ct = batch
-                        x_0 = x_0.to(configs['device'])
-                        ct = ct.to(configs['device'])
-                        t = torch.randint(
-                            0, configs['T'], (x_0.shape[0],), 
-                            device=configs['device']).long()
-
-                        x_noisy, noise = forward_pass(x_0, t, mean_schedule, std_schedule)
-                        z = model(x_noisy, t, ct)
-                        step_test_loss = F.mse_loss(noise, z, reduction='mean').item()
-                        test_epoch_loss.append(step_test_loss)
-                    eval_result[f'test_loss'] = np.mean(test_epoch_loss)
-            eval_result['train_loss'] = np.mean(epoch_loss)
-            if configs['verbose']:
-                print(eval_result)
-            logger.log(eval_result)
+    with tqdm(range(configs['n_epoch'])) as pbar:
+        for epoch in pbar: 
+            epoch_loss = []
+            for step, batch in enumerate(train_dataloader):
+                x_0, ct = batch
+                x_0 = x_0.to(configs['device'])
+                ct = ct.to(configs['device'])
+                opt.zero_grad()
+                t = torch.randint(
+                    0, configs['T'], (x_0.shape[0],), 
+                    device=configs['device']).long()
+    
+                x_noisy, noise = forward_pass(x_0, t, mean_schedule, std_schedule)
+                z = model(x_noisy, t, ct)
+                loss = F.mse_loss(noise, z, reduction='mean')
+    
+                adj_m = model.get_adj_()
+                loss_sparse = adj_m.mean() * configs['sparse_loss_coef']
+    
+                if epoch > 3:
+                    loss = loss + loss_sparse 
+                loss.backward()
+                opt.step()
+                epoch_loss.append(loss.item())
+            pbar.set_description(f'Training loss: {np.round(np.mean(epoch_loss), 3)}')
+            if epoch % configs['eval_on_n_steps'] == configs['eval_on_n_steps'] - 1:
+                if ground_truth is None:
+                    eval_result = {}
+                else:
+                    eval_result = get_metrics(model.get_adj(), ground_truth)
+                if configs['train_split'] < 1:
+                    with torch.no_grad():
+                        test_epoch_loss = []
+                        for step, batch in enumerate(test_dataloader):
+                            x_0, ct = batch
+                            x_0 = x_0.to(configs['device'])
+                            ct = ct.to(configs['device'])
+                            t = torch.randint(
+                                0, configs['T'], (x_0.shape[0],), 
+                                device=configs['device']).long()
+    
+                            x_noisy, noise = forward_pass(x_0, t, mean_schedule, std_schedule)
+                            z = model(x_noisy, t, ct)
+                            step_test_loss = F.mse_loss(noise, z, reduction='mean').item()
+                            test_epoch_loss.append(step_test_loss)
+                        eval_result[f'test_loss'] = np.mean(test_epoch_loss)
+                eval_result['train_loss'] = np.mean(epoch_loss)
+                logger.log(eval_result)
     logger.finish()
+    time_cost = int((datetime.now() - start_time).total_seconds())
 
-    return model
+    output = Inferred_GRN(
+        inferred_adj=model.get_adj(), 
+        gene_names=gene_names, 
+        tf_names=tf_names, 
+        top_gene_percentile=configs['top_gene_percentile'],
+        n_cells = exp_array.shape[0], 
+        logger=logger, 
+        training_losses=np.array(logger.to_df().train_loss), 
+        time_cost=time_cost,
+        training_method='RegDiffusion'
+    )
+
+    return output

@@ -97,8 +97,9 @@ class RegDiffusion(nn.Module):
         self.n_gene = n_gene
         self.gene_dim = hidden_dims[0]
         self.adj_dropout=adj_dropout
+        self.init_value = 1/(n_gene-1)
         
-        adj_A = torch.ones(n_gene, n_gene) / (n_gene-1) * 5
+        adj_A = torch.ones(n_gene, n_gene) * self.init_value * 5
         self.adj_A = nn.Parameter(adj_A, requires_grad =True)
         
 
@@ -114,7 +115,6 @@ class RegDiffusion(nn.Module):
         )
         
         if n_celltype is not None:
-            # self.celltype_emb = nn.Embedding(n_celltype, celltype_dim)
             self.celltype_emb = SinusoidalPositionEmbeddings(celltype_dim, theta=n_celltype)
         
         self.blocks = nn.ModuleList([
@@ -134,11 +134,13 @@ class RegDiffusion(nn.Module):
         if self.train:
             A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout)/(1-self.adj_dropout)
             mask = self.mask * A_dropout
-        clean_A = soft_thresholding(self.adj_A, 0.001) * mask 
+        clean_A = self.adj_A * mask
+        # clean_A = soft_thresholding(self.adj_A, self.init_value / 2) * mask 
         return self.eye - clean_A
         
     def get_adj_(self):
-        return soft_thresholding(self.adj_A, 0.001) * self.mask
+        return self.adj_A * self.mask
+        # return soft_thresholding(self.adj_A, self.init_value / 2) * self.mask
     
     def get_adj(self):
         return self.get_adj_().cpu().detach().numpy()

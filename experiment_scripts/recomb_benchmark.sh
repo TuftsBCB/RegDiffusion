@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=recomb_bm
-#SBATCH -p preempt
-#SBATCH -n 4
-#SBATCH --mem=12g
-#SBATCH --time=0-8:00:00
+# SBATCH --job-name=recomb_bm
+# SBATCH -p preempt
+# SBATCH -n 4
+# SBATCH --mem=12g
+# SBATCH --time=0-8:00:00
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

@@ -1,10 +1,10 @@
 #!/bin/bash
-# SBATCH --job-name=recomb_bg
-# SBATCH -p preempt
-# SBATCH -n 4
-# SBATCH --gres=gpu:a100:1 
-# SBATCH --mem=12g
-# SBATCH --time=0-4:00:00
+#SBATCH --job-name=recomb
+#SBATCH -p preempt
+#SBATCH -n 4
+#SBATCH --mem=12g
+#SBATCH --gres=gpu:a100:1 
+#SBATCH --time=1-00:00:00
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -23,4 +23,4 @@ unset __conda_setup
 
 cd /cluster/tufts/slonimlab/hzhu07/grn-diffusion
 conda activate grn
-python recomb_benchmark_all.py "$1" "$2"
+python deepsem.py "$1" "$2"

@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "BAG3", "label": "BAG3", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "BMP4", "label": "BMP4", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "PLEKHA6", "label": "PLEKHA6", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ALPK2", "label": "ALPK2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "BMPER", "label": "BMPER", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "MYOCD", "label": "MYOCD", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HS3ST1", "label": "HS3ST1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "NRP1", "label": "NRP1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "GPR83", "label": "GPR83", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "PLXNA2", "label": "PLXNA2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HOXB6", "label": "HOXB6", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "LGR5", "label": "LGR5", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "COBLL1", "label": "COBLL1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ZAP70", "label": "ZAP70", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HAND1", "label": "HAND1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "APLNR", "label": "APLNR", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HAS2", "label": "HAS2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HAPLN1", "label": "HAPLN1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "WNT5A", "label": "WNT5A", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "PRTG", "label": "PRTG", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "FOXF1", "label": "FOXF1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "CNKSR3", "label": "CNKSR3", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "PDGFRA", "label": "PDGFRA", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "NOG", "label": "NOG", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "LHX1", "label": "LHX1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "SHOX2", "label": "SHOX2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "MAMLD1", "label": "MAMLD1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HS3ST3A1", "label": "HS3ST3A1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "CER1", "label": "CER1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "NCAM1", "label": "NCAM1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "LZTS1", "label": "LZTS1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "CDH11", "label": "CDH11", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "SEMA6D", "label": "SEMA6D", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "GLIPR2", "label": "GLIPR2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "IFI16", "label": "IFI16", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "TBX3", "label": "TBX3", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "COL5A1", "label": "COL5A1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "UNC5C", "label": "UNC5C", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ITGA5", "label": "ITGA5", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "SVEP1", "label": "SVEP1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "GATA6", "label": "GATA6", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "CYP26A1", "label": "CYP26A1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ROR2", "label": "ROR2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "FAM89A", "label": "FAM89A", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "SNAI2", "label": "SNAI2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "LIX1", "label": "LIX1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HOXB2", "label": "HOXB2", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "PPAPDC1A", "label": "PPAPDC1A", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "ASS1", "label": "ASS1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "OAS1", "label": "OAS1", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "HLX", "label": "HLX", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "PENK", "label": "PENK", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "EPHB2", "label": "EPHB2", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "BAG3", "to": "BMP4", "width": 1.0}, {"from": "BAG3", "to": "PLEKHA6", "width": 1.0}, {"from": "BAG3", "to": "ALPK2", "width": 1.0}, {"from": "BAG3", "to": "BMPER", "width": 1.0}, {"from": "BAG3", "to": "MYOCD", "width": 1.0}, {"from": "BAG3", "to": "HS3ST1", "width": 1.0}, {"from": "BAG3", "to": "NRP1", "width": 1.0}, {"from": "BAG3", "to": "GPR83", "width": 1.0}, {"from": "BAG3", "to": "PLXNA2", "width": 1.0}, {"from": "BAG3", "to": "HOXB6", "width": 1.0}, {"from": "BAG3", "to": "LGR5", "width": 1.0}, {"from": "BAG3", "to": "COBLL1", "width": 1.0}, {"from": "BAG3", "to": "ZAP70", "width": 1.0}, {"from": "BAG3", "to": "HAND1", "width": 1.0}, {"from": "BMP4", "to": "ALPK2", "width": 1.0}, {"from": "BMP4", "to": "PLXNA2", "width": 1.0}, {"from": "BMP4", "to": "HOXB6", "width": 1.0}, {"from": "BMP4", "to": "MYOCD", "width": 1.0}, {"from": "BMP4", "to": "COBLL1", "width": 1.0}, {"from": "BMP4", "to": "HS3ST1", "width": 1.0}, {"from": "BMP4", "to": "LGR5", "width": 1.0}, {"from": "BMP4", "to": "BMPER", "width": 1.0}, {"from": "BMP4", "to": "GPR83", "width": 1.0}, {"from": "BMP4", "to": "HAND1", "width": 1.0}, {"from": "BMP4", "to": "APLNR", "width": 1.0}, {"from": "BMP4", "to": "HAS2", "width": 1.0}, {"from": "BMP4", "to": "HAPLN1", "width": 1.0}, {"from": "BMP4", "to": "WNT5A", "width": 1.0}, {"from": "BMP4", "to": "PRTG", "width": 1.0}, {"from": "BMP4", "to": "NRP1", "width": 1.0}, {"from": "BMP4", "to": "PLEKHA6", "width": 1.0}, {"from": "PLEKHA6", "to": "PLXNA2", "width": 1.0}, {"from": "PLEKHA6", "to": "COBLL1", "width": 1.0}, {"from": "PLEKHA6", "to": "HS3ST1", "width": 1.0}, {"from": "PLEKHA6", "to": "LGR5", "width": 1.0}, {"from": "PLEKHA6", "to": "BMPER", "width": 1.0}, {"from": "PLEKHA6", "to": "GPR83", "width": 1.0}, {"from": "PLEKHA6", "to": "HAND1", "width": 1.0}, {"from": "PLEKHA6", "to": "FOXF1", "width": 1.0}, {"from": "PLEKHA6", "to": "CNKSR3", "width": 1.0}, {"from": "PLEKHA6", "to": "HOXB6", "width": 1.0}, {"from": "PLEKHA6", "to": "PDGFRA", "width": 1.0}, {"from": "PLEKHA6", "to": "NOG", "width": 1.0}, {"from": "ALPK2", "to": "LHX1", "width": 1.0}, {"from": "ALPK2", "to": "HAPLN1", "width": 1.0}, {"from": "ALPK2", "to": "SHOX2", "width": 1.0}, {"from": "ALPK2", "to": "PLXNA2", "width": 1.0}, {"from": "ALPK2", "to": "MAMLD1", "width": 1.0}, {"from": "ALPK2", "to": "ZAP70", "width": 1.0}, {"from": "ALPK2", "to": "COBLL1", "width": 1.0}, {"from": "ALPK2", "to": "HS3ST3A1", "width": 1.0}, {"from": "ALPK2", "to": "CER1", "width": 1.0}, {"from": "ALPK2", "to": "NCAM1", "width": 1.0}, {"from": "ALPK2", "to": "LZTS1", "width": 1.0}, {"from": "ALPK2", "to": "LGR5", "width": 1.0}, {"from": "BMPER", "to": "HOXB6", "width": 1.0}, {"from": "BMPER", "to": "HS3ST1", "width": 1.0}, {"from": "BMPER", "to": "LGR5", "width": 1.0}, {"from": "BMPER", "to": "HAND1", "width": 1.0}, {"from": "BMPER", "to": "CDH11", "width": 1.0}, {"from": "BMPER", "to": "SEMA6D", "width": 1.0}, {"from": "BMPER", "to": "GPR83", "width": 1.0}, {"from": "BMPER", "to": "HAS2", "width": 1.0}, {"from": "BMPER", "to": "APLNR", "width": 1.0}, {"from": "BMPER", "to": "FOXF1", "width": 1.0}, {"from": "BMPER", "to": "MAMLD1", "width": 1.0}, {"from": "BMPER", "to": "PDGFRA", "width": 1.0}, {"from": "BMPER", "to": "NRP1", "width": 1.0}, {"from": "MYOCD", "to": "GLIPR2", "width": 1.0}, {"from": "MYOCD", "to": "HAPLN1", "width": 1.0}, {"from": "MYOCD", "to": "LHX1", "width": 1.0}, {"from": "MYOCD", "to": "PRTG", "width": 1.0}, {"from": "MYOCD", "to": "CER1", "width": 1.0}, {"from": "MYOCD", "to": "SHOX2", "width": 1.0}, {"from": "MYOCD", "to": "HS3ST3A1", "width": 1.0}, {"from": "MYOCD", "to": "LGR5", "width": 1.0}, {"from": "MYOCD", "to": "PLXNA2", "width": 1.0}, {"from": "MYOCD", "to": "IFI16", "width": 1.0}, {"from": "MYOCD", "to": "NRP1", "width": 1.0}, {"from": "HS3ST1", "to": "HOXB6", "width": 1.0}, {"from": "HS3ST1", "to": "COBLL1", "width": 1.0}, {"from": "HS3ST1", "to": "HAND1", "width": 1.0}, {"from": "HS3ST1", "to": "FOXF1", "width": 1.0}, {"from": "HS3ST1", "to": "APLNR", "width": 1.0}, {"from": "HS3ST1", "to": "CNKSR3", "width": 1.0}, {"from": "HS3ST1", "to": "GPR83", "width": 1.0}, {"from": "HS3ST1", "to": "PDGFRA", "width": 1.0}, {"from": "HS3ST1", "to": "TBX3", "width": 1.0}, {"from": "NRP1", "to": "HAPLN1", "width": 1.0}, {"from": "NRP1", "to": "CDH11", "width": 1.0}, {"from": "NRP1", "to": "COL5A1", "width": 1.0}, {"from": "NRP1", "to": "UNC5C", "width": 1.0}, {"from": "NRP1", "to": "PRTG", "width": 1.0}, {"from": "NRP1", "to": "ITGA5", "width": 1.0}, {"from": "NRP1", "to": "LHX1", "width": 1.0}, {"from": "NRP1", "to": "SVEP1", "width": 1.0}, {"from": "NRP1", "to": "APLNR", "width": 1.0}, {"from": "GPR83", "to": "UNC5C", "width": 1.0}, {"from": "GPR83", "to": "HAND1", "width": 1.0}, {"from": "GPR83", "to": "HOXB6", "width": 1.0}, {"from": "GPR83", "to": "FOXF1", "width": 1.0}, {"from": "GPR83", "to": "MAMLD1", "width": 1.0}, {"from": "GPR83", "to": "HAS2", "width": 1.0}, {"from": "GPR83", "to": "GLIPR2", "width": 1.0}, {"from": "PLXNA2", "to": "LHX1", "width": 1.0}, {"from": "PLXNA2", "to": "CER1", "width": 1.0}, {"from": "PLXNA2", "to": "LZTS1", "width": 1.0}, {"from": "PLXNA2", "to": "GATA6", "width": 1.0}, {"from": "PLXNA2", "to": "NCAM1", "width": 1.0}, {"from": "PLXNA2", "to": "MAMLD1", "width": 1.0}, {"from": "PLXNA2", "to": "CYP26A1", "width": 1.0}, {"from": "PLXNA2", "to": "ROR2", "width": 1.0}, {"from": "PLXNA2", "to": "FAM89A", "width": 1.0}, {"from": "PLXNA2", "to": "ZAP70", "width": 1.0}, {"from": "PLXNA2", "to": "LGR5", "width": 1.0}, {"from": "HOXB6", "to": "HAND1", "width": 1.0}, {"from": "HOXB6", "to": "TBX3", "width": 1.0}, {"from": "HOXB6", "to": "CDH11", "width": 1.0}, {"from": "HOXB6", "to": "FOXF1", "width": 1.0}, {"from": "HOXB6", "to": "APLNR", "width": 1.0}, {"from": "HOXB6", "to": "SNAI2", "width": 1.0}, {"from": "HOXB6", "to": "LIX1", "width": 1.0}, {"from": "HOXB6", "to": "HOXB2", "width": 1.0}, {"from": "LGR5", "to": "ZAP70", "width": 1.0}, {"from": "LGR5", "to": "LHX1", "width": 1.0}, {"from": "LGR5", "to": "CER1", "width": 1.0}, {"from": "LGR5", "to": "MAMLD1", "width": 1.0}, {"from": "LGR5", "to": "PDGFRA", "width": 1.0}, {"from": "LGR5", "to": "CYP26A1", "width": 1.0}, {"from": "LGR5", "to": "LZTS1", "width": 1.0}, {"from": "LGR5", "to": "PPAPDC1A", "width": 1.0}, {"from": "COBLL1", "to": "CNKSR3", "width": 1.0}, {"from": "COBLL1", "to": "MAMLD1", "width": 1.0}, {"from": "COBLL1", "to": "ASS1", "width": 1.0}, {"from": "COBLL1", "to": "HAND1", "width": 1.0}, {"from": "COBLL1", "to": "PPAPDC1A", "width": 1.0}, {"from": "COBLL1", "to": "PDGFRA", "width": 1.0}, {"from": "COBLL1", "to": "NOG", "width": 1.0}, {"from": "ZAP70", "to": "OAS1", "width": 1.0}, {"from": "ZAP70", "to": "HAPLN1", "width": 1.0}, {"from": "ZAP70", "to": "HLX", "width": 1.0}, {"from": "ZAP70", "to": "FAM89A", "width": 1.0}, {"from": "ZAP70", "to": "SHOX2", "width": 1.0}, {"from": "ZAP70", "to": "MAMLD1", "width": 1.0}, {"from": "ZAP70", "to": "LHX1", "width": 1.0}, {"from": "ZAP70", "to": "HS3ST3A1", "width": 1.0}, {"from": "ZAP70", "to": "PENK", "width": 1.0}, {"from": "ZAP70", "to": "EPHB2", "width": 1.0}, {"from": "HAND1", "to": "FOXF1", "width": 1.0}, {"from": "HAND1", "to": "CDH11", "width": 1.0}, {"from": "HAND1", "to": "TBX3", "width": 1.0}, {"from": "HAND1", "to": "SNAI2", "width": 1.0}, {"from": "HAND1", "to": "LIX1", "width": 1.0}, {"from": "HAND1", "to": "APLNR", "width": 1.0}, {"from": "HAND1", "to": "SEMA6D", "width": 1.0}, {"from": "LHX1", "to": "NCAM1", "width": 0.2}, {"from": "LHX1", "to": "ITGA5", "width": 0.2}, {"from": "LHX1", "to": "CER1", "width": 0.2}, {"from": "LHX1", "to": "SHOX2", "width": 0.2}, {"from": "LHX1", "to": "ROR2", "width": 0.2}, {"from": "LHX1", "to": "HAPLN1", "width": 0.2}, {"from": "LHX1", "to": "HS3ST3A1", "width": 0.2}, {"from": "LHX1", "to": "MAMLD1", "width": 0.2}, {"from": "LHX1", "to": "GATA6", "width": 0.2}, {"from": "LHX1", "to": "LZTS1", "width": 0.2}, {"from": "LHX1", "to": "IFI16", "width": 0.2}, {"from": "LHX1", "to": "HLX", "width": 0.2}, {"from": "LHX1", "to": "GLIPR2", "width": 0.2}, {"from": "LHX1", "to": "CYP26A1", "width": 0.2}, {"from": "LHX1", "to": "FAM89A", "width": 0.2}, {"from": "HAPLN1", "to": "NCAM1", "width": 0.2}, {"from": "HAPLN1", "to": "UNC5C", "width": 0.2}, {"from": "HAPLN1", "to": "ITGA5", "width": 0.2}, {"from": "HAPLN1", "to": "PENK", "width": 0.2}, {"from": "HAPLN1", "to": "SVEP1", "width": 0.2}, {"from": "HAPLN1", "to": "CER1", "width": 0.2}, {"from": "HAPLN1", "to": "SHOX2", "width": 0.2}, {"from": "HAPLN1", "to": "CYP26A1", "width": 0.2}, {"from": "HAPLN1", "to": "COL5A1", "width": 0.2}, {"from": "HAPLN1", "to": "GLIPR2", "width": 0.2}, {"from": "HAPLN1", "to": "PRTG", "width": 0.2}, {"from": "HAPLN1", "to": "HS3ST3A1", "width": 0.2}, {"from": "HAPLN1", "to": "LZTS1", "width": 0.2}, {"from": "HAPLN1", "to": "IFI16", "width": 0.2}, {"from": "HAPLN1", "to": "EPHB2", "width": 0.2}, {"from": "HAPLN1", "to": "FAM89A", "width": 0.2}, {"from": "SHOX2", "to": "NCAM1", "width": 0.2}, {"from": "SHOX2", "to": "PENK", "width": 0.2}, {"from": "SHOX2", "to": "SVEP1", "width": 0.2}, {"from": "SHOX2", "to": "CYP26A1", "width": 0.2}, {"from": "SHOX2", "to": "MAMLD1", "width": 0.2}, {"from": "SHOX2", "to": "GATA6", "width": 0.2}, {"from": "SHOX2", "to": "CER1", "width": 0.2}, {"from": "SHOX2", "to": "HS3ST3A1", "width": 0.2}, {"from": "SHOX2", "to": "HLX", "width": 0.2}, {"from": "SHOX2", "to": "GLIPR2", "width": 0.2}, {"from": "MAMLD1", "to": "NCAM1", "width": 0.2}, {"from": "MAMLD1", "to": "PPAPDC1A", "width": 0.2}, {"from": "MAMLD1", "to": "NOG", "width": 0.2}, {"from": "MAMLD1", "to": "LZTS1", "width": 0.2}, {"from": "MAMLD1", "to": "ASS1", "width": 0.2}, {"from": "HS3ST3A1", "to": "LZTS1", "width": 0.2}, {"from": "HS3ST3A1", "to": "FAM89A", "width": 0.2}, {"from": "HS3ST3A1", "to": "GATA6", "width": 0.2}, {"from": "CER1", "to": "NCAM1", "width": 0.2}, {"from": "CER1", "to": "ITGA5", "width": 0.2}, {"from": "CER1", "to": "CYP26A1", "width": 0.2}, {"from": "CER1", "to": "GATA6", "width": 0.2}, {"from": "CER1", "to": "ROR2", "width": 0.2}, {"from": "CER1", "to": "LZTS1", "width": 0.2}, {"from": "CER1", "to": "IFI16", "width": 0.2}, {"from": "CER1", "to": "GLIPR2", "width": 0.2}, {"from": "NCAM1", "to": "LZTS1", "width": 0.2}, {"from": "NCAM1", "to": "CYP26A1", "width": 0.2}, {"from": "NCAM1", "to": "HLX", "width": 0.2}, {"from": "LZTS1", "to": "ROR2", "width": 0.2}, {"from": "LZTS1", "to": "GATA6", "width": 0.2}, {"from": "LZTS1", "to": "CYP26A1", "width": 0.2}, {"from": "LZTS1", "to": "HLX", "width": 0.2}, {"from": "LZTS1", "to": "FAM89A", "width": 0.2}, {"from": "GATA6", "to": "ROR2", "width": 0.2}, {"from": "GATA6", "to": "CYP26A1", "width": 0.2}, {"from": "GATA6", "to": "COL5A1", "width": 0.2}, {"from": "CYP26A1", "to": "ITGA5", "width": 0.2}, {"from": "FAM89A", "to": "PPAPDC1A", "width": 0.2}, {"from": "FAM89A", "to": "CDH11", "width": 0.2}, {"from": "OAS1", "to": "PDGFRA", "width": 0.2}, {"from": "OAS1", "to": "PENK", "width": 0.2}, {"from": "OAS1", "to": "ASS1", "width": 0.2}, {"from": "OAS1", "to": "EPHB2", "width": 0.2}, {"from": "OAS1", "to": "FOXF1", "width": 0.2}, {"from": "OAS1", "to": "APLNR", "width": 0.2}, {"from": "HLX", "to": "HOXB2", "width": 0.2}, {"from": "PENK", "to": "UNC5C", "width": 0.2}, {"from": "PENK", "to": "GLIPR2", "width": 0.2}, {"from": "PENK", "to": "ASS1", "width": 0.2}, {"from": "TBX3", "to": "APLNR", "width": 0.2}, {"from": "TBX3", "to": "FOXF1", "width": 0.2}, {"from": "TBX3", "to": "HAS2", "width": 0.2}, {"from": "TBX3", "to": "NOG", "width": 0.2}, {"from": "TBX3", "to": "SNAI2", "width": 0.2}, {"from": "TBX3", "to": "WNT5A", "width": 0.2}, {"from": "TBX3", "to": "SEMA6D", "width": 0.2}, {"from": "TBX3", "to": "LIX1", "width": 0.2}, {"from": "TBX3", "to": "CNKSR3", "width": 0.2}, {"from": "CDH11", "to": "UNC5C", "width": 0.2}, {"from": "CDH11", "to": "HAS2", "width": 0.2}, {"from": "CDH11", "to": "APLNR", "width": 0.2}, {"from": "CDH11", "to": "LIX1", "width": 0.2}, {"from": "CDH11", "to": "WNT5A", "width": 0.2}, {"from": "CDH11", "to": "FOXF1", "width": 0.2}, {"from": "CDH11", "to": "SNAI2", "width": 0.2}, {"from": "CDH11", "to": "PRTG", "width": 0.2}, {"from": "CDH11", "to": "SEMA6D", "width": 0.2}, {"from": "FOXF1", "to": "UNC5C", "width": 0.2}, {"from": "FOXF1", "to": "PDGFRA", "width": 0.2}, {"from": "FOXF1", "to": "NOG", "width": 0.2}, {"from": "FOXF1", "to": "SNAI2", "width": 0.2}, {"from": "FOXF1", "to": "WNT5A", "width": 0.2}, {"from": "FOXF1", "to": "SEMA6D", "width": 0.2}, {"from": "FOXF1", "to": "LIX1", "width": 0.2}, {"from": "FOXF1", "to": "APLNR", "width": 0.2}, {"from": "FOXF1", "to": "CNKSR3", "width": 0.2}, {"from": "FOXF1", "to": "HOXB2", "width": 0.2}, {"from": "APLNR", "to": "UNC5C", "width": 0.2}, {"from": "APLNR", "to": "ITGA5", "width": 0.2}, {"from": "APLNR", "to": "HAS2", "width": 0.2}, {"from": "APLNR", "to": "NOG", "width": 0.2}, {"from": "APLNR", "to": "SNAI2", "width": 0.2}, {"from": "APLNR", "to": "PRTG", "width": 0.2}, {"from": "APLNR", "to": "WNT5A", "width": 0.2}, {"from": "APLNR", "to": "LIX1", "width": 0.2}, {"from": "APLNR", "to": "COL5A1", "width": 0.2}, {"from": "SNAI2", "to": "LIX1", "width": 0.2}, {"from": "SNAI2", "to": "SEMA6D", "width": 0.2}, {"from": "SNAI2", "to": "WNT5A", "width": 0.2}, {"from": "SNAI2", "to": "HOXB2", "width": 0.2}, {"from": "LIX1", "to": "WNT5A", "width": 0.2}, {"from": "LIX1", "to": "SEMA6D", "width": 0.2}, {"from": "LIX1", "to": "CNKSR3", "width": 0.2}, {"from": "HOXB2", "to": "SEMA6D", "width": 0.2}, {"from": "GLIPR2", "to": "UNC5C", "width": 0.2}, {"from": "PRTG", "to": "ITGA5", "width": 0.2}, {"from": "PRTG", "to": "SVEP1", "width": 0.2}, {"from": "PRTG", "to": "COL5A1", "width": 0.2}, {"from": "PRTG", "to": "HAS2", "width": 0.2}, {"from": "IFI16", "to": "UNC5C", "width": 0.2}, {"from": "CNKSR3", "to": "PDGFRA", "width": 0.2}, {"from": "ASS1", "to": "PDGFRA", "width": 0.2}, {"from": "PDGFRA", "to": "SEMA6D", "width": 0.2}, {"from": "NOG", "to": "HAS2", "width": 0.2}, {"from": "SEMA6D", "to": "UNC5C", "width": 0.2}, {"from": "UNC5C", "to": "SVEP1", "width": 0.2}, {"from": "COL5A1", "to": "ITGA5", "width": 0.2}, {"from": "COL5A1", "to": "SVEP1", "width": 0.2}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 100,
+            "springConstant": 0.05,
+            "springLength": 200
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -27,11 +27,11 @@ class Block(nn.Module):
         self.celltype_mlp = nn.Linear(celltype_dim, out_dim)
         self.l1 = nn.Linear(in_dim, out_dim)
         self.l2 = nn.Linear(out_dim, out_dim)
-        self.do = nn.Dropout(0.1)
+        self.do1 = nn.Dropout(0.1)
         self.act = nn.Tanh()
         
     def forward(self, x, t, ct):
-        h = self.do(self.act(self.l1(x)))
+        h = self.do1(self.act(self.l1(x)))
         time_emb = self.act(self.time_mlp(t)).unsqueeze(1)
         celltype_emb = self.act(self.celltype_mlp(ct)).unsqueeze(1)
         h = h + time_emb + celltype_emb
@@ -90,18 +90,17 @@ class RegDiffusion(nn.Module):
     def __init__(
         self, n_gene, time_dim, 
         n_celltype=None, celltype_dim=None, 
-        hidden_dims=[1, 32, 64, 128], adj_dropout=0.1
+        hidden_dims=[16, 16, 16], adj_dropout=0.3
     ):
         super(RegDiffusion, self).__init__()
         
         self.n_gene = n_gene
         self.gene_dim = hidden_dims[0]
         self.adj_dropout=adj_dropout
-        self.init_value = 1/(n_gene-1)
+        self.gene_reg_norm = 1/(n_gene-1)
         
-        adj_A = torch.ones(n_gene, n_gene) * self.init_value * 5
+        adj_A = torch.ones(n_gene, n_gene) * self.gene_reg_norm * 5
         self.adj_A = nn.Parameter(adj_A, requires_grad =True)
-        
 
         self.time_mlp = nn.Sequential(
             SinusoidalPositionEmbeddings(time_dim),
@@ -131,19 +130,18 @@ class RegDiffusion(nn.Module):
             requires_grad=False)
         
     def I_minus_A(self):
+        mask = self.mask
         if self.train:
             A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout)/(1-self.adj_dropout)
-            mask = self.mask * A_dropout
-        clean_A = self.adj_A * mask
-        # clean_A = soft_thresholding(self.adj_A, self.init_value / 2) * mask 
+            mask = mask * A_dropout
+        clean_A = soft_thresholding(self.adj_A, self.gene_reg_norm/2) * mask 
         return self.eye - clean_A
         
     def get_adj_(self):
-        return self.adj_A * self.mask
-        # return soft_thresholding(self.adj_A, self.init_value / 2) * self.mask
+        return soft_thresholding(self.adj_A, self.gene_reg_norm/2) * self.mask
     
     def get_adj(self):
-        return self.get_adj_().cpu().detach().numpy()
+        return self.get_adj_().cpu().detach().numpy() / self.gene_reg_norm
     
     def get_gene_emb(self):
         return self.gene_emb[0].gene_emb.data.cpu().detach().numpy()

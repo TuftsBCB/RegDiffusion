@@ -5,6 +5,8 @@ import torch.nn.functional as F
 from torch.distributions import Normal
 import math
 
+torch.set_float32_matmul_precision('high')
+
 class SinusoidalPositionEmbeddings(nn.Module):
     def __init__(self, dim, theta=10000):
         super().__init__()
@@ -50,10 +52,6 @@ class GeneEmbeddings(nn.Module):
         batch_gene_emb = torch.concat([x.unsqueeze(-1), batch_gene_emb], dim=-1)
         return batch_gene_emb
     
-def soft_thresholding(x, tau):
-    return torch.sign(x) * torch.max(
-        torch.zeros_like(x), torch.abs(x) - tau)
-    
 class RegDiffusion(nn.Module):
     ''' A RegDiffusion model
     
@@ -90,7 +88,7 @@ class RegDiffusion(nn.Module):
     def __init__(
         self, n_gene, time_dim, 
         n_celltype=None, celltype_dim=None, 
-        hidden_dims=[16, 16, 16], adj_dropout=0.3
+        hidden_dims=[16, 16, 16], adj_dropout=0.3, init_coef = 5
     ):
         super(RegDiffusion, self).__init__()
         
@@ -99,8 +97,14 @@ class RegDiffusion(nn.Module):
         self.adj_dropout=adj_dropout
         self.gene_reg_norm = 1/(n_gene-1)
         
-        adj_A = torch.ones(n_gene, n_gene) * self.gene_reg_norm * 5
-        self.adj_A = nn.Parameter(adj_A, requires_grad =True)
+        adj_A = torch.ones(n_gene, n_gene) * self.gene_reg_norm * init_coef
+        self.adj_A = nn.Parameter(adj_A, requires_grad =True, )
+        self.sampled_adj_row_nonparam = nn.Parameter(
+            torch.randint(0, n_gene, size=(10000,)), 
+            requires_grad=False)
+        self.sampled_adj_col_nonparam = nn.Parameter(
+            torch.randint(0, n_gene, size=(10000,)),
+            requires_grad=False)
 
         self.time_mlp = nn.Sequential(
             SinusoidalPositionEmbeddings(time_dim),
@@ -124,24 +128,32 @@ class RegDiffusion(nn.Module):
         
         self.final = nn.Linear(hidden_dims[-1]-1, 1)
         
-        self.eye = nn.Parameter(torch.eye(n_gene), requires_grad=False)
-        self.mask = nn.Parameter(
-            torch.ones(n_gene, n_gene) - torch.eye(n_gene), 
-            requires_grad=False)
+        self.zeros_nonparam = nn.Parameter(torch.zeros(n_gene, n_gene), 
+                                 requires_grad=False)
+        self.eye_nonparam = nn.Parameter(torch.eye(n_gene), requires_grad=False)
+        self.mask_nonparam = nn.Parameter(1 - torch.eye(n_gene), requires_grad=False)
+        
+    def soft_thresholding(self, x, tau):
+        return torch.sign(x) * torch.max(self.zeros_nonparam, torch.abs(x) - tau)
         
     def I_minus_A(self):
-        mask = self.mask
+        mask = self.mask_nonparam
         if self.train:
             A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout)/(1-self.adj_dropout)
             mask = mask * A_dropout
-        clean_A = soft_thresholding(self.adj_A, self.gene_reg_norm/2) * mask 
-        return self.eye - clean_A
+        clean_A = self.soft_thresholding(self.adj_A, self.gene_reg_norm/2) * mask
+
+        return self.eye_nonparam - clean_A
         
     def get_adj_(self):
-        return soft_thresholding(self.adj_A, self.gene_reg_norm/2) * self.mask
+        return self.soft_thresholding(self.adj_A, self.gene_reg_norm/2) * self.mask_nonparam
     
     def get_adj(self):
-        return self.get_adj_().cpu().detach().numpy() / self.gene_reg_norm
+        return (self.get_adj_().detach().cpu().numpy() / self.gene_reg_norm).astype(np.float16)
+
+    @torch.no_grad()
+    def get_sampled_adj_(self):
+        return self.get_adj_()[self.sampled_adj_row_nonparam, self.sampled_adj_col_nonparam].detach()
     
     def get_gene_emb(self):
         return self.gene_emb[0].gene_emb.data.cpu().detach().numpy()

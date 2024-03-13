@@ -26,8 +26,8 @@ class GRN:
         if top_gene_percentile is None:
             self.cutoff_threshold = 0
         else:
-            # Here we are estimating the cutoff point for top 5% predicted edges
-            # To speed up the process, we calculate the 95% percentile within 
+            # Here we are estimating the cutoff point for top a% predicted edges
+            # To speed up the process, we calculate the 1-a% percentile within 
             # 10,000 sampled edges instead of all edges. 
             random_row_idx = np.random.randint(0, self.n_tfs, 10000)
             random_col_idx = np.random.randint(0, self.n_genes, 10000)
@@ -165,48 +165,6 @@ class GRN:
         hop3s['weight'] = 2
         adj_table = pd.concat([hop1, hop2s, hop3s]).reset_index(drop=True)
         return adj_table
-        # We actually don't need BFS for just 2hops
-        # # BFS
-        # visited = set()
-        # explored = set()
-        # travelled_pathes = set()
-        # output = []
-        # queue = deque([(gene, 0)])
-        # while queue:
-        #     node, h = queue.popleft()
-        #     if h >= hop:
-        #         break
-        #     neighbors = self.extract_node_neighbors(node, k)
-        #     explored.add(node)
-        #     for i, r in neighbors.iterrows():
-        #         edge_name = f"{r['source']}--{r['target']}"
-        #         if edge_name not in travelled_pathes:
-        #             output.append({
-        #                 'source': r['source'],
-        #                 'target': r['target'],
-        #                 'weight': hop+1-h,
-        #                 'score': r['weight']
-        #             })
-        #             travelled_pathes.add(edge_name)
-        #             if r['source'] not in visited:
-        #                 visited.add(r['source'])
-        #                 queue.append((r['source'], h+1))
-        #             if r['target'] not in visited:
-        #                 visited.add(r['target'])
-        #                 queue.append((r['target'], h+1))
-        # for node in visited:
-        #     if node not in explored:
-        #         neighbors = self.extract_node_neighbors(node, k)
-        #         for i, r in neighbors.iterrows():
-        #             if r['source'] in explored and r['target'] in explored:
-        #                 output.append({
-        #                     'source': r['source'],
-        #                     'target': r['target'],
-        #                     'weight': 0,
-        #                     'score': r['weight']
-        #                 })
-                    
-        # return pd.DataFrame(output)
 
     def save(self, file_path):
         with open(file_path, 'wb') as f:

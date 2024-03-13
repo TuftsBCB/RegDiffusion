@@ -10,7 +10,6 @@ from .logger import LightLogger
 from datetime import datetime
 from .grn import GRN
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 def linear_beta_schedule(timesteps, start_noise, end_noise):
     scale = 1000 / timesteps
@@ -43,8 +42,9 @@ class RegDiffusionTrainer:
         sparse_loss_coef=0.25, adj_dropout=0.30,
         batch_size=128, n_steps=1000, 
         train_split=1.0, train_split_seed=123, eval_on_n_steps=100, 
-        time_dim=64, celltype_dim=32, hidden_dims=[16, 16, 16],
-        top_gene_percentile=5
+        time_dim=64, celltype_dim=4, hidden_dims=[16, 16, 16],
+        init_coef = 5, 
+        top_gene_percentile=5, compile=False
     ):
         hp = locals()
         del hp['exp_array']
@@ -132,16 +132,22 @@ class RegDiffusionTrainer:
             n_celltype=self.n_celltype,
             celltype_dim = celltype_dim,
             hidden_dims=hidden_dims,
-            adj_dropout=adj_dropout
+            adj_dropout=adj_dropout,
+            init_coef=init_coef
         )
     
         # Setup optimizer --------------------------------------------------------
         if lr_adj is None:
             lr_adj = gene_reg_norm/50
             self.hp['lr_adj'] = lr_adj
-        non_adj_params = [
-            p for i, p in enumerate(self.model.parameters()) if i != 0]
-        adj_params = [self.model.adj_A]
+        adj_params = []
+        non_adj_params = []
+        for name, param in self.model.named_parameters():
+            if name.endswith('adj_A'):
+                adj_params.append(param)
+            else:
+                if not name.endswith('_nonparam'):
+                    non_adj_params.append(param)
         self.opt = torch.optim.Adam(
             [{'params': non_adj_params}, {'params': adj_params}], 
             lr=lr_nn, 
@@ -150,11 +156,11 @@ class RegDiffusionTrainer:
         self.opt.param_groups[0]['lr'] = lr_nn
         self.opt.param_groups[1]['lr'] = lr_adj
         self.opt.param_groups[1]['weight_decay'] = weight_decay_adj
-
-        self.sampled_adj_row = torch.randint(0, n_gene, size=(10000,)).to(device)
-        self.sampled_adj_col = torch.randint(0, n_gene, size=(10000,)).to(device)
     
         self.model.to(device)
+        if self.device.startswith('cuda') and compile:
+            self.original_model = self.model
+            self.model = torch.compile(self.model)
         self.total_time_cost=0
         self.losses_on_gene=None
         self.model_name='RegDiffusion'
@@ -186,8 +192,7 @@ class RegDiffusionTrainer:
         start_time = datetime.now()
         if n_steps is None:
             n_steps = self.hp['n_steps']
-        adj_m = self.model.get_adj_()
-        sampled_adj = adj_m[self.sampled_adj_row, self.sampled_adj_col]
+        sampled_adj = self.model.get_sampled_adj_()
         with tqdm(range(n_steps)) as pbar:
             for epoch in pbar: 
                 epoch_loss = []
@@ -209,13 +214,13 @@ class RegDiffusionTrainer:
                     adj_m = self.model.get_adj_()
                     loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
                             
-                    if epoch > 3:
+                    if epoch > 10:
                         loss = loss + loss_sparse
                     loss.backward()
                     self.opt.step()
                     epoch_loss.append(loss.item())
                 train_loss = np.mean(epoch_loss)
-                sampled_adj_new = adj_m[self.sampled_adj_row, self.sampled_adj_col]
+                sampled_adj_new = self.model.get_sampled_adj_()
                 adj_diff = (sampled_adj_new - sampled_adj).mean().item()*(self.n_gene-1)
                 sampled_adj = sampled_adj_new
                 pbar.set_description(
@@ -251,10 +256,12 @@ class RegDiffusionTrainer:
         log_df = self.logger.to_df()
         if 'train_loss' in log_df:
             figure, axes = plt.subplots(1, 2, figsize=(8, 3))
-            loss_plot = sns.lineplot(log_df['train_loss'], ax=axes[0])
-            loss_plot.set(xlabel='Steps', ylabel='Training Loss')
-            change_plot = sns.lineplot(log_df['adj_change'][1:], ax=axes[1])
-            change_plot.set(xlabel='Steps', ylabel='Amount of Change in Adj. Matrix')
+            axes[0].plot(log_df['train_loss'])
+            axes[0].set_xlabel('Steps')
+            axes[0].set_ylabel('Training Loss')
+            axes[1].plot(log_df['adj_change'][1:])
+            axes[1].set_xlabel('Steps')
+            axes[1].set_ylabel('Amount of Change in Adj. Matrix')
             plt.show()
         else:
             print('Training log and Adj Change are not available. Train your model using the .train() method.')

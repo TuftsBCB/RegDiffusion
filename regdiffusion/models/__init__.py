@@ -1,2 +1,1 @@
 from .regdiffusion import RegDiffusion
-from .deepsem_original.DeepSEM_cell_type_non_specific_GRN_model import non_celltype_GRN_model 

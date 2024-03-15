@@ -5,4 +5,5 @@ result_logs/
 __pycache__/
 .ipynb_checkpoints
 lib
+view.html
 demo_mESC_grn.hdf5

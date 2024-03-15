@@ -24,7 +24,8 @@ dependencies = [
     "torch",
     "tqdm",
     "scanpy",
-    "scikit-learn"
+    "scikit-learn",
+    "h5py"
 ]
 
 [project.urls]

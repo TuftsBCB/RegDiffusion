@@ -3,8 +3,9 @@ import pandas as pd
 from tqdm import tqdm
 from datetime import datetime
 from collections import deque, Counter
-from scipy.sparse import csr_matrix, save_npz
-import pickle
+from scipy.sparse import csr_matrix
+import h5py
+import pyvis
 
 class GRN:
     def __init__(self, adj_matrix=None, gene_names=None, tf_names=None, 
@@ -137,7 +138,7 @@ class GRN:
             del output['abs_weight']
             return output
 
-    def extract_node_2hop_neighborhood(self, gene, k=20, hop=2):
+    def extract_node_2hop_neighborhood(self, gene, k=20):
         hop1 = self.extract_node_neighbors(gene, k=k)
         hop1['weight'] = 0
         hop1_genes = set()
@@ -166,9 +167,63 @@ class GRN:
         adj_table = pd.concat([hop1, hop2s, hop3s]).reset_index(drop=True)
         return adj_table
 
-    def save(self, file_path):
-        with open(file_path, 'wb') as f:
-            pickle.dump(self, f)
+    def visualize_local_neighborhood(
+        self, gene, k=20, node_size=8, edge_widths=[2, 1, 0.5], 
+        node_group_dict=None, cdn_resources='remote'):
+        local_adj_table = self.extract_node_2hop_neighborhood(gene, k)
+        local_adj_table.weight = local_adj_table.weight.map(
+            lambda x: edge_widths[x])
+        
+        g = pyvis.network.Network(cdn_resources=cdn_resources)
+        
+        for node in set(local_adj_table['source']) | set(local_adj_table['target']):
+            node_shape = 'star' if node == gene else 'dot'
+            node_group = None if node_group_dict is None else node_group_dict[node]
+            g.add_node(node, label=node, size=node_size, 
+                       shape=node_shape, group=node_group)
+        
+        for _, row in local_adj_table.iterrows():
+            g.add_edge(row['source'], row['target'], width=row['weight'])
+        
+        g.repulsion()
+        return g
+
+    def to_hdf5(self, file_path, as_sparse=False):
+        if as_sparse:
+            sp_adj = csr_matrix(self.adj_matrix)
+        if not file_path.endswith('.hdf5'):
+            file_path += '.hdf5'
+        with h5py.File(file_path, 'w') as f:
+            adj_group = f.create_group('adj_matrix')
+            if as_sparse:
+                adj_group.attrs['sparse'] = True
+                adj_group.attrs['shape'] = sp_adj.shape
+                adj_group.create_dataset(
+                    'data', data=sp_adj.data.astype(np.float16), chunks=True, 
+                    compression="gzip", compression_opts=9
+                )
+                adj_group.create_dataset(
+                    'indices', data=sp_adj.indices, chunks=True, 
+                    compression="gzip", compression_opts=9
+                )
+                adj_group.create_dataset(
+                    'indptr', data=sp_adj.indptr, chunks=True, 
+                    compression="gzip", compression_opts=9
+                )
+            else:
+                adj_group.attrs['sparse'] = False
+                adj_group.create_dataset(
+                    'data', data=self.adj_matrix, chunks=True, 
+                    compression="gzip", compression_opts=9
+                )
+            f.create_dataset(
+                'gene_names', data=list(self.gene_names), chunks=True, 
+                compression="gzip", compression_opts=9
+            )
+            f.create_dataset(
+                'tf_names', data=list(self.tf_names), chunks=True, 
+                compression="gzip", compression_opts=9
+            )
             
     def __repr__(self):
         result_description_header = "Inferred GRN"
@@ -180,3 +235,5 @@ class GRN:
         
     def __str__(self):
         return self.__repr__()
+
+# def load

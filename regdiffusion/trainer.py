@@ -266,7 +266,7 @@ class RegDiffusionTrainer:
         else:
             print('Training log and Adj Change are not available. Train your model using the .train() method.')
 
-    def generate_grn(self, gene_names, tf_names=None, top_gene_percentile=None):
+    def get_grn(self, gene_names, tf_names=None, top_gene_percentile=None):
         adj = self.model.get_adj()
         return GRN(adj, gene_names, tf_names, top_gene_percentile)
 

@@ -236,4 +236,16 @@ class GRN:
     def __str__(self):
         return self.__repr__()
 
-# def load
+def read_hdf5(file_path):
+    with h5py.File(file_path, 'r') as f:
+        if f['adj_matrix'].attrs['sparse']:
+            sparse_dt = csr_matrix((
+                f['adj_matrix']['data'][:].astype(np.float32), 
+                f['adj_matrix']['indices'][:], 
+                f['adj_matrix']['indptr'][:]), shape=f['adj_matrix'].attrs['shape'])
+            adj_matrix = sparse_dt.toarray().astype(np.float16)
+        else:
+            adj_matrix = f['adj_matrix']['data'][:]
+        gene_names = f['gene_names'][:]
+        tf_names = f['tf_names'][:]
+        return GRN(adj_matrix, gene_names, tf_names)    

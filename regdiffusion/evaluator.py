@@ -2,10 +2,21 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-# Modified from 
-# https://github.com/HantaoShu/DeepSEM/blob/master/src/utils.py
-
 class GRNEvaluator:
+    """
+    A generalized evaluator for GRN inference.
+
+    Args:
+        ground_truth (np.ndarray or list): Either a 2D numpy array or list of 
+            list holding the ground truth. Each row is an edge and includes 
+            names for the source and target nodes. For example, [['A', 'B'], 
+            ['B', 'C']].
+        gene_names (np.ndarray or list): Either a 1D numpy array or list of 
+            gene names. Make sure the order of the gene names is the same as 
+            the order of gene names in the adjacency matrix. 
+        metrics (list): A list of supported evaluation metrics. Currently 
+            support 'AUROC', 'AUPR', 'AUPRR', 'EP', 'EPR'.
+    """
     def __init__(self, ground_truth, gene_names, 
                  metrics=['AUROC', 'AUPR', 'AUPRR', 'EP', 'EPR']):
         n_gene = len(gene_names)
@@ -69,6 +80,7 @@ class GRNEvaluator:
             y_above_cutoff = y_pred > cutoff
         
             eval_results['EP'] = int(np.sum(self.y_true[y_above_cutoff]))
-            eval_results['EPR'] = 1. * eval_results['EP'] / ((self.num_true_edges ** 2) / len(y_pred))
+            eval_results['EPR'] = 1. * eval_results['EP']
+            eval_results['EPR'] /= ((self.num_true_edges ** 2) / len(y_pred))
         return eval_results
 

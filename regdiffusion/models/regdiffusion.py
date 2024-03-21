@@ -4,6 +4,8 @@ from torch import nn
 import torch.nn.functional as F
 from torch.distributions import Normal
 import math
+from typing import List
+
 
 torch.set_float32_matmul_precision('high')
 
@@ -17,7 +19,8 @@ class SinusoidalPositionEmbeddings(nn.Module):
         device = time.device
         half_dim = self.dim // 2
         embeddings = math.log(self.theta) / (half_dim - 1)
-        embeddings = torch.exp(torch.arange(half_dim, device=device) * -embeddings)
+        embeddings = torch.exp(torch.arange(
+            half_dim, device=device) * -embeddings)
         embeddings = time[:, None] * embeddings[None, :]
         embeddings = torch.cat((embeddings.sin(), embeddings.cos()), dim=-1)
         return embeddings
@@ -53,41 +56,30 @@ class GeneEmbeddings(nn.Module):
         return batch_gene_emb
     
 class RegDiffusion(nn.Module):
-    ''' A RegDiffusion model
+    ''' 
     
-    Parameters
-    ----------
-    n_genes: int
-        Number of Genes
-    time_dim: int
-        Dimension of time step embedding
-    n_celltype: int
-        Number of cell types (Optional). Default None
-    celltype_dim: int
-        Dimension of cell types
-    hidden_dims: list[int]
-        List of integer for the dimensions of the hidden layers
-    adj_dropout: float
-        A single number between 0 and 1 specifying the percentage of 
-        values in the adjacency matrix that are dropped during training. 
-        
-    Methods
-    -------
-    get_adj_
-        Obtain current adjacency matrix 
-    get_adj
-        Obtain current adjacency matrix as a detached numpy array
-    I_minus_A
-        Calculate I - A
-    get_gene_emb
-        Obtain the first layer gene embedding
-    forward(x, t, ct)
-        Forward pass. Input is expression table x, time step t, and 
-        cell type ct. Output is the predicted z. 
+    A RegDiffusion model. For architecture details, please refer to our paper.
+
+    > From noise to knowledge: probabilistic diffusion-based neural inference
+    
+    Args:
+        n_genes (int): Number of Genes
+        time_dim (int): Dimension of time step embedding
+        n_celltype (int): Number of expected cell types. If it is not provided, 
+            there would be no celltype embedding. Default is None. 
+        celltype_dim (int): Dimension of cell types
+        hidden_dims (list[int]): List of integer for the dimensions of the 
+            hidden layers. The first hidden dimension will be used as the size
+            for gene embedding. 
+        adj_dropout (float): A single number between 0 and 1 specifying the 
+            percentage of values in the adjacency matrix that are dropped 
+            during training. 
+        init_coef (int): Coefficient to multiply with gene regulation norm 
+            (1/(n_gene - 1)) to initialize the adjacency matrix. 
     '''
     def __init__(
         self, n_gene, time_dim, 
-        n_celltype=None, celltype_dim=None, 
+        n_celltype=None, celltype_dim=4, 
         hidden_dims=[16, 16, 16], adj_dropout=0.3, init_coef = 5
     ):
         super(RegDiffusion, self).__init__()
@@ -118,7 +110,7 @@ class RegDiffusion(nn.Module):
         )
         
         if n_celltype is not None:
-            self.celltype_emb = SinusoidalPositionEmbeddings(celltype_dim, theta=n_celltype)
+            self.celltype_emb = nn.Embedding(n_celltype, celltype_dim)
         
         self.blocks = nn.ModuleList([
             Block(
@@ -128,32 +120,40 @@ class RegDiffusion(nn.Module):
         
         self.final = nn.Linear(hidden_dims[-1]-1, 1)
         
-        self.zeros_nonparam = nn.Parameter(torch.zeros(n_gene, n_gene), 
-                                 requires_grad=False)
-        self.eye_nonparam = nn.Parameter(torch.eye(n_gene), requires_grad=False)
-        self.mask_nonparam = nn.Parameter(1 - torch.eye(n_gene), requires_grad=False)
+        self.zeros_nonparam = nn.Parameter(
+            torch.zeros(n_gene, n_gene), requires_grad=False)
+        self.eye_nonparam = nn.Parameter(
+            torch.eye(n_gene), requires_grad=False)
+        self.mask_nonparam = nn.Parameter(
+            1 - torch.eye(n_gene), requires_grad=False)
         
     def soft_thresholding(self, x, tau):
-        return torch.sign(x) * torch.max(self.zeros_nonparam, torch.abs(x) - tau)
+        return torch.sign(x) * torch.max(
+            self.zeros_nonparam, torch.abs(x) - tau)
         
     def I_minus_A(self):
         mask = self.mask_nonparam
         if self.train:
-            A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout)/(1-self.adj_dropout)
+            A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout)
+            A_dropout /= (1-self.adj_dropout)
             mask = mask * A_dropout
-        clean_A = self.soft_thresholding(self.adj_A, self.gene_reg_norm/2) * mask
+        clean_A = self.soft_thresholding(self.adj_A, self.gene_reg_norm/2)*mask
 
         return self.eye_nonparam - clean_A
         
     def get_adj_(self):
-        return self.soft_thresholding(self.adj_A, self.gene_reg_norm/2) * self.mask_nonparam
+        return self.soft_thresholding(
+            self.adj_A, self.gene_reg_norm/2) * self.mask_nonparam
     
     def get_adj(self):
-        return (self.get_adj_().detach().cpu().numpy() / self.gene_reg_norm).astype(np.float16)
+        adj = self.get_adj_().detach().cpu().numpy() / self.gene_reg_norm
+        return adj.astype(np.float16)
 
     @torch.no_grad()
     def get_sampled_adj_(self):
-        return self.get_adj_()[self.sampled_adj_row_nonparam, self.sampled_adj_col_nonparam].detach()
+        return self.get_adj_()[
+            self.sampled_adj_row_nonparam, self.sampled_adj_col_nonparam
+        ].detach()
     
     def get_gene_emb(self):
         return self.gene_emb[0].gene_emb.data.cpu().detach().numpy()

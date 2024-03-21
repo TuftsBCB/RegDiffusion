@@ -23,4 +23,4 @@ unset __conda_setup
 
 cd /cluster/tufts/slonimlab/hzhu07/grn-diffusion
 conda activate grn
-python deepsem.py "$1" "$2"
+python recomb_benchmark_all.py "$1" "$2"

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regdiffusion package &mdash; regdiffusion 0.0.5 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=282f96c0"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            regdiffusion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">regdiffusion package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-regdiffusion.evaluator">regdiffusion.evaluator module</a><ul>
+<li><a class="reference internal" href="#regdiffusion.evaluator.GRNEvaluator"><code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.evaluator.GRNEvaluator.evaluate"><code class="docutils literal notranslate"><span class="pre">GRNEvaluator.evaluate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-regdiffusion.grn">regdiffusion.grn module</a><ul>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_2hop_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_2hop_neighborhood()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_sources"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.generate_adj_list"><code class="docutils literal notranslate"><span class="pre">GRN.generate_adj_list()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.grn.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regdiffusion.grn.read_hdf5"><code class="docutils literal notranslate"><span class="pre">read_hdf5()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-regdiffusion.logger">regdiffusion.logger module</a><ul>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger"><code class="docutils literal notranslate"><span class="pre">LightLogger</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.set_configs"><code class="docutils literal notranslate"><span class="pre">LightLogger.set_configs()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.start"><code class="docutils literal notranslate"><span class="pre">LightLogger.start()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.log"><code class="docutils literal notranslate"><span class="pre">LightLogger.log()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.finish"><code class="docutils literal notranslate"><span class="pre">LightLogger.finish()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.to_df"><code class="docutils literal notranslate"><span class="pre">LightLogger.to_df()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.save"><code class="docutils literal notranslate"><span class="pre">LightLogger.save()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.logger.LightLogger.check_early_stopping"><code class="docutils literal notranslate"><span class="pre">LightLogger.check_early_stopping()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">LightLogger.finish()</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">LightLogger.log()</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">LightLogger.save()</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">LightLogger.set_configs()</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">LightLogger.start()</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">LightLogger.to_df()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regdiffusion.logger.load_logger"><code class="docutils literal notranslate"><span class="pre">load_logger()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-regdiffusion.trainer">regdiffusion.trainer module</a><ul>
+<li><a class="reference internal" href="#regdiffusion.trainer.RegDiffusionTrainer"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.trainer.RegDiffusionTrainer.forward_pass"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.forward_pass()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.trainer.RegDiffusionTrainer.get_adj"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.get_adj()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.trainer.RegDiffusionTrainer.get_grn"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.get_grn()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.trainer.RegDiffusionTrainer.train"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.train()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.trainer.RegDiffusionTrainer.training_curves"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.training_curves()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regdiffusion.trainer.linear_beta_schedule"><code class="docutils literal notranslate"><span class="pre">linear_beta_schedule()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.trainer.power_beta_schedule"><code class="docutils literal notranslate"><span class="pre">power_beta_schedule()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-regdiffusion">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">regdiffusion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">regdiffusion package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/regdiffusion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="regdiffusion-package">
+<h1>regdiffusion package<a class="headerlink" href="#regdiffusion-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="regdiffusion.data.html">regdiffusion.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data.beeline">regdiffusion.data.beeline module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.cell_type_separator"><code class="docutils literal notranslate"><span class="pre">cell_type_separator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.download_beeline"><code class="docutils literal notranslate"><span class="pre">download_beeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline"><code class="docutils literal notranslate"><span class="pre">load_beeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline_ground_truth"><code class="docutils literal notranslate"><span class="pre">load_beeline_ground_truth()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data.microglia">regdiffusion.data.microglia module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.microglia.download_regdiffusion_data"><code class="docutils literal notranslate"><span class="pre">download_regdiffusion_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.microglia.load_atlas_microglia"><code class="docutils literal notranslate"><span class="pre">load_atlas_microglia()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.microglia.load_hammond_microglia"><code class="docutils literal notranslate"><span class="pre">load_hammond_microglia()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data.utils">regdiffusion.data.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.utils.download_file"><code class="docutils literal notranslate"><span class="pre">download_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="regdiffusion.models.html">regdiffusion.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.html#module-regdiffusion.models.regdiffusion">regdiffusion.models.regdiffusion module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.Block.forward"><code class="docutils literal notranslate"><span class="pre">Block.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.GeneEmbeddings"><code class="docutils literal notranslate"><span class="pre">GeneEmbeddings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.GeneEmbeddings.forward"><code class="docutils literal notranslate"><span class="pre">GeneEmbeddings.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion"><code class="docutils literal notranslate"><span class="pre">RegDiffusion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.I_minus_A"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.I_minus_A()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.forward"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.forward()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_adj"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_adj()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_adj_"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_adj_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_gene_emb"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_gene_emb()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_sampled_adj_"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_sampled_adj_()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.soft_thresholding"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.soft_thresholding()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings"><code class="docutils literal notranslate"><span class="pre">SinusoidalPositionEmbeddings</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="regdiffusion.models.html#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings.forward"><code class="docutils literal notranslate"><span class="pre">SinusoidalPositionEmbeddings.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.html#module-regdiffusion.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-regdiffusion.evaluator">
+<span id="regdiffusion-evaluator-module"></span><h2>regdiffusion.evaluator module<a class="headerlink" href="#module-regdiffusion.evaluator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.evaluator.GRNEvaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.evaluator.</span></span><span class="sig-name descname"><span class="pre">GRNEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ground_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['AUROC',</span> <span class="pre">'AUPR',</span> <span class="pre">'AUPRR',</span> <span class="pre">'EP',</span> <span class="pre">'EPR']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/evaluator.html#GRNEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.evaluator.GRNEvaluator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generalized evaluator for GRN inference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ground_truth</strong> (<em>np.ndarray</em><em> or </em><em>list</em>) – Either a 2D numpy array or list of
+list holding the ground truth. Each row is an edge and includes
+names for the source and target nodes. For example, [[‘A’, ‘B’],
+[‘B’, ‘C’]].</p></li>
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em><em> or </em><em>list</em>) – Either a 1D numpy array or list of
+gene names. Make sure the order of the gene names is the same as
+the order of gene names in the adjacency matrix.</p></li>
+<li><p><strong>metrics</strong> (<em>list</em>) – A list of supported evaluation metrics. Currently
+support ‘AUROC’, ‘AUPR’, ‘AUPRR’, ‘EP’, ‘EPR’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.evaluator.GRNEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/evaluator.html#GRNEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.evaluator.GRNEvaluator.evaluate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regdiffusion.grn">
+<span id="regdiffusion-grn-module"></span><h2>regdiffusion.grn module<a class="headerlink" href="#module-regdiffusion.grn" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.grn.</span></span><span class="sig-name descname"><span class="pre">GRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Object to save and analyze gene regulatory network</p>
+<p>A GRN object includes the adjacency matrix between transcriptional factors
+(<a href="#id6"><span class="problematic" id="id7">|a|</span></a>) and target genes (<a href="#id8"><span class="problematic" id="id9">|b|</span></a>). The adjacency matrix is expected to be in the
+shape of <a href="#id10"><span class="problematic" id="id11">|a|</span></a> * <a href="#id12"><span class="problematic" id="id13">|b|</span></a>. In many cases, when TFs are not specified, we have a
+square-shaped (<a href="#id14"><span class="problematic" id="id15">|b|</span></a> * <a href="#id16"><span class="problematic" id="id17">|b|</span></a>) adjacency matrix. We expected the adjacency
+matrix to hold predicted weights/probabilities for the edges (float).</p>
+<p>To create a GRN object, you need at least two things: the adjacency matrix
+and the corresponding gene names. You can further specify the TF names if
+your adjacency matrix is not a square matrix.</p>
+<p>You can save a GRN object to the HDF5 format using the <cite>.to_hdf5</cite> method in
+the GRN class. You can load a saved GRN object using the <cite>read_hdf5</cite>
+function in this package.</p>
+<p>If your adjacency matrix is very large and space is a concern, you may
+consider provide a value for <cite>top_gene_percentile</cite>. This value will
+calculate the a cutoff point for the values in the adjacency matrix.
+Every value whose absolute value is below this cutoff point will be set to
+zero. Later on, we can save the data as a sparse matrix to reduce the
+space requirement.</p>
+<p>The GRN object comes with many useful methods to analyze and visualize the
+network. Top top-level interfaces includes <cite>.extract_node_2hop_neighborhood</cite>
+and <cite>.visualize_local_neighborhood</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adj_matrix</strong> (<em>np.ndarray</em>) – A 2D adjacency matrix to save.</p></li>
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – A 1D numpy array with all the target gene
+names.</p></li>
+<li><p><strong>tf_names</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – A 1D numpy array with all the TF gene
+names.</p></li>
+<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If this value is set, only the top k absolute
+values in the adjacency matrix will be kept. All the other values
+will be set to zero.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_2hop_neighborhood">
+<span class="sig-name descname"><span class="pre">extract_node_2hop_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_2hop_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_2hop_neighborhood" title="Link to this definition"></a></dt>
+<dd><p>Generate a pandas dataframe for the local neighborhood (2-hop) around
+selected gene(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_neighbors">
+<span class="sig-name descname"><span class="pre">extract_node_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_neighbors" title="Link to this definition"></a></dt>
+<dd><p>Generate a pandas dataframe for the top direct neighbors of selected
+gene. The dataframe will be sorted by the absolute weight of edges.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_neighbors_as_indices">
+<span class="sig-name descname"><span class="pre">extract_node_neighbors_as_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_neighbors_as_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_neighbors_as_indices" title="Link to this definition"></a></dt>
+<dd><p>Generate a dictionary for the top direct neighbors of selected gene.
+It is slightly faster than the dataframe version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_sources">
+<span class="sig-name descname"><span class="pre">extract_node_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_sources" title="Link to this definition"></a></dt>
+<dd><p>Generate a pandas dataframe for the top direct edge pointing to the
+selected gene.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_sources_as_indices">
+<span class="sig-name descname"><span class="pre">extract_node_sources_as_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_sources_as_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_sources_as_indices" title="Link to this definition"></a></dt>
+<dd><p>Generate a dictionary for the top direct edge pointing to the
+selected gene. It is slightly faster than the dataframe version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_targets">
+<span class="sig-name descname"><span class="pre">extract_node_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_targets" title="Link to this definition"></a></dt>
+<dd><p>Generate a pandas dataframe for the top direct edge pointing from the
+selected gene.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.extract_node_targets_as_indices">
+<span class="sig-name descname"><span class="pre">extract_node_targets_as_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.extract_node_targets_as_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.extract_node_targets_as_indices" title="Link to this definition"></a></dt>
+<dd><p>Generate a dictionary for the top direct edge pointing from the
+selected gene. It is slightly faster than the dataframe version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.generate_adj_list">
+<span class="sig-name descname"><span class="pre">generate_adj_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.generate_adj_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.generate_adj_list" title="Link to this definition"></a></dt>
+<dd><p>Simply generate a dataframe to hold the adjacency list.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.to_hdf5">
+<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_sparse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.to_hdf5" title="Link to this definition"></a></dt>
+<dd><p>Save GRN into a HDF5 file. You have the option to save as a sparse
+matrix. This option is preferred when most of the values in the
+adjacency matrix are zeros.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – File path to save.</p></li>
+<li><p><strong>as_sparse</strong> (<em>bool</em>) – Whether to save as sparse matrix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.grn.GRN.visualize_local_neighborhood">
+<span class="sig-name descname"><span class="pre">visualize_local_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_widths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[2,</span> <span class="pre">1,</span> <span class="pre">0.5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_group_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdn_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'remote'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN.visualize_local_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN.visualize_local_neighborhood" title="Link to this definition"></a></dt>
+<dd><p>Generate a vis.js network visualization of the local neighborhood
+(2-hop) around selected gene(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>edge_widths</strong> (<em>List</em>) – The widths for edges (1st, 2nd, between 2nd
+hops).</p></li>
+<li><p><strong>font_size</strong> (<em>int</em>) – The font size for nodes labels.</p></li>
+<li><p><strong>node_group_dict</strong> (<em>dict</em>) – A dictionary with keys being the names of
+genes and values being the groups. Genes from the same group
+will be colored using the same color.</p></li>
+<li><p><strong>cdn_resources</strong> (<em>str</em>) – Where to load vis.js resources. Default is
+‘remote’.</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – Boolean value indicating whether the visualization
+happens in a jupyter notebook.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regdiffusion.grn.read_hdf5">
+<span class="sig-prename descclassname"><span class="pre">regdiffusion.grn.</span></span><span class="sig-name descname"><span class="pre">read_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/grn.html#read_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.read_hdf5" title="Link to this definition"></a></dt>
+<dd><p>Read HDF5 file as a GRN object. See the documentation for GRN for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – File path to read.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-regdiffusion.logger">
+<span id="regdiffusion-logger-module"></span><h2>regdiffusion.logger module<a class="headerlink" href="#module-regdiffusion.logger" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.logger.</span></span><span class="sig-name descname"><span class="pre">LightLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'result_logs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A lightweight logger that runs completely in local</p>
+<p>This logger takes inspirations from w&amp;b but runs completely in local
+environment. Also, it supports logging multiple separated runs in
+a single experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result_dir</strong> (<em>str</em>) – Path to the dir to save all the logging files</p></li>
+<li><p><strong>log_date</strong> (<em>str</em>) – Within result_dir, logs from each date will be saved in each
+subdirectory. This log_date variable provides a way to customize
+this setting</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.set_configs">
+<span class="sig-name descname"><span class="pre">set_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.set_configs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.set_configs" title="Link to this definition"></a></dt>
+<dd><p>Save experiment configurations (a python dictionary) to memory for
+future exportation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.start" title="Link to this definition"></a></dt>
+<dd><p>Start the logging of a new run within an experiment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.log" title="Link to this definition"></a></dt>
+<dd><p>Log <cite>log_dict</cite> (a dictionary containing performance) at each step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.finish">
+<span class="sig-name descname"><span class="pre">finish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.finish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.finish" title="Link to this definition"></a></dt>
+<dd><p>End the logging of a run and save to a local file if <cite>save_now</cite> is
+True</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.to_df">
+<span class="sig-name descname"><span class="pre">to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tidy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.to_df" title="Link to this definition"></a></dt>
+<dd><p>Convert saved logs to a pandas dataframe</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.save" title="Link to this definition"></a></dt>
+<dd><p>Save all the logs to path</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.logger.LightLogger.check_early_stopping">
+<span class="sig-name descname"><span class="pre">check_early_stopping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.check_early_stopping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.LightLogger.check_early_stopping" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">finish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.finish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">set_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.set_configs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tidy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#LightLogger.to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regdiffusion.logger.load_logger">
+<span class="sig-prename descclassname"><span class="pre">regdiffusion.logger.</span></span><span class="sig-name descname"><span class="pre">load_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/logger.html#load_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.logger.load_logger" title="Link to this definition"></a></dt>
+<dd><p>Load a saved log file to a LightLogger object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – path to the json file generated by LightLogger.save.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-regdiffusion.trainer">
+<span id="regdiffusion-trainer-module"></span><h2>regdiffusion.trainer module<a class="headerlink" href="#module-regdiffusion.trainer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.trainer.RegDiffusionTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.trainer.</span></span><span class="sig-name descname"><span class="pre">RegDiffusionTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay_nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse_loss_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_on_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celltype_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[16,</span> <span class="pre">16,</span> <span class="pre">16]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#RegDiffusionTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.RegDiffusionTrainer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Initialize and Train a RegDiffusion model with configs</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.trainer.RegDiffusionTrainer.forward_pass">
+<span class="sig-name descname"><span class="pre">forward_pass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#RegDiffusionTrainer.forward_pass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.RegDiffusionTrainer.forward_pass" title="Link to this definition"></a></dt>
+<dd><p>Forward diffusion pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_0</strong> (<em>torch.FloatTensor</em>) – Torch tensor for expression data. Rows are cells and columns
+are genes</p></li>
+<li><p><strong>t</strong> (<em>torch.LongTensor</em>) – Torch tensor for time steps.</p></li>
+<li><p><strong>mean_schedule</strong> (<em>torch.FloatTensor</em>) – Torch tensor for diffusion mean schedule</p></li>
+<li><p><strong>std_schedule</strong> (<em>torch.FloatTensor</em>) – Torch tensor for diffusion std schedule</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.trainer.RegDiffusionTrainer.get_adj">
+<span class="sig-name descname"><span class="pre">get_adj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#RegDiffusionTrainer.get_adj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.RegDiffusionTrainer.get_adj" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.trainer.RegDiffusionTrainer.get_grn">
+<span class="sig-name descname"><span class="pre">get_grn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#RegDiffusionTrainer.get_grn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.RegDiffusionTrainer.get_grn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.trainer.RegDiffusionTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#RegDiffusionTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.RegDiffusionTrainer.train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.trainer.RegDiffusionTrainer.training_curves">
+<span class="sig-name descname"><span class="pre">training_curves</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#RegDiffusionTrainer.training_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.RegDiffusionTrainer.training_curves" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regdiffusion.trainer.linear_beta_schedule">
+<span class="sig-prename descclassname"><span class="pre">regdiffusion.trainer.</span></span><span class="sig-name descname"><span class="pre">linear_beta_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_noise</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_noise</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#linear_beta_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.linear_beta_schedule" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regdiffusion.trainer.power_beta_schedule">
+<span class="sig-prename descclassname"><span class="pre">regdiffusion.trainer.</span></span><span class="sig-name descname"><span class="pre">power_beta_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_noise</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_noise</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/trainer.html#power_beta_schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.trainer.power_beta_schedule" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-regdiffusion">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-regdiffusion" title="Link to this heading"></a></h2>
+<p>Single-cell Gene Regulatory Networks Inference and Analytics</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Hao Zhu, Donna Slonim.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

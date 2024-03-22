@@ -308,12 +308,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">RegDiffusion</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
 </ul>
 </li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -330,10 +328,13 @@ document.write(`
 probabilistic diffusion model. It works well on genes and is capable to predict
 biologically verifiable links from single cell RNA-seq data.</p>
 <p>Inference on networks with 15,000 genes takes under 5 minutes with modern
-accelerated computing.</p>
-</section>
+accelerated computing. In contrast, previous VAE based models would take more
+than 4 hours on the same device. Even if you don’t have access to those fancy
+GPU cards, RegDiffusion still works. Inference on the same large network takes
+roughly 3 hours on a mid-range 12-core CPU. It does run slower but it’s still
+faster than previous algorithm on GPU thanks to the improvement on algorithm.</p>
 <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> is available on pypi:</p>
 <blockquote>
 <div><p>pip install regdiffusion</p>
@@ -346,6 +347,7 @@ accelerated computing.</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
+</section>
 </section>
 
 
@@ -384,12 +386,10 @@ accelerated computing.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">RegDiffusion</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
 </ul>
 </li>
 </ul>
-
   </nav></div>
 
 </div></div>

@@ -21,6 +21,6 @@ Installation
 
 .. toctree::
    :caption: References:
-   :titlesonly:
+   :hidden:
 
    modules

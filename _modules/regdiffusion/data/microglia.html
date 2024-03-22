@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regdiffusion.data.microglia &mdash; regdiffusion 0.0.5 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=282f96c0"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regdiffusion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regdiffusion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regdiffusion.data.microglia</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regdiffusion.data.microglia</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scanpy</span> <span class="k">as</span> <span class="nn">sc</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">download_file</span>
+
+
+<div class="viewcode-block" id="load_atlas_microglia">
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.microglia.load_atlas_microglia">[docs]</a>
+<span class="k">def</span> <span class="nf">load_atlas_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39; Load single cell for microglia from SCP795</span>
+
+<span class="sd">    Data Source: https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary</span>
+
+<span class="sd">    Data is just count data and has been log </span>
+<span class="sd">    transformed at the end of the loading step</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+    <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/scp795_microglia/&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
+        <span class="n">download_regdiffusion_data</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">&#39;atlas_microglia.zip&#39;</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_dir</span><span class="si">}</span><span class="s1">scp795_microglia.h5ad&#39;</span><span class="p">)</span>
+    <span class="n">ann_dt</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">filter_genes</span><span class="p">(</span><span class="n">ann_dt</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Gm&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mt&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rpl&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rps&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">ann_dt</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ann_dt</span></div>
+
+
+<div class="viewcode-block" id="load_hammond_microglia">
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.microglia.load_hammond_microglia">[docs]</a>
+<span class="k">def</span> <span class="nf">load_hammond_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39; Load single cell for hammond microglia</span>
+
+<span class="sd">    We selected the 4 P100 male mice data. Data has been log transformed. </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+    <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/hammond_microglia/&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
+        <span class="n">download_regdiffusion_data</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">&#39;hammond_microglia.zip&#39;</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_dir</span><span class="si">}</span><span class="s1">/hammond_male_p100_microglia.csv&#39;</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">filter_genes</span><span class="p">(</span><span class="n">ann_dt</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Gm&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mt&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rpl&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rps&#39;</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">ann_dt</span></div>
+
+
+<div class="viewcode-block" id="download_regdiffusion_data">
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.microglia.download_regdiffusion_data">[docs]</a>
+<span class="k">def</span> <span class="nf">download_regdiffusion_data</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">remove_zip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;save_dir does not exist&quot;</span><span class="p">)</span>
+    <span class="n">zip_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="n">download_file</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;https://bcb.cs.tufts.edu/regdiffusion/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> 
+        <span class="n">zip_path</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Extracting&#39;</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">(),</span> 
+                         <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">())):</span>
+            <span class="n">zip_ref</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">remove_zip</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Hao Zhu, Donna Slonim.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

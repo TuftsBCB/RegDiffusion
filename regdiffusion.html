@@ -47,7 +47,13 @@
 <li><a class="reference internal" href="#">regdiffusion package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#regdiffusion-evaluator-module">regdiffusion.evaluator module</a></li>
+<li><a class="reference internal" href="#module-regdiffusion.evaluator">regdiffusion.evaluator module</a><ul>
+<li><a class="reference internal" href="#regdiffusion.evaluator.GRNEvaluator"><code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.evaluator.GRNEvaluator.evaluate"><code class="docutils literal notranslate"><span class="pre">GRNEvaluator.evaluate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-regdiffusion.grn">regdiffusion.grn module</a><ul>
 <li><a class="reference internal" href="#regdiffusion.grn.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul>
 <li><a class="reference internal" href="#regdiffusion.grn.GRN.extract_node_2hop_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_2hop_neighborhood()</span></code></a></li>
@@ -98,7 +104,7 @@
 <li><a class="reference internal" href="#regdiffusion.trainer.power_beta_schedule"><code class="docutils literal notranslate"><span class="pre">power_beta_schedule()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-regdiffusion">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -133,6 +139,28 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="regdiffusion.data.html">regdiffusion.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data.beeline">regdiffusion.data.beeline module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.cell_type_separator"><code class="docutils literal notranslate"><span class="pre">cell_type_separator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.download_beeline"><code class="docutils literal notranslate"><span class="pre">download_beeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline"><code class="docutils literal notranslate"><span class="pre">load_beeline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline_ground_truth"><code class="docutils literal notranslate"><span class="pre">load_beeline_ground_truth()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data.microglia">regdiffusion.data.microglia module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.microglia.download_regdiffusion_data"><code class="docutils literal notranslate"><span class="pre">download_regdiffusion_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.microglia.load_atlas_microglia"><code class="docutils literal notranslate"><span class="pre">load_atlas_microglia()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.microglia.load_hammond_microglia"><code class="docutils literal notranslate"><span class="pre">load_hammond_microglia()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data.utils">regdiffusion.data.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html#regdiffusion.data.utils.download_file"><code class="docutils literal notranslate"><span class="pre">download_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.html#module-regdiffusion.data">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="regdiffusion.models.html">regdiffusion.models package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.html#module-regdiffusion.models.regdiffusion">regdiffusion.models.regdiffusion module</a><ul>
@@ -169,8 +197,35 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="regdiffusion-evaluator-module">
-<h2>regdiffusion.evaluator module<a class="headerlink" href="#regdiffusion-evaluator-module" title="Link to this heading"></a></h2>
+<section id="module-regdiffusion.evaluator">
+<span id="regdiffusion-evaluator-module"></span><h2>regdiffusion.evaluator module<a class="headerlink" href="#module-regdiffusion.evaluator" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.evaluator.GRNEvaluator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.evaluator.</span></span><span class="sig-name descname"><span class="pre">GRNEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ground_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['AUROC',</span> <span class="pre">'AUPR',</span> <span class="pre">'AUPRR',</span> <span class="pre">'EP',</span> <span class="pre">'EPR']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/evaluator.html#GRNEvaluator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.evaluator.GRNEvaluator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generalized evaluator for GRN inference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ground_truth</strong> (<em>np.ndarray</em><em> or </em><em>list</em>) – Either a 2D numpy array or list of
+list holding the ground truth. Each row is an edge and includes
+names for the source and target nodes. For example, [[‘A’, ‘B’],
+[‘B’, ‘C’]].</p></li>
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em><em> or </em><em>list</em>) – Either a 1D numpy array or list of
+gene names. Make sure the order of the gene names is the same as
+the order of gene names in the adjacency matrix.</p></li>
+<li><p><strong>metrics</strong> (<em>list</em>) – A list of supported evaluation metrics. Currently
+support ‘AUROC’, ‘AUPR’, ‘AUPRR’, ‘EP’, ‘EPR’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.evaluator.GRNEvaluator.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/evaluator.html#GRNEvaluator.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.evaluator.GRNEvaluator.evaluate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-regdiffusion.grn">
 <span id="regdiffusion-grn-module"></span><h2>regdiffusion.grn module<a class="headerlink" href="#module-regdiffusion.grn" title="Link to this heading"></a></h2>
@@ -555,8 +610,9 @@ are genes</p></li>
 <dd></dd></dl>
 
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-regdiffusion">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-regdiffusion" title="Link to this heading"></a></h2>
+<p>Single-cell Gene Regulatory Networks Inference and Analytics</p>
 </section>
 </section>
 

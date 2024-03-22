@@ -29,7 +29,7 @@ jobs:
         pip install sphinx_book_theme
         pip install numpy
         pip install pandas
-        pip install torch
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
         pip install tqdm
         pip install scanpy
         pip install scikit-learn

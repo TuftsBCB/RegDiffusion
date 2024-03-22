@@ -1,5 +1,5 @@
 dist/
-data/
+/data/
 results/
 result_logs/
 __pycache__/

@@ -27,6 +27,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install sphinx
         pip install renku-sphinx-theme
+        pip install numpy
+        pip install pandas
+        pip install torch
+        pip install tqdm
+        pip install scanpy
+        pip install scikit-learn
+        pip install h5py
+        pip install pyvis
 
     - name: Build documentation
       run: |

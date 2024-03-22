@@ -3,42 +3,24 @@ import json
 import datetime
 import pandas as pd
 import numpy as np
+from typing import List, Dict, Union
 
 class LightLogger:
-    ''' A lightweight logger that runs completely in local
+    ''' 
+    A lightweight logger that runs completely in local
     
     This logger takes inspirations from w&b but runs completely in local 
     environment. Also, it supports logging multiple separated runs in 
     a single experiment. 
     
-    Parameters
-    ----------
-    result_dir: str
-        Path to the dir to save all the logging files
-    log_date: str
-        Within result_dir, logs from each date will be saved in each 
-        subdirectory. This log_date variable provides a way to customize
-        this setting
-        
-    Methods
-    -------
-    set_configs(configs)
-        Save experiment configurations (a python dictionary) to memory for 
-        future exportation
-    start(note=None)
-        Start the logging of a new run within an experiment
-    log(log_dict, step=None)
-        Log `log_dict` (a dictionary containing performance) at each step
-    finish(save_now=True)
-        End the logging of a run and save to a local file if `save_now` is 
-        True
-    to_df(tidy=True)
-        Convert saved logs to a pandas dataframe
-    save(path)
-        Save all the logs to path
+    Args:
+        result_dir (str): Path to the dir to save all the logging files
+        log_date (str): Within result_dir, logs from each date will be saved in 
+        each subdirectory. This log_date variable provides a way to customize
+        this setting.
     '''
-    
-    def __init__(self, result_dir='result_logs', log_date=None):
+    def __init__(self, result_dir: str = 'result_logs', 
+                 log_date: str = None):
         if log_date is None:
             log_date = str(datetime.date.today())
         self.result_dir = result_dir
@@ -53,12 +35,27 @@ class LightLogger:
         self.logging_vars = set()
         self.early_stopping_min = None
     
-    def set_configs(self, configs):
+    def set_configs(self, configs: Dict):
+        """
+        Save experiment configurations (a python dictionary) to memory for 
+        future exportation
+
+        Args:
+            configs (dict): A python dictionary saving all the experimental 
+                details. For example, the hyper parameters. 
+        """
         self.configs = configs
     
-    def start(self, note=None):
+    def start(self, note: str = None):
+        """
+        Start the logging of a new run within an experiment
+
+        Args:
+            note (str): A name for a new log stream. 
+        """
         if note is None:
-            note = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") + str(np.random.choice(100000))
+            note = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") 
+            note += str(np.random.choice(100000))
         self.current_log = note
         self.mem[note] = {'time': note}
         for k in self.configs.keys():
@@ -68,7 +65,14 @@ class LightLogger:
         return note
         
     
-    def log(self, log_dict, step=None):
+    def log(self, log_dict: Dict, step: int = None):
+        """
+        Log `log_dict` (a dictionary containing performance) at each step
+
+        Args:
+            log_dict (dict): A python dictionary (with performances) to log
+            step (int): Which step to log on. 
+        """
         if step is None:
             step = self.mem[self.current_log]['current_step'] + 1
         self.mem[self.current_log]['current_step'] = step
@@ -77,7 +81,7 @@ class LightLogger:
             self.mem[self.current_log]['log'][step][k] = log_dict[k]
             self.logging_vars.add(k)
 
-    def check_early_stopping(self, item, k=10):
+    def check_early_stopping(self, item: str, k: int = 10):
         end_idx = self.mem[self.current_log]['current_step']
         window = []
         start_idx = max(end_idx-k, 0)
@@ -94,13 +98,28 @@ class LightLogger:
                 self.early_stopping_min = min(window)
                 return False
             
-    def finish(self, save_now=True):
+    def finish(self, save_now: bool = True):
+        """
+        End the logging of a run and save to a local file if `save_now` is 
+        True.
+
+        Args:
+            save_now (bool): whether to dump the current log stream's memory
+                to a local memory file. 
+        """
         if save_now:
             with open(f'{self.log_dir}/{self.current_log}.json', 'w') as f:
                 json.dump(self.mem[self.current_log], f)
         self.current_log = None
     
-    def to_df(self, tidy=True):
+    def to_df(self, tidy: bool = True):
+        """
+        Convert saved logs to a pandas dataframe
+
+        Args:
+            tidy (bool): Whether to convert the df to a tidy format. Default
+                is true.
+        """
         export_df = pd.DataFrame(self.mem).transpose().reset_index()
         if tidy:
             export_df['steps'] = export_df['log'].map(lambda x: list(x.keys()))
@@ -113,7 +132,13 @@ class LightLogger:
                 ['steps'] + list(self.logging_vars), ignore_index=True)
         return export_df
     
-    def save(self, path):
+    def save(self, path: str):
+        """
+        Save all the logs to path
+
+        Args:
+            path (str): The file path used to save the logs. 
+        """
         export = {}
         export['result_dir'] = self.result_dir
         export['log_dir'] = self.log_dir

@@ -1,20 +1,26 @@
-.. regdiffusion documentation master file, created by
-   sphinx-quickstart on Thu Mar 21 15:45:33 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+RegDiffusion
+=============
 
-Welcome to regdiffusion's documentation!
-========================================
+RegDiffusion is a very fast regulatory network inference algorithm based on 
+probabilistic diffusion model. It works well on genes and is capable to predict 
+biologically verifiable links from single cell RNA-seq data.
+
+Inference on networks with 15,000 genes takes under 5 minutes with modern 
+accelerated computing. 
+
+Installation
+============
+``regdiffusion`` is available on pypi:
+
+    pip install regdiffusion
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :caption: Get Started:
 
-    modules
+   quick_tour
 
-Indices and tables
-==================
+.. toctree::
+   :caption: References:
+   :titlesonly:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   modules

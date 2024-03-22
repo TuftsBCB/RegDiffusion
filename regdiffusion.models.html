@@ -46,8 +46,32 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">regdiffusion.models package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#regdiffusion-models-regdiffusion-module">regdiffusion.models.regdiffusion module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-regdiffusion.models.regdiffusion">regdiffusion.models.regdiffusion module</a><ul>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.Block.forward"><code class="docutils literal notranslate"><span class="pre">Block.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.GeneEmbeddings"><code class="docutils literal notranslate"><span class="pre">GeneEmbeddings</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.GeneEmbeddings.forward"><code class="docutils literal notranslate"><span class="pre">GeneEmbeddings.forward()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion"><code class="docutils literal notranslate"><span class="pre">RegDiffusion</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.I_minus_A"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.I_minus_A()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.forward"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.forward()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_adj"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_adj()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_adj_"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_adj_()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_gene_emb"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_gene_emb()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_sampled_adj_"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.get_sampled_adj_()</span></code></a></li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.RegDiffusion.soft_thresholding"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.soft_thresholding()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings"><code class="docutils literal notranslate"><span class="pre">SinusoidalPositionEmbeddings</span></code></a><ul>
+<li><a class="reference internal" href="#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings.forward"><code class="docutils literal notranslate"><span class="pre">SinusoidalPositionEmbeddings.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-regdiffusion.models">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -81,11 +105,142 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="regdiffusion-models-regdiffusion-module">
-<h2>regdiffusion.models.regdiffusion module<a class="headerlink" href="#regdiffusion-models-regdiffusion-module" title="Link to this heading"></a></h2>
+<section id="module-regdiffusion.models.regdiffusion">
+<span id="regdiffusion-models-regdiffusion-module"></span><h2>regdiffusion.models.regdiffusion module<a class="headerlink" href="#module-regdiffusion.models.regdiffusion" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.Block">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.models.regdiffusion.</span></span><span class="sig-name descname"><span class="pre">Block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celltype_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#Block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.Block" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.Block.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#Block.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.Block.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.GeneEmbeddings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.models.regdiffusion.</span></span><span class="sig-name descname"><span class="pre">GeneEmbeddings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#GeneEmbeddings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.GeneEmbeddings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.GeneEmbeddings.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#GeneEmbeddings.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.GeneEmbeddings.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.models.regdiffusion.</span></span><span class="sig-name descname"><span class="pre">RegDiffusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_celltype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celltype_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[16,</span> <span class="pre">16,</span> <span class="pre">16]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>A RegDiffusion model. For architecture details, please refer to our paper.</p>
+<p>&gt; From noise to knowledge: probabilistic diffusion-based neural inference</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_genes</strong> (<em>int</em>) – Number of Genes</p></li>
+<li><p><strong>time_dim</strong> (<em>int</em>) – Dimension of time step embedding</p></li>
+<li><p><strong>n_celltype</strong> (<em>int</em>) – Number of expected cell types. If it is not provided,
+there would be no celltype embedding. Default is None.</p></li>
+<li><p><strong>celltype_dim</strong> (<em>int</em>) – Dimension of cell types</p></li>
+<li><p><strong>hidden_dims</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of integer for the dimensions of the
+hidden layers. The first hidden dimension will be used as the size
+for gene embedding.</p></li>
+<li><p><strong>adj_dropout</strong> (<em>float</em>) – A single number between 0 and 1 specifying the
+percentage of values in the adjacency matrix that are dropped
+during training.</p></li>
+<li><p><strong>init_coef</strong> (<em>int</em>) – Coefficient to multiply with gene regulation norm
+(1/(n_gene - 1)) to initialize the adjacency matrix.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.I_minus_A">
+<span class="sig-name descname"><span class="pre">I_minus_A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.I_minus_A"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.I_minus_A" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.get_adj">
+<span class="sig-name descname"><span class="pre">get_adj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.get_adj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_adj" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.get_adj_">
+<span class="sig-name descname"><span class="pre">get_adj_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.get_adj_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_adj_" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.get_gene_emb">
+<span class="sig-name descname"><span class="pre">get_gene_emb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.get_gene_emb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_gene_emb" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.get_sampled_adj_">
+<span class="sig-name descname"><span class="pre">get_sampled_adj_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.get_sampled_adj_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.get_sampled_adj_" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.RegDiffusion.soft_thresholding">
+<span class="sig-name descname"><span class="pre">soft_thresholding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#RegDiffusion.soft_thresholding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.RegDiffusion.soft_thresholding" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.models.regdiffusion.</span></span><span class="sig-name descname"><span class="pre">SinusoidalPositionEmbeddings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#SinusoidalPositionEmbeddings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/models/regdiffusion.html#SinusoidalPositionEmbeddings.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-regdiffusion.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-regdiffusion.models" title="Link to this heading"></a></h2>
 </section>
 </section>
 

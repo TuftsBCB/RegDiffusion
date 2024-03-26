@@ -374,9 +374,12 @@ benchmarks and our preprocessed single cell datasets on mouse microglia.</p></li
 <p>After the <code class="docutils literal notranslate"><span class="pre">RegDiffusion</span></code> model converges, what you get is simply an
 <cite>adjacency</cite> matrix. When you have thousands or tens of thousands of genes,
 it’s getting difficult to analyze matrix at that scale. In our paper, we
-propose to analyze the local network by focusing on the local networks around
-genes you care the most.</p>
-<a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true"><img alt="Inferred network around ApoE" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true" style="width: 400px;" /></a>
+propose a way to analyze the local network by focusing on the genes you care
+the most. With this package, you could visualize the network directly.
+Alternatively, we can also extract the network first, identify some node
+clusters, and then perform a gene set enrichment analysis to find out the
+corresponding pathways.</p>
+<a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true"><img alt="Inferred network around ApoE" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true" style="width: 500px;" /></a>
 </section>
 <section id="inference-speed">
 <h2>Inference Speed<a class="headerlink" href="#inference-speed" title="Link to this heading">#</a></h2>
@@ -385,6 +388,33 @@ In contrast, previous VAE based models would take more than 4 hours on the same
 device. Even if you don’t have access to those fancy GPU cards, RegDiffusion
 still works. Inference on the same large network takes roughly 3 hours on a
 mid-range 12-core CPU.</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>hESC</p></th>
+<th class="head"><p>hHep</p></th>
+<th class="head"><p>Hammond</p></th>
+<th class="head"><p>Atlas</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="5"><p># of Genes   | 1,410     | 1,448     | 14,065    | 15,547
+# of Cells   | 758       | 425       | 8,258     | 1,296</p></td>
+</tr>
+<tr class="row-odd"><td colspan="5" rowspan="2"><blockquote>
+<div><p>GENIE3       | 1hr 58min | 48min 51s | -         | -
+GRNBoost2    | 34min 12s | 16min 32s | -         | -
+DeepSEM      | 29s       | 15s       | 4hr 21min | 59min
+DAZZLE       | 31s       | 16s       | 4hr 47min | 1hr 10min</p>
+</div></blockquote>
+<blockquote>
+<div><p>RegDiffusion | 7s        | 8s        | 3min 28s  | 4min 10s</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-even"></tr>
+</tbody>
+</table>
 </section>
 <section id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Link to this heading">#</a></h2>

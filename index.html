@@ -310,6 +310,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-tour">Quick Tour</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-inferred-networks">Understanding the Inferred Networks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-speed">Inference Speed</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a><ul class="nav section-nav flex-column">
 </ul>
@@ -340,39 +341,50 @@ predict biologically verifiable links from large single cell RNA-seq data with
 </section>
 <section id="quick-tour">
 <h2>Quick Tour<a class="headerlink" href="#quick-tour" title="Link to this heading">#</a></h2>
-<p>This package <cite>regdiffusion</cite> provides the official implementation of the
+<p>This package <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> provides the official implementation of the
 RegDiffusion algorithm and a set of easy-to-use companion tools to evaluate,
 analyze, and visualize the inferred network. We also provide access tools to
 GRN benchmarks and preprocessed single cell datasets for evaluation.</p>
 <p>We tried to keep the top level interface straightforward. Right now, it only
-consists of 4 components: the <cite>RegDiffusionTrainer</cite> class, the <cite>GRN</cite> class, the
-<cite>GRNEvaluator</cite> class, and the <cite>data</cite> module.</p>
+consists of 4 components: the <code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code> class, the <code class="docutils literal notranslate"><span class="pre">GRN</span></code> class, the
+<code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code> class, and the <code class="docutils literal notranslate"><span class="pre">data</span></code> module.</p>
 <ul class="simple">
-<li><p><cite>RegDiffusionTrainer</cite>: You can use it to train a <cite>RegDiffusion</cite> model by
-providing log transformed expression data in a <cite>numpy</cite> array. The training
-process could be either started or continued using the <cite>.train()</cite> method. You
-can export the inferred <cite>GRN</cite> using the <cite>.get_grn()</cite> method.</p></li>
-<li><p><cite>GRN</cite>: The <cite>GRN</cite> class provides a container to save the inferred adjacency
-matrix and the corresponding gene names. You can save the <cite>GRN</cite> object to
-a local <cite>HDF5</cite> file using the <cite>.to_hdf5()</cite> method and reload the saved file
-using the <cite>read_hdf5()</cite> function. It also comes with functionalities to
-export or visualize local regions.</p></li>
-<li><p><cite>GRNEvaluator</cite>: The ground truth of regulatory relationship often exist as
+<li><p><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code>: You can use it to train a <code class="docutils literal notranslate"><span class="pre">RegDiffusion</span></code> model by
+providing log transformed expression data in a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array. The training
+process could be either started or continued using the <code class="docutils literal notranslate"><span class="pre">.train()</span></code> method. You
+can export the inferred <code class="docutils literal notranslate"><span class="pre">GRN</span></code> using the <code class="docutils literal notranslate"><span class="pre">.get_grn()</span></code> method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GRN</span></code>: The <code class="docutils literal notranslate"><span class="pre">GRN</span></code> class provides a container to save the inferred adjacency
+matrix and the corresponding gene names. You can save the <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object to
+a local <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file using the <code class="docutils literal notranslate"><span class="pre">.to_hdf5()</span></code> method and reload the saved file
+using the <code class="docutils literal notranslate"><span class="pre">read_hdf5()</span></code> function. It also comes with functionalities to
+export or visualize local regions. For example, you can use the
+<code class="docutils literal notranslate"><span class="pre">.visualize_local_neighborhood()</span></code> to generate a similar plot as used in
+the RegDiffusion paper. You can also extract the underlying adjacency list
+using the <code class="docutils literal notranslate"><span class="pre">.extract_node_2hop_neighborhood()</span></code> method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code>: The ground truth of regulatory relationship often exist as
 list of edges but the values to be evaluated are often in adjacency matrix.
-The <cite>GRNEvaluator</cite> class is designed to fill the gap. Right now it supports
+The <code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code> class is designed to fill the gap. Right now it supports
 common metrics such as AUROC, AUPR, AUPR Ratio, EP, and EPR.</p></li>
-<li><p><cite>data</cite> module: Right now, the <cite>data</cite> module includes quick access to BEELINE
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> module: Right now, the <code class="docutils literal notranslate"><span class="pre">data</span></code> module includes quick access to BEELINE
 benchmarks and our preprocessed single cell datasets on mouse microglia.</p></li>
 </ul>
 </section>
+<section id="understanding-the-inferred-networks">
+<h2>Understanding the Inferred Networks<a class="headerlink" href="#understanding-the-inferred-networks" title="Link to this heading">#</a></h2>
+<p>After the <code class="docutils literal notranslate"><span class="pre">RegDiffusion</span></code> model converges, what you get is simply an
+<cite>adjacency</cite> matrix. When you have thousands or tens of thousands of genes,
+it’s getting difficult to analyze matrix at that scale. In our paper, we
+propose to analyze the local network by focusing on the local networks around
+genes you care the most.</p>
+<a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true"><img alt="Inferred network around ApoE" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true" style="width: 400px;" /></a>
+</section>
 <section id="inference-speed">
 <h2>Inference Speed<a class="headerlink" href="#inference-speed" title="Link to this heading">#</a></h2>
-<p>Inference on networks with 15,000 genes takes under 5 minutes with modern
-accelerated computing. In contrast, previous VAE based models would take more
-than 4 hours on the same device. Even if you don’t have access to those fancy
-GPU cards, RegDiffusion still works. Inference on the same large network takes
-roughly 3 hours on a mid-range 12-core CPU. It does run slower but it’s still
-faster than previous algorithm on GPU thanks to the improvement on algorithm.</p>
+<p>Inference on networks with 15,000 genes takes under 5 minutes on an A100 GPU.
+In contrast, previous VAE based models would take more than 4 hours on the same
+device. Even if you don’t have access to those fancy GPU cards, RegDiffusion
+still works. Inference on the same large network takes roughly 3 hours on a
+mid-range 12-core CPU.</p>
 </section>
 <section id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Link to this heading">#</a></h2>
@@ -422,6 +434,7 @@ faster than previous algorithm on GPU thanks to the improvement on algorithm.</p
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-tour">Quick Tour</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-inferred-networks">Understanding the Inferred Networks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-speed">Inference Speed</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a><ul class="nav section-nav flex-column">
 </ul>

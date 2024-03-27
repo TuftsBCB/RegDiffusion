@@ -309,8 +309,6 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements">Requirements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-loading">Data Loading</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-object">GRN object</a></li>
 </ul>
             </nav>
         </div>
@@ -340,37 +338,43 @@ document.write(`
 <p>The <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> package comes with a set of preprocessed data, including the <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/31907445/">BEELINE benchmarks</a>, <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/30471926/">Hammond microglia</a> in male adult mice, and another labelled microglia subset from a <a class="reference external" href="https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary">mice cerebellum atlas project</a>.</p>
 <p>Here we use the <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data from the BEELINE benchmark. The <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data comes from <a class="reference external" href="https://www.nature.com/articles/s41467-018-02866-0">Mouse embryonic stem cells</a>. It has 421 cells and 1,620 genes.</p>
 <p>If you want to see the inference on a larger network with 14,000+ genes and 8,000+ cells, check out the other example.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bl_dt</span><span class="p">,</span> <span class="n">bl_gt</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_beeline</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bl_dt</span><span class="p">,</span> <span class="n">bl_gt</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_beeline</span><span class="p">(</span>
     <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">&#39;mESC&#39;</span><span class="p">,</span> <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">&#39;1000_STRING&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">load_beeline</span></code> gives you a tuple, where the first element is an anndata of the single cell experession data and the second element is an array of all the ground truth links (based on the STRING network in this case).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bl_dt</span>
+<div class="highlight-md notranslate"><div class="highlight"><pre><span></span>```python
+bl_dt
 </pre></div>
 </div>
-<p>AnnData object with n_obs × n_vars = 421 × 1620
-obs: ‘cell_type’, ‘cell_type_index’</p>
-</section>
-<section id="grn-inference">
-<h2>GRN Inference<a class="headerlink" href="#grn-inference" title="Link to this heading">#</a></h2>
-<p>You are recommended to use the provided trainer to train a RegDiffusion Model. You need to provide the expression data in a numpy array to the trainer.</p>
-<p>During the training process, the training loss and the average amount of change on the adjacency matrix are provided on the progress bar. The model converges when the step change n the adjacency matrix is near-zero. By default, the <code class="docutils literal notranslate"><span class="pre">train</span></code> method will train the model for 1,000 iterations. It should be sufficient in most cases. If you want to keep training the model afterwards, you can simply call the <code class="docutils literal notranslate"><span class="pre">train</span></code> methods again with the desired number of iterations.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rd_trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">bl_dt</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
-<span class="n">rd_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+## GRN Inference
+
+You are recommended to use the provided trainer to train a RegDiffusion Model. You need to provide the expression data in a numpy array to the trainer. 
+
+During the training process, the training loss and the average amount of change on the adjacency matrix are provided on the progress bar. The model converges when the step change n the adjacency matrix is near-zero. By default, the `train` method will train the model for 1,000 iterations. It should be sufficient in most cases. If you want to keep training the model afterwards, you can simply call the `train` methods again with the desired number of iterations. 
+
 </pre></div>
 </div>
-<p>We run this experiment on an A100 card and the inference finishes within 8 seconds.</p>
-<p>When ground truth links are avaiable, you can test the inference performance by setting up an evaluator. You need to provide both the ground truth links and the gene names. Note that the order of the provided gene names here should be the same as the column order in the expression table (and the inferred adjacency matrix).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">GRNEvaluator</span><span class="p">(</span><span class="n">bl_gt</span><span class="p">,</span> <span class="n">bl_dt</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
-<span class="n">inferred_adj</span> <span class="o">=</span> <span class="n">rd_trainer</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
-<span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">inferred_adj</span><span class="p">)</span>
+<p>rd_trainer = rd.RegDiffusionTrainer(bl_dt.X)
+rd_trainer.train()</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="n">We</span> <span class="n">run</span> <span class="n">this</span> <span class="n">experiment</span> <span class="n">on</span> <span class="n">an</span> <span class="n">A100</span> <span class="n">card</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">inference</span> <span class="n">finishes</span> <span class="n">within</span> <span class="mi">8</span> <span class="n">seconds</span><span class="o">.</span> 
+
+<span class="n">When</span> <span class="n">ground</span> <span class="n">truth</span> <span class="n">links</span> <span class="n">are</span> <span class="n">avaiable</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">test</span> <span class="n">the</span> <span class="n">inference</span> <span class="n">performance</span> <span class="n">by</span> <span class="n">setting</span> <span class="n">up</span> <span class="n">an</span> <span class="n">evaluator</span><span class="o">.</span> <span class="n">You</span> <span class="n">need</span> <span class="n">to</span> <span class="n">provide</span> <span class="n">both</span> <span class="n">the</span> <span class="n">ground</span> <span class="n">truth</span> <span class="n">links</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">gene</span> <span class="n">names</span><span class="o">.</span> <span class="n">Note</span> <span class="n">that</span> <span class="n">the</span> <span class="n">order</span> <span class="n">of</span> <span class="n">the</span> <span class="n">provided</span> <span class="n">gene</span> <span class="n">names</span> <span class="n">here</span> <span class="n">should</span> <span class="n">be</span> <span class="n">the</span> <span class="n">same</span> <span class="k">as</span> <span class="n">the</span> <span class="n">column</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">expression</span> <span class="n">table</span> <span class="p">(</span><span class="ow">and</span> <span class="n">the</span> <span class="n">inferred</span> <span class="n">adjacency</span> <span class="n">matrix</span><span class="p">)</span><span class="o">.</span> 
+
 </pre></div>
 </div>
-</section>
-<section id="grn-object">
-<h2>GRN object<a class="headerlink" href="#grn-object" title="Link to this heading">#</a></h2>
-<p>In order to facilitate the downstream analyses on GRN, we defined an <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object in the <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> package. You need to provide the gene names in the same order as in your expression table.</p>
+<p>evaluator = rd.evaluator.GRNEvaluator(bl_gt, bl_dt.var_names)
+inferred_adj = rd_trainer.get_adj()
+evaluator.evaluate(inferred_adj)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+## GRN object
+
+In order to facilitate the downstream analyses on GRN, we defined an `GRN` object in the `regdiffusion` package. You need to provide the gene names in the same order as in your expression table.
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -421,8 +425,6 @@ obs: ‘cell_type’, ‘cell_type_index’</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements">Requirements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-loading">Data Loading</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-object">GRN object</a></li>
 </ul>
   </nav></div>
 

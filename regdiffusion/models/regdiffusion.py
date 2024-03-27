@@ -56,8 +56,7 @@ class GeneEmbeddings(nn.Module):
         return batch_gene_emb
     
 class RegDiffusion(nn.Module):
-    ''' 
-    
+    """
     A RegDiffusion model. For architecture details, please refer to our paper.
 
     > From noise to knowledge: probabilistic diffusion-based neural inference
@@ -76,7 +75,7 @@ class RegDiffusion(nn.Module):
             during training. 
         init_coef (int): Coefficient to multiply with gene regulation norm 
             (1/(n_gene - 1)) to initialize the adjacency matrix. 
-    '''
+    """
     def __init__(
         self, n_gene, time_dim, 
         n_celltype=None, celltype_dim=4, 

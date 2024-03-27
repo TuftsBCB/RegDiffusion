@@ -27,6 +27,7 @@ extensions = [
     # "sphinx_panels",
     'myst_parser'
 ]
+html_extra_path = ['supplements']
 
 copybutton_prompt_text = ">>> "
 

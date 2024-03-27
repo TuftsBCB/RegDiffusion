@@ -83,3 +83,9 @@ Please consider cite our work if you found it useful for your work:
    :hidden:
 
    modules
+
+.. toctree::
+   :caption: Paper Supplements
+   :hidden:
+
+   supplements

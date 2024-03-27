@@ -49,13 +49,12 @@ After the ``RegDiffusion`` model converges, what you get is simply an
 `adjacency` matrix. When you have thousands or tens of thousands of genes, 
 it's getting difficult to analyze matrix at that scale. In our paper, we 
 propose a way to analyze the local network by focusing on the genes you care 
-the most. With this package, you could visualize the network directly. 
-Alternatively, we can also extract the network first, identify some node 
-clusters, and then perform a gene set enrichment analysis to find out the 
-corresponding pathways. 
+the most. Check out the tutorials on the left side for how to perform a similar 
+network analysis like the one we did in the paper. We are also working on an 
+interactive tool to analyze saved GRN object. 
 
 .. image:: https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true
-    :width: 500
+    :width: 700
     :alt: Inferred network around ApoE
 
 Inference Speed
@@ -66,19 +65,6 @@ device. Even if you don't have access to those fancy GPU cards, RegDiffusion
 still works. Inference on the same large network takes roughly 3 hours on a 
 mid-range 12-core CPU. 
 
-+--------------+-----------+-----------+-----------+-----------+
-|              | hESC      | hHep      | Hammond   | Atlas     |
-+==============+===========+===========+===========+===========+
-| # of Genes   | 1,410     | 1,448     | 14,065    | 15,547    |
-| # of Cells   | 758       | 425       | 8,258     | 1,296     |
-+--------------------------------------------------------------+
-| GENIE3       | 1hr 58min | 48min 51s | -         | -         |
-| GRNBoost2    | 34min 12s | 16min 32s | -         | -         |
-| DeepSEM      | 29s       | 15s       | 4hr 21min | 59min     |
-| DAZZLE       | 31s       | 16s       | 4hr 47min | 1hr 10min |
-+--------------------------------------------------------------|
-| RegDiffusion | 7s        | 8s        | 3min 28s  | 4min 10s  |
-+--------------+-----------+-----------+-----------+-----------+
 
 Citation
 --------

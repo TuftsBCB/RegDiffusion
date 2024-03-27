@@ -21,9 +21,11 @@ release = '0.0.5'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'myst_parser'
 ]
 
+source_suffix = ['.rst', '.md']
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.ipynb_checkpoints', '__pycache__/']
 

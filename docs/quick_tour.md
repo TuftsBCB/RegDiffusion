@@ -23,7 +23,7 @@ Here we use the `mESC` data from the BEELINE benchmark. The `mESC` data comes fr
 
 If you want to see the inference on a larger network with 14,000+ genes and 8,000+ cells, check out the other example. 
 
-```
+```python
 bl_dt, bl_gt = rd.data.load_beeline(
     benchmark_data='mESC', benchmark_setting='1000_STRING'
 )
@@ -31,11 +31,16 @@ bl_dt, bl_gt = rd.data.load_beeline(
 
 Here, `load_beeline` gives you a tuple, where the first element is an anndata of the single cell experession data and the second element is an array of all the ground truth links (based on the STRING network in this case). 
 
-```
+```md
+```python
 bl_dt
 ```
+
+```{code-output}
 AnnData object with n_obs × n_vars = 421 × 1620
     obs: 'cell_type', 'cell_type_index'
+```
+```
 
 ## GRN Inference
 

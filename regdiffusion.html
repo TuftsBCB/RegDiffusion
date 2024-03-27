@@ -30,6 +30,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -39,12 +40,12 @@
     <script src="_static/documentation_options.js?v=6424ca4d"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'regdiffusion';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="regdiffusion.data package" href="regdiffusion.data.html" />
-    <link rel="prev" title="regdiffusion" href="modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -106,6 +107,8 @@
       
       
       
+        
+      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -147,16 +150,18 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Getting Startted with GRN inference using diffusion model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">regdiffusion</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">regdiffusion package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html">regdiffusion.data package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="regdiffusion.models.html">regdiffusion.models package</a></li>
-</ul>
-</li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
 </li>
 </ul>
@@ -512,10 +517,11 @@ support ‘AUROC’, ‘AUPR’, ‘AUPRR’, ‘EP’, ‘EPR’.</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.grn.</span></span><span class="sig-name descname"><span class="pre">GRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.grn.GRN" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Object to save and analyze gene regulatory network</p>
-<p>A GRN object includes the adjacency matrix between transcriptional factors
-(<a href="#id1"><span class="problematic" id="id2">|a|</span></a>) and target genes (<a href="#id3"><span class="problematic" id="id4">|b|</span></a>). The adjacency matrix is expected to be in the
-shape of <a href="#id5"><span class="problematic" id="id6">|a|</span></a> * <a href="#id7"><span class="problematic" id="id8">|b|</span></a>. In many cases, when TFs are not specified, we have a
-square-shaped (<a href="#id9"><span class="problematic" id="id10">|b|</span></a> * <a href="#id11"><span class="problematic" id="id12">|b|</span></a>) adjacency matrix. We expected the adjacency
+<dl class="simple">
+<dt>A GRN object includes the adjacency matrix between transcriptional factors</dt><dd><p>and target genes. In many cases, when TFs are not specified, we have a</p>
+</dd>
+</dl>
+<p>square-shaped adjacency matrix. We expected the adjacency
 matrix to hold predicted weights/probabilities for the edges (float).</p>
 <p>To create a GRN object, you need at least two things: the adjacency matrix
 and the corresponding gene names. You can further specify the TF names if
@@ -902,10 +908,11 @@ are genes</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.</span></span><span class="sig-name descname"><span class="pre">GRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/regdiffusion/grn.html#GRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A Object to save and analyze gene regulatory network</p>
-<p>A GRN object includes the adjacency matrix between transcriptional factors
-(<a href="#id13"><span class="problematic" id="id14">|a|</span></a>) and target genes (<a href="#id15"><span class="problematic" id="id16">|b|</span></a>). The adjacency matrix is expected to be in the
-shape of <a href="#id17"><span class="problematic" id="id18">|a|</span></a> * <a href="#id19"><span class="problematic" id="id20">|b|</span></a>. In many cases, when TFs are not specified, we have a
-square-shaped (<a href="#id21"><span class="problematic" id="id22">|b|</span></a> * <a href="#id23"><span class="problematic" id="id24">|b|</span></a>) adjacency matrix. We expected the adjacency
+<dl class="simple">
+<dt>A GRN object includes the adjacency matrix between transcriptional factors</dt><dd><p>and target genes. In many cases, when TFs are not specified, we have a</p>
+</dd>
+</dl>
+<p>square-shaped adjacency matrix. We expected the adjacency
 matrix to hold predicted weights/probabilities for the edges (float).</p>
 <p>To create a GRN object, you need at least two things: the adjacency matrix
 and the corresponding gene names. You can further specify the TF names if
@@ -1308,24 +1315,6 @@ are genes</p></li>
                 <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="modules.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">regdiffusion</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="regdiffusion.data.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">regdiffusion.data package</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               

@@ -29,6 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -38,6 +39,8 @@
     <script src="../../_static/documentation_options.js?v=6424ca4d"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/regdiffusion/grn';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -146,16 +149,18 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../quick_tour.html">Getting Startted with GRN inference using diffusion model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_tour.html">Get Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">regdiffusion</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../regdiffusion.html">regdiffusion package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../regdiffusion.data.html">regdiffusion.data package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../regdiffusion.models.html">regdiffusion.models package</a></li>
-</ul>
-</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
 </li>
 </ul>
@@ -272,15 +277,14 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 
 <div class="viewcode-block" id="GRN">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN">[docs]</a>
 <span class="k">class</span> <span class="nc">GRN</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    A Object to save and analyze gene regulatory network</span>
 
 <span class="sd">    A GRN object includes the adjacency matrix between transcriptional factors</span>
-<span class="sd">    (|a|) and target genes (|b|). The adjacency matrix is expected to be in the </span>
-<span class="sd">    shape of |a| * |b|. In many cases, when TFs are not specified, we have a </span>
-<span class="sd">    square-shaped (|b| * |b|) adjacency matrix. We expected the adjacency </span>
+<span class="sd">     and target genes. In many cases, when TFs are not specified, we have a </span>
+<span class="sd">    square-shaped adjacency matrix. We expected the adjacency </span>
 <span class="sd">    matrix to hold predicted weights/probabilities for the edges (float). </span>
 
 <span class="sd">    To create a GRN object, you need at least two things: the adjacency matrix</span>
@@ -345,7 +349,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">tf_indices</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tf_names</span><span class="p">)}</span>
 
 <div class="viewcode-block" id="GRN.generate_adj_list">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.generate_adj_list">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.generate_adj_list">[docs]</a>
     <span class="k">def</span> <span class="nf">generate_adj_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simply generate a dataframe to hold the adjacency list.</span>
@@ -366,7 +370,7 @@ document.write(`
                 
 
 <div class="viewcode-block" id="GRN.extract_node_sources_as_indices">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_sources_as_indices">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_sources_as_indices">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_sources_as_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a dictionary for the top direct edge pointing to the </span>
@@ -393,7 +397,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.extract_node_sources">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_sources">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_sources">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a pandas dataframe for the top direct edge pointing to the </span>
@@ -419,7 +423,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.extract_node_targets_as_indices">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_targets_as_indices">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_targets_as_indices">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_targets_as_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a dictionary for the top direct edge pointing from the </span>
@@ -446,7 +450,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.extract_node_targets">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_targets">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_targets">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a pandas dataframe for the top direct edge pointing from the </span>
@@ -472,7 +476,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.extract_node_neighbors_as_indices">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_neighbors_as_indices">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_neighbors_as_indices">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_neighbors_as_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a dictionary for the top direct neighbors of selected gene. </span>
@@ -505,7 +509,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.extract_node_neighbors">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_neighbors">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_neighbors">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a pandas dataframe for the top direct neighbors of selected </span>
@@ -531,7 +535,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.extract_node_2hop_neighborhood">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.extract_node_2hop_neighborhood">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.extract_node_2hop_neighborhood">[docs]</a>
     <span class="k">def</span> <span class="nf">extract_node_2hop_neighborhood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">genes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -583,7 +587,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.visualize_local_neighborhood">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.visualize_local_neighborhood">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.visualize_local_neighborhood">[docs]</a>
     <span class="k">def</span> <span class="nf">visualize_local_neighborhood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">genes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> 
         <span class="n">node_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">edge_widths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> 
@@ -633,7 +637,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="GRN.to_hdf5">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.GRN.to_hdf5">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRN.to_hdf5">[docs]</a>
     <span class="k">def</span> <span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">as_sparse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save GRN into a HDF5 file. You have the option to save as a sparse </span>
@@ -694,7 +698,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="read_hdf5">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.grn.read_hdf5">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.read_hdf5">[docs]</a>
 <span class="k">def</span> <span class="nf">read_hdf5</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read HDF5 file as a GRN object. See the documentation for GRN for details.</span>

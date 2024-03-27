@@ -2,13 +2,13 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="./" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; regdiffusion 0.0.5 documentation</title>
+    <title>regdiffusion.data.load_beeline &#8212; regdiffusion 0.0.5 documentation</title>
   
   
   
@@ -18,36 +18,36 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="_static/documentation_options.js?v=6424ca4d"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="_static/copybutton.js?v=4ea706d9"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'modules';</script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="RegDiffusionTrainer" href="_autosummary/regdiffusion.RegDiffusionTrainer.html" />
-    <link rel="prev" title="Get Started" href="quick_tour.html" />
+    <script src="../_static/documentation_options.js?v=6424ca4d"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=4ea706d9"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/regdiffusion.data.load_beeline';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="regdiffusion.data.load_atlas_microglia" href="regdiffusion.data.load_atlas_microglia.html" />
+    <link rel="prev" title="RegDiffusion" href="regdiffusion.models.RegDiffusion.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -83,7 +83,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
-      action="search.html"
+      action="../search.html"
       method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search"
@@ -125,7 +125,7 @@
 
   
 
-<a class="navbar-brand logo" href="index.html">
+<a class="navbar-brand logo" href="../index.html">
   
   
   
@@ -150,18 +150,18 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_tour.html">Get Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRN.html">GRN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
 </li>
 </ul>
@@ -218,7 +218,7 @@
       
       
       
-      <li><a href="_sources/modules.rst" target="_blank"
+      <li><a href="../_sources/_autosummary/regdiffusion.data.load_beeline.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -302,7 +302,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>API Reference</h1>
+    <h1>regdiffusion.data.load_beeline</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -312,9 +312,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-api">Top level API</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.data.load_beeline"><code class="docutils literal notranslate"><span class="pre">load_beeline()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -326,50 +324,37 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
-<section id="top-level-api">
-<h2>Top level API<a class="headerlink" href="#top-level-api" title="Link to this heading">#</a></h2>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="regdiffusion.html#regdiffusion.RegDiffusionTrainer" title="regdiffusion.RegDiffusionTrainer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.RegDiffusionTrainer</span></code></a>(exp_array)</p></td>
-<td><p>Initialize and Train a RegDiffusion model with configs</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="regdiffusion.html#regdiffusion.GRN" title="regdiffusion.GRN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.GRN</span></code></a>(adj_matrix, gene_names[, ...])</p></td>
-<td><p>A Object to save and analyze gene regulatory network</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="regdiffusion.html#regdiffusion.GRNEvaluator" title="regdiffusion.GRNEvaluator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.GRNEvaluator</span></code></a>(ground_truth, ...)</p></td>
-<td><p>A generalized evaluator for GRN inference.</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="models">
-<h2>models<a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion" title="regdiffusion.models.RegDiffusion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.models.RegDiffusion</span></code></a>(n_gene, ...)</p></td>
-<td><p>A RegDiffusion model.</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="data">
-<h2>data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html#regdiffusion.data.load_beeline" title="regdiffusion.data.load_beeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.data.load_beeline</span></code></a>([data_dir, ...])</p></td>
-<td><p>Load BEELINE</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html#regdiffusion.data.load_atlas_microglia" title="regdiffusion.data.load_atlas_microglia"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.data.load_atlas_microglia</span></code></a>([...])</p></td>
-<td><p>Load single cell for microglia from SCP795</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html#regdiffusion.data.load_hammond_microglia" title="regdiffusion.data.load_hammond_microglia"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.data.load_hammond_microglia</span></code></a>([...])</p></td>
-<td><p>Load single cell for hammond microglia</p></td>
-</tr>
-</tbody>
-</table>
-</section>
+  <section id="regdiffusion-data-load-beeline">
+<h1>regdiffusion.data.load_beeline<a class="headerlink" href="#regdiffusion-data-load-beeline" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="regdiffusion.data.load_beeline">
+<span class="sig-prename descclassname"><span class="pre">regdiffusion.data.</span></span><span class="sig-name descname"><span class="pre">load_beeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">benchmark_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hESC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">benchmark_setting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'500_STRING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/data/beeline.html#load_beeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.data.load_beeline" title="Link to this definition">#</a></dt>
+<dd><p>Load BEELINE</p>
+<p>Load BEELINE data into memory (download if necessary).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dir</strong> (<em>str</em>) – Root folder where the BEELINE data is/will be located.</p></li>
+<li><p><strong>benchmark_data</strong> (<em>str</em>) – Benchmark datasets. Choose among <cite>hESC</cite>, <cite>hHep</cite>, <cite>mDC</cite>,
+<cite>mESC</cite>, <cite>mHSC</cite>, <cite>mHSC-GM</cite>, and <cite>mHSC-L</cite>.</p></li>
+<li><p><strong>benchmark_setting</strong> (<em>str</em>) – Benchmark settings. Choose among <cite>500_STRING</cite>,
+<cite>1000_STRING</cite>, <cite>500_Non-ChIP</cite>, <cite>1000_Non-ChIP</cite>,
+<cite>500_ChIP-seq</cite>, <cite>1000_ChIP-seq</cite>, <cite>500_lofgof</cite>,
+and <cite>1000_lofgof</cite>. If either of the <cite>lofgof</cite> settings
+is choosed, only <cite>mESC</cite> data is available.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>First element is a scanpy data with cells on rows and
+genes on columns. Second element is the corresponding
+BEELINE ground truth data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -384,20 +369,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="quick_tour.html"
+       href="regdiffusion.models.RegDiffusion.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Get Started</p>
+        <p class="prev-next-title">RegDiffusion</p>
       </div>
     </a>
     <a class="right-next"
-       href="_autosummary/regdiffusion.RegDiffusionTrainer.html"
+       href="regdiffusion.data.load_atlas_microglia.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">RegDiffusionTrainer</p>
+        <p class="prev-next-title">regdiffusion.data.load_atlas_microglia</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -417,9 +402,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-api">Top level API</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.data.load_beeline"><code class="docutils literal notranslate"><span class="pre">load_beeline()</span></code></a></li>
 </ul>
   </nav></div>
 
@@ -468,8 +451,8 @@ By Hao Zhu, Donna Slonim
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>

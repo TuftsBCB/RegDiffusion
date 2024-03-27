@@ -29,6 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -38,6 +39,8 @@
     <script src="../../_static/documentation_options.js?v=6424ca4d"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/regdiffusion/evaluator';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -146,16 +149,18 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../quick_tour.html">Getting Startted with GRN inference using diffusion model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_tour.html">Get Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">regdiffusion</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../regdiffusion.html">regdiffusion package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../regdiffusion.data.html">regdiffusion.data package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../regdiffusion.models.html">regdiffusion.models package</a></li>
-</ul>
-</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
 </li>
 </ul>
@@ -266,7 +271,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">average_precision_score</span><span class="p">,</span> <span class="n">roc_auc_score</span>
 
 <div class="viewcode-block" id="GRNEvaluator">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.evaluator.GRNEvaluator">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRNEvaluator">[docs]</a>
 <span class="k">class</span> <span class="nc">GRNEvaluator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A generalized evaluator for GRN inference.</span>
@@ -324,7 +329,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">report_epr</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;EPR&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GRNEvaluator.evaluate">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.evaluator.GRNEvaluator.evaluate">[docs]</a>
+<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRNEvaluator.evaluate">[docs]</a>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_mask</span><span class="p">,</span> <span class="p">:]</span>

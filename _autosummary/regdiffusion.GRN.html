@@ -1,0 +1,660 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>GRN &#8212; regdiffusion 0.0.5 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=6424ca4d"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=4ea706d9"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/regdiffusion.GRN';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="GRNEvaluator" href="regdiffusion.GRNEvaluator.html" />
+    <link rel="prev" title="RegDiffusionTrainer" href="regdiffusion.RegDiffusionTrainer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">regdiffusion 0.0.5 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../quick_tour.html">Get Started</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/_autosummary/regdiffusion.GRN.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>GRN</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_2hop_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_2hop_neighborhood()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.generate_adj_list"><code class="docutils literal notranslate"><span class="pre">GRN.generate_adj_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="grn">
+<h1>GRN<a class="headerlink" href="#grn" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="regdiffusion.GRN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.</span></span><span class="sig-name descname"><span class="pre">GRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN" title="Link to this definition">#</a></dt>
+<dd><p>A Object to save and analyze gene regulatory network</p>
+<dl class="simple">
+<dt>A GRN object includes the adjacency matrix between transcriptional factors</dt><dd><p>and target genes. In many cases, when TFs are not specified, we have a</p>
+</dd>
+</dl>
+<p>square-shaped adjacency matrix. We expected the adjacency
+matrix to hold predicted weights/probabilities for the edges (float).</p>
+<p>To create a GRN object, you need at least two things: the adjacency matrix
+and the corresponding gene names. You can further specify the TF names if
+your adjacency matrix is not a square matrix.</p>
+<p>You can save a GRN object to the HDF5 format using the <cite>.to_hdf5</cite> method in
+the GRN class. You can load a saved GRN object using the <cite>read_hdf5</cite>
+function in this package.</p>
+<p>If your adjacency matrix is very large and space is a concern, you may
+consider provide a value for <cite>top_gene_percentile</cite>. This value will
+calculate the a cutoff point for the values in the adjacency matrix.
+Every value whose absolute value is below this cutoff point will be set to
+zero. Later on, we can save the data as a sparse matrix to reduce the
+space requirement.</p>
+<p>The GRN object comes with many useful methods to analyze and visualize the
+network. Top top-level interfaces includes <cite>.extract_node_2hop_neighborhood</cite>
+and <cite>.visualize_local_neighborhood</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adj_matrix</strong> (<em>np.ndarray</em>) – A 2D adjacency matrix to save.</p></li>
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – A 1D numpy array with all the target gene
+names.</p></li>
+<li><p><strong>tf_names</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – A 1D numpy array with all the TF gene
+names.</p></li>
+<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If this value is set, only the top k absolute
+values in the adjacency matrix will be kept. All the other values
+will be set to zero.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_2hop_neighborhood">
+<span class="sig-name descname"><span class="pre">extract_node_2hop_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_2hop_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_2hop_neighborhood" title="Link to this definition">#</a></dt>
+<dd><p>Generate a pandas dataframe for the local neighborhood (2-hop) around
+selected gene(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_neighbors">
+<span class="sig-name descname"><span class="pre">extract_node_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_neighbors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_neighbors" title="Link to this definition">#</a></dt>
+<dd><p>Generate a pandas dataframe for the top direct neighbors of selected
+gene. The dataframe will be sorted by the absolute weight of edges.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_neighbors_as_indices">
+<span class="sig-name descname"><span class="pre">extract_node_neighbors_as_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_neighbors_as_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_neighbors_as_indices" title="Link to this definition">#</a></dt>
+<dd><p>Generate a dictionary for the top direct neighbors of selected gene.
+It is slightly faster than the dataframe version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_sources">
+<span class="sig-name descname"><span class="pre">extract_node_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_sources" title="Link to this definition">#</a></dt>
+<dd><p>Generate a pandas dataframe for the top direct edge pointing to the
+selected gene.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_sources_as_indices">
+<span class="sig-name descname"><span class="pre">extract_node_sources_as_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_sources_as_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_sources_as_indices" title="Link to this definition">#</a></dt>
+<dd><p>Generate a dictionary for the top direct edge pointing to the
+selected gene. It is slightly faster than the dataframe version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_targets">
+<span class="sig-name descname"><span class="pre">extract_node_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_targets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_targets" title="Link to this definition">#</a></dt>
+<dd><p>Generate a pandas dataframe for the top direct edge pointing from the
+selected gene.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_targets_as_indices">
+<span class="sig-name descname"><span class="pre">extract_node_targets_as_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_targets_as_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_targets_as_indices" title="Link to this definition">#</a></dt>
+<dd><p>Generate a dictionary for the top direct edge pointing from the
+selected gene. It is slightly faster than the dataframe version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.generate_adj_list">
+<span class="sig-name descname"><span class="pre">generate_adj_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.generate_adj_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.generate_adj_list" title="Link to this definition">#</a></dt>
+<dd><p>Simply generate a dataframe to hold the adjacency list.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.to_hdf5">
+<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_sparse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_hdf5" title="Link to this definition">#</a></dt>
+<dd><p>Save GRN into a HDF5 file. You have the option to save as a sparse
+matrix. This option is preferred when most of the values in the
+adjacency matrix are zeros.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – File path to save.</p></li>
+<li><p><strong>as_sparse</strong> (<em>bool</em>) – Whether to save as sparse matrix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.visualize_local_neighborhood">
+<span class="sig-name descname"><span class="pre">visualize_local_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_widths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[2,</span> <span class="pre">1,</span> <span class="pre">0.5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_group_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdn_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'remote'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.visualize_local_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.visualize_local_neighborhood" title="Link to this definition">#</a></dt>
+<dd><p>Generate a vis.js network visualization of the local neighborhood
+(2-hop) around selected gene(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
+<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>edge_widths</strong> (<em>List</em>) – The widths for edges (1st, 2nd, between 2nd
+hops).</p></li>
+<li><p><strong>font_size</strong> (<em>int</em>) – The font size for nodes labels.</p></li>
+<li><p><strong>node_group_dict</strong> (<em>dict</em>) – A dictionary with keys being the names of
+genes and values being the groups. Genes from the same group
+will be colored using the same color.</p></li>
+<li><p><strong>cdn_resources</strong> (<em>str</em>) – Where to load vis.js resources. Default is
+‘remote’.</p></li>
+<li><p><strong>notebook</strong> (<em>bool</em>) – Boolean value indicating whether the visualization
+happens in a jupyter notebook.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="regdiffusion.RegDiffusionTrainer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">RegDiffusionTrainer</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="regdiffusion.GRNEvaluator.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">GRNEvaluator</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_2hop_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_2hop_neighborhood()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.generate_adj_list"><code class="docutils literal notranslate"><span class="pre">GRN.generate_adj_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hao Zhu, Donna Slonim
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Hao Zhu, Donna Slonim.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

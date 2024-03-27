@@ -29,6 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -38,6 +39,8 @@
     <script src="../../../_static/documentation_options.js?v=6424ca4d"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/regdiffusion/data/beeline';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -146,16 +149,18 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../quick_tour.html">Getting Startted with GRN inference using diffusion model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_tour.html">Get Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">regdiffusion</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../regdiffusion.html">regdiffusion package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../regdiffusion.data.html">regdiffusion.data package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../regdiffusion.models.html">regdiffusion.models package</a></li>
-</ul>
-</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
 </li>
 </ul>
@@ -271,7 +276,7 @@ document.write(`
 
 <span class="c1"># Read ground truth</span>
 <div class="viewcode-block" id="load_beeline_ground_truth">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.beeline.load_beeline_ground_truth">[docs]</a>
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_beeline_ground_truth">[docs]</a>
 <span class="k">def</span> <span class="nf">load_beeline_ground_truth</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
     <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/label.csv&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ground_truth</span><span class="o">.</span><span class="n">values</span></div>
@@ -288,7 +293,7 @@ document.write(`
 <span class="p">}</span>
 
 <div class="viewcode-block" id="cell_type_separator">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.beeline.cell_type_separator">[docs]</a>
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.cell_type_separator">[docs]</a>
 <span class="k">def</span> <span class="nf">cell_type_separator</span><span class="p">(</span><span class="n">sc_data</span><span class="p">,</span> <span class="n">cell_type_element_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
     <span class="n">cell_types</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sc_data</span><span class="o">.</span><span class="n">obs_names</span><span class="p">:</span>
@@ -302,7 +307,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="load_beeline">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.beeline.load_beeline">[docs]</a>
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_beeline">[docs]</a>
 <span class="k">def</span> <span class="nf">load_beeline</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">&#39;hESC&#39;</span><span class="p">,</span> 
                  <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">&#39;500_STRING&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39; Load BEELINE</span>
@@ -348,7 +353,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="download_beeline">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.beeline.download_beeline">[docs]</a>
+<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.download_beeline">[docs]</a>
 <span class="k">def</span> <span class="nf">download_beeline</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">remove_zip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;save_dir does not exist&quot;</span><span class="p">)</span>

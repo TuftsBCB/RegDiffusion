@@ -29,6 +29,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
@@ -38,6 +39,8 @@
     <script src="_static/documentation_options.js?v=6424ca4d"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
     <link rel="index" title="Index" href="#" />
@@ -146,16 +149,18 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Getting Startted with GRN inference using diffusion model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">regdiffusion</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="regdiffusion.html">regdiffusion package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="regdiffusion.data.html">regdiffusion.data package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="regdiffusion.models.html">regdiffusion.models package</a></li>
-</ul>
-</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
 </li>
 </ul>
@@ -264,26 +269,49 @@ document.write(`
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#B"><strong>B</strong></a>
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#V"><strong>V</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
  
 </div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.add_module">add_module() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.apply">apply() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.bfloat16">bfloat16() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.Block">Block (class in regdiffusion.models.regdiffusion)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.buffers">buffers() (regdiffusion.models.RegDiffusion method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -293,8 +321,6 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.data.html#regdiffusion.data.beeline.cell_type_separator">cell_type_separator() (in module regdiffusion.data.beeline)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.html#regdiffusion.LightLogger.check_early_stopping">check_early_stopping() (regdiffusion.LightLogger method)</a>
 
       <ul>
@@ -302,11 +328,23 @@ document.write(`
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.children">children() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.compile">compile() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.cpu">cpu() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.cuda">cuda() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.double">double() (regdiffusion.models.RegDiffusion method)</a>
+</li>
       <li><a href="regdiffusion.data.html#regdiffusion.data.beeline.download_beeline">download_beeline() (in module regdiffusion.data.beeline)</a>
 </li>
   </ul></td>
@@ -321,25 +359,29 @@ document.write(`
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.eval">eval() (regdiffusion.models.RegDiffusion method)</a>
+</li>
       <li><a href="regdiffusion.html#regdiffusion.evaluator.GRNEvaluator.evaluate">evaluate() (regdiffusion.evaluator.GRNEvaluator method)</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.GRNEvaluator.evaluate">(regdiffusion.GRNEvaluator method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_2hop_neighborhood">extract_node_2hop_neighborhood() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.extra_repr">extra_repr() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_2hop_neighborhood">extract_node_2hop_neighborhood() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_2hop_neighborhood">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_2hop_neighborhood">(regdiffusion.grn.GRN method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_neighbors">extract_node_neighbors() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_neighbors">extract_node_neighbors() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_neighbors">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_neighbors">(regdiffusion.grn.GRN method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_neighbors_as_indices">extract_node_neighbors_as_indices() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_neighbors_as_indices">extract_node_neighbors_as_indices() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_neighbors_as_indices">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_neighbors_as_indices">(regdiffusion.grn.GRN method)</a>
@@ -347,25 +389,25 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_sources">extract_node_sources() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_sources">extract_node_sources() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_sources">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_sources">(regdiffusion.grn.GRN method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_sources_as_indices">extract_node_sources_as_indices() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_sources_as_indices">extract_node_sources_as_indices() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_sources_as_indices">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_sources_as_indices">(regdiffusion.grn.GRN method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_targets">extract_node_targets() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_targets">extract_node_targets() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_targets">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_targets">(regdiffusion.grn.GRN method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.extract_node_targets_as_indices">extract_node_targets_as_indices() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_targets_as_indices">extract_node_targets_as_indices() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.extract_node_targets_as_indices">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.extract_node_targets_as_indices">(regdiffusion.grn.GRN method)</a>
@@ -383,9 +425,13 @@ document.write(`
         <li><a href="regdiffusion.html#regdiffusion.logger.LightLogger.finish">(regdiffusion.logger.LightLogger method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.Block.forward">forward() (regdiffusion.models.regdiffusion.Block method)</a>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.float">float() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.forward">forward() (regdiffusion.models.RegDiffusion method)</a>
 
       <ul>
+        <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.Block.forward">(regdiffusion.models.regdiffusion.Block method)</a>
+</li>
         <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.GeneEmbeddings.forward">(regdiffusion.models.regdiffusion.GeneEmbeddings method)</a>
 </li>
         <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.forward">(regdiffusion.models.regdiffusion.RegDiffusion method)</a>
@@ -395,7 +441,7 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="regdiffusion.html#regdiffusion.RegDiffusionTrainer.forward_pass">forward_pass() (regdiffusion.RegDiffusionTrainer method)</a>
+      <li><a href="_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.forward_pass">forward_pass() (regdiffusion.RegDiffusionTrainer method)</a>, <a href="regdiffusion.html#regdiffusion.RegDiffusionTrainer.forward_pass">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.trainer.RegDiffusionTrainer.forward_pass">(regdiffusion.trainer.RegDiffusionTrainer method)</a>
@@ -409,7 +455,7 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.GeneEmbeddings">GeneEmbeddings (class in regdiffusion.models.regdiffusion)</a>
 </li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.generate_adj_list">generate_adj_list() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.generate_adj_list">generate_adj_list() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.generate_adj_list">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.generate_adj_list">(regdiffusion.grn.GRN method)</a>
@@ -425,6 +471,10 @@ document.write(`
       </ul></li>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_adj_">get_adj_() (regdiffusion.models.regdiffusion.RegDiffusion method)</a>
 </li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.get_buffer">get_buffer() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.get_extra_state">get_extra_state() (regdiffusion.models.RegDiffusion method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_gene_emb">get_gene_emb() (regdiffusion.models.regdiffusion.RegDiffusion method)</a>
@@ -435,15 +485,19 @@ document.write(`
         <li><a href="regdiffusion.html#regdiffusion.trainer.RegDiffusionTrainer.get_grn">(regdiffusion.trainer.RegDiffusionTrainer method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.get_parameter">get_parameter() (regdiffusion.models.RegDiffusion method)</a>
+</li>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.get_sampled_adj_">get_sampled_adj_() (regdiffusion.models.regdiffusion.RegDiffusion method)</a>
 </li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN">GRN (class in regdiffusion)</a>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.get_submodule">get_submodule() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN">GRN (class in regdiffusion)</a>, <a href="regdiffusion.html#regdiffusion.GRN">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN">(class in regdiffusion.grn)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRNEvaluator">GRNEvaluator (class in regdiffusion)</a>
+      <li><a href="_autosummary/regdiffusion.GRNEvaluator.html#regdiffusion.GRNEvaluator">GRNEvaluator (class in regdiffusion)</a>, <a href="regdiffusion.html#regdiffusion.GRNEvaluator">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.evaluator.GRNEvaluator">(class in regdiffusion.evaluator)</a>
@@ -452,10 +506,22 @@ document.write(`
   </ul></td>
 </tr></table>
 
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.half">half() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.I_minus_A">I_minus_A() (regdiffusion.models.regdiffusion.RegDiffusion method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.ipu">ipu() (regdiffusion.models.RegDiffusion method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -471,22 +537,36 @@ document.write(`
       </ul></li>
       <li><a href="regdiffusion.html#regdiffusion.trainer.linear_beta_schedule">linear_beta_schedule() (in module regdiffusion.trainer)</a>
 </li>
-      <li><a href="regdiffusion.data.html#regdiffusion.data.microglia.load_atlas_microglia">load_atlas_microglia() (in module regdiffusion.data.microglia)</a>
+      <li><a href="_autosummary/regdiffusion.data.load_atlas_microglia.html#regdiffusion.data.load_atlas_microglia">load_atlas_microglia() (in module regdiffusion.data)</a>
+
+      <ul>
+        <li><a href="regdiffusion.data.html#regdiffusion.data.microglia.load_atlas_microglia">(in module regdiffusion.data.microglia)</a>
 </li>
-      <li><a href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline">load_beeline() (in module regdiffusion.data.beeline)</a>
+      </ul></li>
+      <li><a href="_autosummary/regdiffusion.data.load_beeline.html#regdiffusion.data.load_beeline">load_beeline() (in module regdiffusion.data)</a>
+
+      <ul>
+        <li><a href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline">(in module regdiffusion.data.beeline)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.data.html#regdiffusion.data.beeline.load_beeline_ground_truth">load_beeline_ground_truth() (in module regdiffusion.data.beeline)</a>
 </li>
-      <li><a href="regdiffusion.data.html#regdiffusion.data.microglia.load_hammond_microglia">load_hammond_microglia() (in module regdiffusion.data.microglia)</a>
+      <li><a href="_autosummary/regdiffusion.data.load_hammond_microglia.html#regdiffusion.data.load_hammond_microglia">load_hammond_microglia() (in module regdiffusion.data)</a>
+
+      <ul>
+        <li><a href="regdiffusion.data.html#regdiffusion.data.microglia.load_hammond_microglia">(in module regdiffusion.data.microglia)</a>
 </li>
+      </ul></li>
       <li><a href="regdiffusion.html#regdiffusion.load_logger">load_logger() (in module regdiffusion)</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.logger.load_logger">(in module regdiffusion.logger)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.load_state_dict">load_state_dict() (regdiffusion.models.RegDiffusion method)</a>
+</li>
       <li><a href="regdiffusion.html#regdiffusion.LightLogger.log">log() (regdiffusion.LightLogger method)</a>
 
       <ul>
@@ -527,10 +607,34 @@ document.write(`
 </li>
       </ul></li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.modules">modules() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.named_buffers">named_buffers() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.named_children">named_children() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.named_modules">named_modules() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.named_parameters">named_parameters() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.parameters">parameters() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="regdiffusion.html#regdiffusion.trainer.power_beta_schedule">power_beta_schedule() (in module regdiffusion.trainer)</a>
 </li>
@@ -553,8 +657,12 @@ document.write(`
         <li><a href="regdiffusion.html#module-regdiffusion">module</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion">RegDiffusion (class in regdiffusion.models.regdiffusion)</a>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion">RegDiffusion (class in regdiffusion.models)</a>
+
+      <ul>
+        <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion">(class in regdiffusion.models.regdiffusion)</a>
 </li>
+      </ul></li>
       <li>
     regdiffusion.data
 
@@ -583,8 +691,6 @@ document.write(`
         <li><a href="regdiffusion.data.html#module-regdiffusion.data.utils">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     regdiffusion.evaluator
 
@@ -606,6 +712,8 @@ document.write(`
         <li><a href="regdiffusion.html#module-regdiffusion.logger">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     regdiffusion.models
 
@@ -627,12 +735,34 @@ document.write(`
         <li><a href="regdiffusion.html#module-regdiffusion.trainer">module</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.RegDiffusionTrainer">RegDiffusionTrainer (class in regdiffusion)</a>
+      <li><a href="_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer">RegDiffusionTrainer (class in regdiffusion)</a>, <a href="regdiffusion.html#regdiffusion.RegDiffusionTrainer">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.trainer.RegDiffusionTrainer">(class in regdiffusion.trainer)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_backward_hook">register_backward_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_buffer">register_buffer() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_forward_hook">register_forward_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_forward_pre_hook">register_forward_pre_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_full_backward_hook">register_full_backward_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_full_backward_pre_hook">register_full_backward_pre_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_load_state_dict_post_hook">register_load_state_dict_post_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_module">register_module() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_parameter">register_parameter() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.register_state_dict_pre_hook">register_state_dict_pre_hook() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.requires_grad_">requires_grad_() (regdiffusion.models.RegDiffusion method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -651,8 +781,12 @@ document.write(`
         <li><a href="regdiffusion.html#regdiffusion.logger.LightLogger.set_configs">(regdiffusion.logger.LightLogger method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.set_extra_state">set_extra_state() (regdiffusion.models.RegDiffusion method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.share_memory">share_memory() (regdiffusion.models.RegDiffusion method)</a>
+</li>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.SinusoidalPositionEmbeddings">SinusoidalPositionEmbeddings (class in regdiffusion.models.regdiffusion)</a>
 </li>
       <li><a href="regdiffusion.models.html#regdiffusion.models.regdiffusion.RegDiffusion.soft_thresholding">soft_thresholding() (regdiffusion.models.regdiffusion.RegDiffusion method)</a>
@@ -663,19 +797,25 @@ document.write(`
         <li><a href="regdiffusion.html#regdiffusion.logger.LightLogger.start">(regdiffusion.logger.LightLogger method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.state_dict">state_dict() (regdiffusion.models.RegDiffusion method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.to">to() (regdiffusion.models.RegDiffusion method)</a>
+</li>
       <li><a href="regdiffusion.html#regdiffusion.LightLogger.to_df">to_df() (regdiffusion.LightLogger method)</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.logger.LightLogger.to_df">(regdiffusion.logger.LightLogger method)</a>
 </li>
       </ul></li>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.to_hdf5">to_hdf5() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.to_empty">to_empty() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.to_hdf5">to_hdf5() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.to_hdf5">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.to_hdf5">(regdiffusion.grn.GRN method)</a>
@@ -683,9 +823,11 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="regdiffusion.html#regdiffusion.RegDiffusionTrainer.train">train() (regdiffusion.RegDiffusionTrainer method)</a>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.train">train() (regdiffusion.models.RegDiffusion method)</a>
 
       <ul>
+        <li><a href="regdiffusion.html#regdiffusion.RegDiffusionTrainer.train">(regdiffusion.RegDiffusionTrainer method)</a>
+</li>
         <li><a href="regdiffusion.html#regdiffusion.trainer.RegDiffusionTrainer.train">(regdiffusion.trainer.RegDiffusionTrainer method)</a>
 </li>
       </ul></li>
@@ -695,18 +837,36 @@ document.write(`
         <li><a href="regdiffusion.html#regdiffusion.trainer.RegDiffusionTrainer.training_curves">(regdiffusion.trainer.RegDiffusionTrainer method)</a>
 </li>
       </ul></li>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.type">type() (regdiffusion.models.RegDiffusion method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="regdiffusion.html#regdiffusion.GRN.visualize_local_neighborhood">visualize_local_neighborhood() (regdiffusion.GRN method)</a>
+      <li><a href="_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.visualize_local_neighborhood">visualize_local_neighborhood() (regdiffusion.GRN method)</a>, <a href="regdiffusion.html#regdiffusion.GRN.visualize_local_neighborhood">[1]</a>
 
       <ul>
         <li><a href="regdiffusion.html#regdiffusion.grn.GRN.visualize_local_neighborhood">(regdiffusion.grn.GRN method)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.xpu">xpu() (regdiffusion.models.RegDiffusion method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.zero_grad">zero_grad() (regdiffusion.models.RegDiffusion method)</a>
+</li>
   </ul></td>
 </tr></table>
 

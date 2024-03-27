@@ -281,14 +281,27 @@ document.write(`
 
 <div class="viewcode-block" id="load_atlas_microglia">
 <a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_atlas_microglia">[docs]</a>
-<span class="k">def</span> <span class="nf">load_atlas_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39; Load single cell for microglia from SCP795</span>
+<span class="k">def</span> <span class="nf">load_atlas_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sc</span><span class="o">.</span><span class="n">AnnData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load single cell for microglia from Broad Institute SCP795</span>
 
 <span class="sd">    Data Source: https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary</span>
 
-<span class="sd">    Data is just count data and has been log </span>
-<span class="sd">    transformed at the end of the loading step</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    Paper: A transcriptomic atlas of mouse cerebellar cortex comprehensively </span>
+<span class="sd">        defines cell types</span>
+<span class="sd">    Paper Link: https://www.nature.com/articles/s41586-021-03220-z</span>
+
+<span class="sd">    Raw data is count data. We select all genes that have non-zero expression. </span>
+<span class="sd">    We also removed all gene models, Mitochondrial genes, and ribosome genes. </span>
+<span class="sd">    We used log-plus-one to transform the count data. </span>
+
+<span class="sd">    The output is an AnnData object where rows are cells and columns are genes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
+<span class="sd">            does not exist, it will be created. Data will be saved in a</span>
+<span class="sd">            subdirectory under the provided path. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
     <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/scp795_microglia/&#39;</span>
@@ -311,10 +324,35 @@ document.write(`
 <div class="viewcode-block" id="load_hammond_microglia">
 <a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_hammond_microglia">[docs]</a>
 <span class="k">def</span> <span class="nf">load_hammond_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39; Load single cell for hammond microglia</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load single cell for microglia from Hammond Microglia dataset</span>
 
-<span class="sd">    We selected the 4 P100 male mice data. Data has been log transformed. </span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    Data Source: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654</span>
+
+<span class="sd">    Paper: Single-Cell RNA Sequencing of Microglia throughout the Mouse Lifespan</span>
+<span class="sd">        and in the Injured Brain Reveals Complex Cell-State Changes</span>
+<span class="sd">    Paper Link: https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0</span>
+
+<span class="sd">    IMPORTANT! This is not the complete data from the study. We only selected</span>
+<span class="sd">    data from the 4 adult male mouses at P100. Here are their accession IDs. </span>
+
+<span class="sd">    GSM3442026	P100 male no 1</span>
+<span class="sd">    GSM3442027	P100 male no 2</span>
+<span class="sd">    GSM3442030	P100 male no 3</span>
+<span class="sd">    GSM3442031	P100 male no 4</span>
+<span class="sd">    </span>
+<span class="sd">    Raw data has already been log transformed. We select all genes that have </span>
+<span class="sd">    non-zero expression. We also removed all gene models, Mitochondrial genes, </span>
+<span class="sd">    and ribosome genes. </span>
+
+<span class="sd">    The output is an AnnData object where rows are cells and columns are genes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
+<span class="sd">            does not exist, it will be created. Data will be saved in a</span>
+<span class="sd">            subdirectory under the provided path. </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
     <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/hammond_microglia/&#39;</span>

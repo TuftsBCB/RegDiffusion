@@ -333,8 +333,30 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="regdiffusion.data.load_hammond_microglia">
 <span class="sig-prename descclassname"><span class="pre">regdiffusion.data.</span></span><span class="sig-name descname"><span class="pre">load_hammond_microglia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/data/microglia.html#load_hammond_microglia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.data.load_hammond_microglia" title="Link to this definition">#</a></dt>
-<dd><p>Load single cell for hammond microglia</p>
-<p>We selected the 4 P100 male mice data. Data has been log transformed.</p>
+<dd><p>Load single cell for microglia from Hammond Microglia dataset</p>
+<p>Data Source: <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654</a></p>
+<dl class="simple">
+<dt>Paper: Single-Cell RNA Sequencing of Microglia throughout the Mouse Lifespan</dt><dd><p>and in the Injured Brain Reveals Complex Cell-State Changes</p>
+</dd>
+</dl>
+<p>Paper Link: <a class="reference external" href="https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0">https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0</a></p>
+<p>IMPORTANT! This is not the complete data from the study. We only selected
+data from the 4 adult male mouses at P100. Here are their accession IDs.</p>
+<p>GSM3442026  P100 male no 1
+GSM3442027  P100 male no 2
+GSM3442030  P100 male no 3
+GSM3442031  P100 male no 4</p>
+<p>Raw data has already been log transformed. We select all genes that have
+non-zero expression. We also removed all gene models, Mitochondrial genes,
+and ribosome genes.</p>
+<p>The output is an AnnData object where rows are cells and columns are genes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path
+does not exist, it will be created. Data will be saved in a
+subdirectory under the provided path.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

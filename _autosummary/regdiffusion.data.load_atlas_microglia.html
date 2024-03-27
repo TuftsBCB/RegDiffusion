@@ -332,11 +332,25 @@ document.write(`
 <h1>regdiffusion.data.load_atlas_microglia<a class="headerlink" href="#regdiffusion-data-load-atlas-microglia" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="regdiffusion.data.load_atlas_microglia">
-<span class="sig-prename descclassname"><span class="pre">regdiffusion.data.</span></span><span class="sig-name descname"><span class="pre">load_atlas_microglia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/data/microglia.html#load_atlas_microglia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.data.load_atlas_microglia" title="Link to this definition">#</a></dt>
-<dd><p>Load single cell for microglia from SCP795</p>
+<span class="sig-prename descclassname"><span class="pre">regdiffusion.data.</span></span><span class="sig-name descname"><span class="pre">load_atlas_microglia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AnnData</span></span></span><a class="reference internal" href="../_modules/regdiffusion/data/microglia.html#load_atlas_microglia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.data.load_atlas_microglia" title="Link to this definition">#</a></dt>
+<dd><p>Load single cell for microglia from Broad Institute SCP795</p>
 <p>Data Source: <a class="reference external" href="https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary">https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary</a></p>
-<p>Data is just count data and has been log
-transformed at the end of the loading step</p>
+<dl class="simple">
+<dt>Paper: A transcriptomic atlas of mouse cerebellar cortex comprehensively</dt><dd><p>defines cell types</p>
+</dd>
+</dl>
+<p>Paper Link: <a class="reference external" href="https://www.nature.com/articles/s41586-021-03220-z">https://www.nature.com/articles/s41586-021-03220-z</a></p>
+<p>Raw data is count data. We select all genes that have non-zero expression.
+We also removed all gene models, Mitochondrial genes, and ribosome genes.
+We used log-plus-one to transform the count data.</p>
+<p>The output is an AnnData object where rows are cells and columns are genes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path
+does not exist, it will be created. Data will be saved in a
+subdirectory under the provided path.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

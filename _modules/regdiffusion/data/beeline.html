@@ -314,31 +314,35 @@ document.write(`
 <a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_beeline">[docs]</a>
 <span class="k">def</span> <span class="nf">load_beeline</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">&#39;hESC&#39;</span><span class="p">,</span> 
                  <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">&#39;500_STRING&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39; Load BEELINE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load BEELINE data and its ground truth (download if necessary).</span>
+
+<span class="sd">    Paper: Benchmarking algorithms for gene regulatory network inference from </span>
+<span class="sd">        single-cell transcriptomic data</span>
+<span class="sd">    Paper Link: https://www.nature.com/articles/s41592-019-0690-6</span>
+
+<span class="sd">    BEELINE consists of 7 single-cell datasets (`hESC`, `hHep`, `mDC`, `mESC`, </span>
+<span class="sd">    `mHSC`, `mHSC-GM`, and `mHSC-L) and 3 sets of ground truth networks </span>
+<span class="sd">    (`STRING`, `Non-ChIP`, `ChIP-seq`). </span>
 <span class="sd">    </span>
-<span class="sd">    Load BEELINE data into memory (download if necessary).</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data_dir: str</span>
-<span class="sd">        Root folder where the BEELINE data is/will be located. </span>
-<span class="sd">    benchmark_data: str</span>
-<span class="sd">        Benchmark datasets. Choose among `hESC`, `hHep`, `mDC`, </span>
-<span class="sd">        `mESC`, `mHSC`, `mHSC-GM`, and `mHSC-L`.</span>
-<span class="sd">    benchmark_setting: str</span>
-<span class="sd">        Benchmark settings. Choose among `500_STRING`, </span>
-<span class="sd">        `1000_STRING`, `500_Non-ChIP`, `1000_Non-ChIP`, </span>
-<span class="sd">        `500_ChIP-seq`, `1000_ChIP-seq`, `500_lofgof`,</span>
-<span class="sd">        and `1000_lofgof`. If either of the `lofgof` settings</span>
-<span class="sd">        is choosed, only `mESC` data is available.  </span>
-<span class="sd">        </span>
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tuple</span>
-<span class="sd">        First element is a scanpy data with cells on rows and </span>
-<span class="sd">        genes on columns. Second element is the corresponding </span>
-<span class="sd">        BEELINE ground truth data </span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
+<span class="sd">            does not exist, it will be created. Data will be saved in a</span>
+<span class="sd">            subdirectory under the provided path. </span>
+<span class="sd">        benchmark_data (str): Benchmark datasets. Choose among `hESC`, `hHep`, </span>
+<span class="sd">            `mDC`, `mESC`, `mHSC`, `mHSC-GM`, and `mHSC-L`.</span>
+<span class="sd">        benchmark_setting (str): Benchmark settings. Choose among `500_STRING`, </span>
+<span class="sd">            `1000_STRING`, `500_Non-ChIP`, `1000_Non-ChIP`, `500_ChIP-seq`, </span>
+<span class="sd">            `1000_ChIP-seq`, `500_lofgof`, and `1000_lofgof`. If either of the </span>
+<span class="sd">            `lofgof` settings is choosed, only `mESC` data is available.  </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing two objects for a single BEELINE benchmark. </span>
+<span class="sd">            - The first element is a scanpy AnnData with cells on rows and </span>
+<span class="sd">                genes on columns. </span>
+<span class="sd">            - Second element is an numpy array for the adjacency list of the </span>
+<span class="sd">                ground truth network.  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/BEELINE/&#39;</span><span class="p">):</span>

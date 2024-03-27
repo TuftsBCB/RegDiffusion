@@ -318,6 +318,10 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.forward_pass"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.forward_pass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.get_adj"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.get_adj()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.get_grn"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.get_grn()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.train"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.train()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.training_curves"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.training_curves()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -335,23 +339,136 @@ document.write(`
 <h1>RegDiffusionTrainer<a class="headerlink" href="#regdiffusiontrainer" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.</span></span><span class="sig-name descname"><span class="pre">RegDiffusionTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay_nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse_loss_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_on_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celltype_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[16,</span> <span class="pre">16,</span> <span class="pre">16]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer" title="Link to this definition">#</a></dt>
-<dd><p>Initialize and Train a RegDiffusion model with configs</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer.forward_pass">
-<span class="sig-name descname"><span class="pre">forward_pass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer.forward_pass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer.forward_pass" title="Link to this definition">#</a></dt>
-<dd><p>Forward diffusion pass</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.</span></span><span class="sig-name descname"><span class="pre">RegDiffusionTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celltype_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[16,</span> <span class="pre">16,</span> <span class="pre">16]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay_nn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay_adj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse_loss_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_split_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_on_n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer" title="Link to this definition">#</a></dt>
+<dd><p>Initialize and Train a RegDiffusion model.</p>
+<p>For architecture and training details, please refer to our paper.</p>
+<p>&gt; From noise to knowledge: probabilistic diffusion-based neural inference</p>
+<p>You can access the model through <cite>RegDiffusionTrainer.model</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x_0</strong> (<em>torch.FloatTensor</em>) – Torch tensor for expression data. Rows are cells and columns
-are genes</p></li>
-<li><p><strong>t</strong> (<em>torch.LongTensor</em>) – Torch tensor for time steps.</p></li>
-<li><p><strong>mean_schedule</strong> (<em>torch.FloatTensor</em>) – Torch tensor for diffusion mean schedule</p></li>
-<li><p><strong>std_schedule</strong> (<em>torch.FloatTensor</em>) – Torch tensor for diffusion std schedule</p></li>
+<li><p><strong>exp_array</strong> (<em>np.ndarray</em>) – 2D numpy array. If used on single-cell RNAseq,
+the rows are cells and the columns are genes. Data should be log
+transformed. You may also want to remove all non expressed genes.</p></li>
+<li><p><strong>cell_types</strong> (<em>np.ndarray</em>) – (Optional) 1D integer array for cell type. If
+you have labels in your cell type, you need to convert them to
+interge. Default is None.</p></li>
+<li><p><strong>T</strong> (<em>int</em>) – Total number of diffusion steps. Default: 5,000</p></li>
+<li><p><strong>start_noise</strong> (<em>float</em>) – Minimal noise level (beta) to be added. Default:
+0.0001</p></li>
+<li><p><strong>end_noise</strong> (<em>float</em>) – Maximal noise level (beta) to be added. Default:
+0.02</p></li>
+<li><p><strong>time_dim</strong> (<em>int</em>) – Dimension size for the time embedding. Default: 64.</p></li>
+<li><p><strong>celltype_dim</strong> (<em>int</em>) – Dimension size for the cell type embedding.
+Default: 4.</p></li>
+<li><p><strong>hidden_dim</strong> (<em>list</em>) – Dimension sizes for the feature learning layers. We
+use the size of the first layer as the dimension for gene embeddings
+as well. Default: [16, 16, 16].</p></li>
+<li><p><strong>init_coef</strong> (<em>int</em>) – A coefficent to control the value to initialize the
+adjacency matrix. Here we define regulatory norm as 1 over (number
+of genes - 1). The value which we use to initialize the model is
+<cite>init_coef</cite> times of the regulatory norm. Default: 5.</p></li>
+<li><p><strong>lr_nn</strong> (<em>float</em>) – Learning rate for the rest of the neural networks except
+the adjacency matrix. Default: 0.001</p></li>
+<li><p><strong>lr_adj</strong> (<em>float</em>) – Learning rate for the adjacency matrix. By default, it
+equals to 0.02 * gene regulatory norm, which equals 1/(n_gene-1).</p></li>
+<li><p><strong>weight_decay_nn</strong> (<em>float</em>) – L2 regularization coef on the rest of the
+neural networks. Default: 0.1.</p></li>
+<li><p><strong>weight_decay_adj</strong> (<em>float</em>) – L2 regularization coef on the adj matrix.
+Default: 0.01.</p></li>
+<li><p><strong>sparse_loss_coef</strong> (<em>float</em>) – L1 regularization coef on the adj matrix.
+Default: 0.25.</p></li>
+<li><p><strong>adj_dropout</strong> (<em>float</em>) – Probability of an edge to be zeroed. Default: 0.3.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Batch size for training. Default: 128.</p></li>
+<li><p><strong>n_steps</strong> (<em>int</em>) – Total number of training iterations. Default: 1000.</p></li>
+<li><p><strong>train_split</strong> (<em>float</em>) – Train partition. Default: 1.0.</p></li>
+<li><p><strong>train_split_seed</strong> (<em>int</em>) – Random seed for train/val partition.
+Default: 123</p></li>
+<li><p><strong>device</strong> (<em>str</em><em> or </em><em>torch.device</em>) – Device where the model is running. For
+example, “cpu”, “cuda”, “cuda:1”, and etc. You are not recommended
+to run this model on Apple’s MPS chips. Default is “cuda” but if
+you only has CPU, it will switch back to CPU.</p></li>
+<li><p><strong>compile</strong> (<em>boolean</em>) – Whether to compile the model before training.
+Compile the model is a good idea on large dataset and ofter improves
+inference speed when it works. For smaller dataset, eager execution
+if often good enough.</p></li>
+<li><p><strong>evaluator</strong> (<a class="reference internal" href="../regdiffusion.html#regdiffusion.GRNEvaluator" title="regdiffusion.GRNEvaluator"><em>GRNEvaluator</em></a>) – (Optional) A defined GRNEvaluator if ground
+truth data is available. Evaluation will be done every 100 steps by
+default but you can change this setting through the eval_on_n_steps
+option. Default is None</p></li>
+<li><p><strong>eval_on_n_steps</strong> (<em>int</em>) – If an evaluator is provided, the trainer will
+run evaluation every <cite>eval_on_n_steps</cite> steps. Default: 100.</p></li>
+<li><p><strong>logger</strong> (<a class="reference internal" href="../regdiffusion.html#regdiffusion.LightLogger" title="regdiffusion.LightLogger"><em>LightLogger</em></a>) – (Optional) A LightLogger to log training process.
+The only situation when you need to provide this is when you want
+to save logs from different trainers into the same logger. Default
+is None.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer.forward_pass">
+<span class="sig-name descname"><span class="pre">forward_pass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer.forward_pass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer.forward_pass" title="Link to this definition">#</a></dt>
+<dd><p>Forward diffusion process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_0</strong> (<em>torch.FloatTensor</em>) – Torch tensor for expression data. Rows are</p></li>
+<li><p><strong>genes</strong> (<em>cells and columns are</em>) – </p></li>
+<li><p><strong>t</strong> (<em>torch.LongTensor</em>) – Torch tensor for diffusion time steps.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer.get_adj">
+<span class="sig-name descname"><span class="pre">get_adj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer.get_adj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer.get_adj" title="Link to this definition">#</a></dt>
+<dd><p>Obtain the adjacency matrix. The values in this adjacency matix has
+been scaled using regulatory norm. You may expect strong links to go
+beyond 5 or 10 in most cases.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer.get_grn">
+<span class="sig-name descname"><span class="pre">get_grn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer.get_grn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer.get_grn" title="Link to this definition">#</a></dt>
+<dd><p>Obtain a GRN object. You need to provide the genes names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – An array of names of all genes. The order
+of genes should be the same as the order used in your expression
+table.</p></li>
+<li><p><strong>tf_names</strong> (<em>np.ndarray</em>) – An array of names of all transcriptional
+factors. The order of genes should be the same as the order
+used in your expression table.</p></li>
+<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If provided, we will set the value on
+weak links to be zero. It is useful if you want to save the
+regulatory relationship in a GRN object as a sparse matrix.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer.train" title="Link to this definition">#</a></dt>
+<dd><p>Train the initialized model for a number of steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n_steps</strong> (<em>int</em>) – Number of steps to train. If not provided, it will
+train the model by the n_steps sepcified in class
+initialization. Please read our paper to see how to identify
+the converge point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.RegDiffusionTrainer.training_curves">
+<span class="sig-name descname"><span class="pre">training_curves</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/trainer.html#RegDiffusionTrainer.training_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.RegDiffusionTrainer.training_curves" title="Link to this definition">#</a></dt>
+<dd><p>Plot out the training curves on <cite>train_loss</cite> and <cite>adj_change</cite>. Check
+out our paper for how to use <cite>adj_change</cite> to identify the convergence
+point.</p>
 </dd></dl>
 
 </dd></dl>
@@ -405,6 +522,10 @@ are genes</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.forward_pass"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.forward_pass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.get_adj"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.get_adj()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.get_grn"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.get_grn()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.train"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.train()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.RegDiffusionTrainer.training_curves"><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer.training_curves()</span></code></a></li>
 </ul>
 </li>
 </ul>

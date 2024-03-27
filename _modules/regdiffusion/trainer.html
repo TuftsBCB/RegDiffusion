@@ -282,6 +282,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">.grn</span> <span class="kn">import</span> <span class="n">GRN</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <div class="viewcode-block" id="linear_beta_schedule">
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.linear_beta_schedule">[docs]</a>
@@ -306,25 +307,84 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer">
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.RegDiffusionTrainer">[docs]</a>
 <span class="k">class</span> <span class="nc">RegDiffusionTrainer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Initialize and Train a RegDiffusion model with configs</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize and Train a RegDiffusion model.</span>
+
+<span class="sd">    For architecture and training details, please refer to our paper.</span>
+
+<span class="sd">    &gt; From noise to knowledge: probabilistic diffusion-based neural inference</span>
+
+<span class="sd">    You can access the model through `RegDiffusionTrainer.model`. </span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">        </span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        exp_array (np.ndarray): 2D numpy array. If used on single-cell RNAseq, </span>
+<span class="sd">            the rows are cells and the columns are genes. Data should be log </span>
+<span class="sd">            transformed. You may also want to remove all non expressed genes.</span>
+<span class="sd">        cell_types (np.ndarray): (Optional) 1D integer array for cell type. If </span>
+<span class="sd">            you have labels in your cell type, you need to convert them to </span>
+<span class="sd">            interge. Default is None. </span>
+<span class="sd">        T (int): Total number of diffusion steps. Default: 5,000</span>
+<span class="sd">        start_noise (float): Minimal noise level (beta) to be added. Default: </span>
+<span class="sd">            0.0001</span>
+<span class="sd">        end_noise (float): Maximal noise level (beta) to be added. Default: </span>
+<span class="sd">            0.02</span>
+<span class="sd">        time_dim (int): Dimension size for the time embedding. Default: 64.</span>
+<span class="sd">        celltype_dim (int): Dimension size for the cell type embedding. </span>
+<span class="sd">            Default: 4.</span>
+<span class="sd">        hidden_dim (list): Dimension sizes for the feature learning layers. We </span>
+<span class="sd">            use the size of the first layer as the dimension for gene embeddings</span>
+<span class="sd">            as well. Default: [16, 16, 16].</span>
+<span class="sd">        init_coef (int): A coefficent to control the value to initialize the </span>
+<span class="sd">            adjacency matrix. Here we define regulatory norm as 1 over (number </span>
+<span class="sd">            of genes - 1). The value which we use to initialize the model is </span>
+<span class="sd">            `init_coef` times of the regulatory norm. Default: 5. </span>
+<span class="sd">        lr_nn (float): Learning rate for the rest of the neural networks except</span>
+<span class="sd">            the adjacency matrix. Default: 0.001</span>
+<span class="sd">        lr_adj (float): Learning rate for the adjacency matrix. By default, it </span>
+<span class="sd">            equals to 0.02 * gene regulatory norm, which equals 1/(n_gene-1). </span>
+<span class="sd">        weight_decay_nn (float): L2 regularization coef on the rest of the </span>
+<span class="sd">            neural networks. Default: 0.1.</span>
+<span class="sd">        weight_decay_adj (float): L2 regularization coef on the adj matrix.</span>
+<span class="sd">            Default: 0.01.</span>
+<span class="sd">        sparse_loss_coef (float): L1 regularization coef on the adj matrix. </span>
+<span class="sd">            Default: 0.25.</span>
+<span class="sd">        adj_dropout (float): Probability of an edge to be zeroed. Default: 0.3.</span>
+<span class="sd">        batch_size (int): Batch size for training. Default: 128.</span>
+<span class="sd">        n_steps (int): Total number of training iterations. Default: 1000.</span>
+<span class="sd">        train_split (float): Train partition. Default: 1.0.</span>
+<span class="sd">        train_split_seed (int): Random seed for train/val partition. </span>
+<span class="sd">            Default: 123</span>
+<span class="sd">        device (str or torch.device): Device where the model is running. For </span>
+<span class="sd">            example, &quot;cpu&quot;, &quot;cuda&quot;, &quot;cuda:1&quot;, and etc. You are not recommended </span>
+<span class="sd">            to run this model on Apple&#39;s MPS chips. Default is &quot;cuda&quot; but if </span>
+<span class="sd">            you only has CPU, it will switch back to CPU.</span>
+<span class="sd">        compile (boolean): Whether to compile the model before training. </span>
+<span class="sd">            Compile the model is a good idea on large dataset and ofter improves</span>
+<span class="sd">            inference speed when it works. For smaller dataset, eager execution </span>
+<span class="sd">            if often good enough. </span>
+<span class="sd">        evaluator (GRNEvaluator): (Optional) A defined GRNEvaluator if ground </span>
+<span class="sd">            truth data is available. Evaluation will be done every 100 steps by </span>
+<span class="sd">            default but you can change this setting through the eval_on_n_steps </span>
+<span class="sd">            option. Default is None</span>
+<span class="sd">        eval_on_n_steps (int): If an evaluator is provided, the trainer will </span>
+<span class="sd">            run evaluation every `eval_on_n_steps` steps. Default: 100.</span>
+<span class="sd">        logger (LightLogger): (Optional) A LightLogger to log training process. </span>
+<span class="sd">            The only situation when you need to provide this is when you want </span>
+<span class="sd">            to save logs from different trainers into the same logger. Default </span>
+<span class="sd">            is None. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">start_noise</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">end_noise</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="n">T</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">start_noise</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">end_noise</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="n">time_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">celltype_dim</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">hidden_dims</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+        <span class="n">init_coef</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> 
         <span class="n">lr_nn</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">lr_adj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
         <span class="n">weight_decay_nn</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">weight_decay_adj</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">sparse_loss_coef</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">adj_dropout</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> 
-        <span class="n">train_split</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
-        <span class="n">time_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">celltype_dim</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">hidden_dims</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
-        <span class="n">init_coef</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> 
-        <span class="n">top_gene_percentile</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">train_split</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> 
+        <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+        <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">hp</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;exp_array&#39;</span><span class="p">]</span>
@@ -333,17 +393,18 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">hp</span> <span class="o">=</span> <span class="n">hp</span>
         
         <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;mps&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;We noticed unreliable training behavior on Apple&#39;s&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot; silicon. Consider using other devices.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;We noticed unreliable training behavior on&quot;</span><span class="p">,</span> 
+                            <span class="s2">&quot;Apple&#39;s silicon. Consider using other devices.&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You specified cuda as your computing device but apprently&quot;</span><span class="p">,</span> 
-                      <span class="s2">&quot;it&#39;s not available. Setting device to cpu for now. &quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;You specified cuda as your computing device but apprently&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;it&#39;s not available. Setting device to cpu for now. &quot;</span><span class="p">)</span>
                 <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
         
-        <span class="c1"># Logger -------------------------------------------------------------------</span>
+        <span class="c1"># Logger ---------------------------------------------------------------</span>
         <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">LightLogger</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">note_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -355,7 +416,13 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">mean_schedule</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">alpha_bars</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">std_schedule</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alpha_bars</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     
-        <span class="c1"># Prepare Data -------------------------------------------------------------</span>
+        <span class="c1"># Prepare Data ---------------------------------------------------------</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Some columns in the exp_array contains all zero values, &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;which often causes trouble in inference. Please consider &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;removing these columns before continuing. &quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">cell_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cell_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_celltype</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cell_types</span><span class="p">))</span>
@@ -377,9 +444,12 @@ document.write(`
         <span class="n">train_index</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="o">&lt;=</span> <span class="n">train_split</span>
         <span class="n">val_index</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="o">&gt;</span> <span class="n">train_split</span>
     
-        <span class="n">x_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">normalized_X</span><span class="p">[</span><span class="n">train_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">celltype_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cell_types</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">x_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">normalized_X</span><span class="p">[</span><span class="n">val_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">x_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="n">normalized_X</span><span class="p">[</span><span class="n">train_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">celltype_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="n">cell_types</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">x_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="n">normalized_X</span><span class="p">[</span><span class="n">val_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">celltype_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cell_types</span><span class="p">[</span><span class="n">val_index</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     
         <span class="c1">## Setup dataset and dataloader</span>
@@ -404,7 +474,7 @@ document.write(`
             <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span><span class="p">,</span> 
             <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     
-        <span class="c1"># Setup Model ------------------------------------------------------------</span>
+        <span class="c1"># Setup Model ----------------------------------------------------------</span>
         <span class="n">gene_reg_norm</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">n_gene</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">RegDiffusion</span><span class="p">(</span>
             <span class="n">n_gene</span><span class="o">=</span><span class="n">n_gene</span><span class="p">,</span> 
@@ -416,7 +486,7 @@ document.write(`
             <span class="n">init_coef</span><span class="o">=</span><span class="n">init_coef</span>
         <span class="p">)</span>
     
-        <span class="c1"># Setup optimizer --------------------------------------------------------</span>
+        <span class="c1"># Setup optimizer ------------------------------------------------------</span>
         <span class="k">if</span> <span class="n">lr_adj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">lr_adj</span> <span class="o">=</span> <span class="n">gene_reg_norm</span><span class="o">/</span><span class="mi">50</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;lr_adj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_adj</span>
@@ -450,20 +520,14 @@ document.write(`
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.RegDiffusionTrainer.forward_pass">[docs]</a>
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39; Forward diffusion pass</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward diffusion process</span>
 <span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        x_0: torch.FloatTensor</span>
-<span class="sd">            Torch tensor for expression data. Rows are cells and columns</span>
-<span class="sd">            are genes</span>
-<span class="sd">        t: torch.LongTensor</span>
-<span class="sd">            Torch tensor for time steps. </span>
-<span class="sd">        mean_schedule: torch.FloatTensor</span>
-<span class="sd">            Torch tensor for diffusion mean schedule</span>
-<span class="sd">        std_schedule: torch.FloatTensor</span>
-<span class="sd">            Torch tensor for diffusion std schedule</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x_0 (torch.FloatTensor): Torch tensor for expression data. Rows are </span>
+<span class="sd">            cells and columns are genes</span>
+<span class="sd">            t (torch.LongTensor): Torch tensor for diffusion time steps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span>
         <span class="n">mean_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_schedule</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
         <span class="n">std_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_schedule</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
@@ -474,7 +538,17 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer.train">
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.RegDiffusionTrainer.train">[docs]</a>
     <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train the initialized model for a number of steps. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_steps (int): Number of steps to train. If not provided, it will </span>
+<span class="sd">                train the model by the n_steps sepcified in class </span>
+<span class="sd">                initialization. Please read our paper to see how to identify</span>
+<span class="sd">                the converge point. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">n_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;n_steps&#39;</span><span class="p">]</span>
         <span class="n">sampled_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
@@ -506,14 +580,18 @@ document.write(`
                     <span class="n">epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
                 <span class="n">train_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">epoch_loss</span><span class="p">)</span>
                 <span class="n">sampled_adj_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
-                <span class="n">adj_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">sampled_adj_new</span> <span class="o">-</span> <span class="n">sampled_adj</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">adj_diff</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sampled_adj_new</span> <span class="o">-</span> <span class="n">sampled_adj</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="n">sampled_adj</span> <span class="o">=</span> <span class="n">sampled_adj_new</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s1">&#39;Training loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, Change on Adj: </span><span class="si">{</span><span class="n">adj_diff</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">epoch_log</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train_loss&#39;</span><span class="p">:</span> <span class="n">train_loss</span><span class="p">,</span> <span class="s1">&#39;adj_change&#39;</span><span class="p">:</span> <span class="n">adj_diff</span><span class="p">}</span>
-                <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="n">eval_steps</span> <span class="o">==</span> <span class="n">eval_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">eval_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">())</span>
+                        <span class="n">eval_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
+                            <span class="p">)</span>
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">eval_result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;train_split&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -529,18 +607,25 @@ document.write(`
         
                                 <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
                                 <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
-                                <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                                <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
+                                    <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                                 <span class="n">val_epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_val_loss</span><span class="p">)</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epoch_log</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">losses_on_gene</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">((</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="RegDiffusionTrainer.training_curves">
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.RegDiffusionTrainer.training_curves">[docs]</a>
     <span class="k">def</span> <span class="nf">training_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot out the training curves on `train_loss` and `adj_change`. Check</span>
+<span class="sd">        out our paper for how to use `adj_change` to identify the convergence </span>
+<span class="sd">        point. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;train_loss&#39;</span> <span class="ow">in</span> <span class="n">log_df</span><span class="p">:</span>
             <span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
@@ -552,12 +637,29 @@ document.write(`
             <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Amount of Change in Adj. Matrix&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training log and Adj Change are not available. Train your model using the .train() method.&#39;</span><span class="p">)</span></div>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s1">&#39;Training log and Adj Change are not available. Train your &#39;</span><span class="p">,</span> 
+                <span class="s1">&#39;model using the .train() method.&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RegDiffusionTrainer.get_grn">
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.RegDiffusionTrainer.get_grn">[docs]</a>
     <span class="k">def</span> <span class="nf">get_grn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tf_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain a GRN object. You need to provide the genes names. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gene_names (np.ndarray): An array of names of all genes. The order </span>
+<span class="sd">                of genes should be the same as the order used in your expression</span>
+<span class="sd">                table.</span>
+<span class="sd">            tf_names (np.ndarray):An array of names of all transcriptional </span>
+<span class="sd">                factors. The order of genes should be the same as the order </span>
+<span class="sd">                used in your expression table.</span>
+<span class="sd">            top_gene_percentile (int): If provided, we will set the value on </span>
+<span class="sd">                weak links to be zero. It is useful if you want to save the </span>
+<span class="sd">                regulatory relationship in a GRN object as a sparse matrix. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">GRN</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tf_names</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="p">)</span></div>
 
@@ -565,6 +667,11 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer.get_adj">
 <a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.RegDiffusionTrainer.get_adj">[docs]</a>
     <span class="k">def</span> <span class="nf">get_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain the adjacency matrix. The values in this adjacency matix has </span>
+<span class="sd">        been scaled using regulatory norm. You may expect strong links to go</span>
+<span class="sd">        beyond 5 or 10 in most cases. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span></div>
 </div>
 

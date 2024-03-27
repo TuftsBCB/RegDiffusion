@@ -13,9 +13,8 @@ class GRN:
     A Object to save and analyze gene regulatory network
 
     A GRN object includes the adjacency matrix between transcriptional factors
-    (|a|) and target genes (|b|). The adjacency matrix is expected to be in the 
-    shape of |a| * |b|. In many cases, when TFs are not specified, we have a 
-    square-shaped (|b| * |b|) adjacency matrix. We expected the adjacency 
+     and target genes. In many cases, when TFs are not specified, we have a 
+    square-shaped adjacency matrix. We expected the adjacency 
     matrix to hold predicted weights/probabilities for the edges (float). 
 
     To create a GRN object, you need at least two things: the adjacency matrix

@@ -20,10 +20,18 @@ release = '0.0.5'
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'sphinx_copybutton',
+    "sphinx_panels",
     'myst_parser'
 ]
+
+copybutton_prompt_text = ">>> "
+
+autosummary_generate = True
+numpydoc_show_class_members = False
 
 source_suffix = ['.rst', '.md']
 templates_path = ['_templates']

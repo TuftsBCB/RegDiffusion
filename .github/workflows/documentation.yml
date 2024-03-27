@@ -28,6 +28,8 @@ jobs:
         pip install sphinx
         pip install sphinx_book_theme
         pip install myst-parser
+        pip install sphinx-panels
+        pip install sphinx-copybutton
         pip install numpy
         pip install pandas
         pip install torch --index-url https://download.pytorch.org/whl/cpu

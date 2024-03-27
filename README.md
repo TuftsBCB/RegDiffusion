@@ -17,5 +17,7 @@ RegDiffusion is on pypi.
 pip install regdiffusion
 ```
 
-Check out the [example notebook](https://github.com/TuftsBCB/RegDiffusion/blob/master/example.ipynb) for a quick tour of how to use RegDiffusion for your research!
+
+
+Check out the [this tutorial](https://tuftsbcb.github.io/RegDiffusion/quick_tour.html) for a quick tour of how to use RegDiffusion for your research!
 

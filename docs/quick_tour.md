@@ -1,4 +1,4 @@
-# Getting Startted with GRN inference using diffusion model
+# Get Started
 
 Diffusion model has been widely used in generative AI, especially in the vision domain. In our paper, we proposed RegDiffusion, a diffusion based model for GRN inference. Compared with previous model, RegDiffusion completes inference within a fraction of time and yield better benchmarking results. 
 
@@ -25,8 +25,8 @@ If you want to see the inference on a larger network with 14,000+ genes and 8,00
 
 ```
 >>> bl_dt, bl_gt = rd.data.load_beeline(
-        benchmark_data='mESC', benchmark_setting='1000_STRING'
-    )
+>>>     benchmark_data='mESC', benchmark_setting='1000_STRING'
+>>> )
 ```
 
 Here, `load_beeline` gives you a tuple, where the first element is an anndata of the single cell experession data and the second element is an array of all the ground truth links (based on the STRING network in this case). 
@@ -35,9 +35,7 @@ Here, `load_beeline` gives you a tuple, where the first element is an anndata of
 >>> bl_dt
 AnnData object with n_obs × n_vars = 421 × 1620
     obs: 'cell_type', 'cell_type_index'
-```
 
-```python
 >>> bl_gt
 array([['KLF6', 'JUN'],
        ['JUN', 'KLF6'],
@@ -117,7 +115,7 @@ There are many ways to discover target genes to study the local networks. For ex
 
 ### Step 2. Visualize the local network around the selected gene
 
-The `visualize_local_neighborhood` method of an `GRN` object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using `pyvis`/`vis.js`. The default `k` here is 20. However, in cases when the regulatory relationships are strong and bidirectional, `k=20` only gives a very simple network. You may increase the magnitude of `k` to find some meaningful results to you. 
+The `visualize_local_neighborhood` method of an `GRN` object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using `pyvis`/`vis.js`. The default `k` here is 20. However, in cases when the regulatory relationships are strong and bidirectional, `k=20` only gives a very simple network. You may increase the magnitude of `k` to find some meaningful results to you. Keep in mind that, if your `k` is too small, you won't be able to see some relatively strong links.  
 
 
 ```python
@@ -126,6 +124,52 @@ The `visualize_local_neighborhood` method of an `GRN` object extracts the 2-hop 
 ```
 
 ![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs.png)
+
+### (Optional) Step 3. Node clustering
+
+Here we have a fairly obvious bipartisan graph. It also makes sense to use some clustering methods to automatically assign nodes into partitions. You can use any clustering methods that you like (and works). Here is an example of using `node2vec` for this task.
+
+```python
+>>> import networkx as nx
+>>> from sklearn.cluster import KMeans
+>>> from node2vec import Node2Vec
+>>> 
+>>> adj_table = grn.extract_node_2hop_neighborhood('HIST1H1D', 40)
+>>> nxg = nx.from_pandas_edgelist(adj_table)
+>>> 
+>>> node2vec = Node2Vec(nxg, dimensions=64, walk_length=30, num_walks=200, 
+>>>                     workers=4, seed=123)
+>>> model = node2vec.fit(window=10, min_count=1, batch_words=4)
+>>> 
+>>> node_embeddings = [model.wv.get_vector(str(node)) for node in nxg.nodes()]
+>>> 
+>>> kmeans = KMeans(n_clusters=4, random_state=0).fit(node_embeddings)
+>>> node_labels = kmeans.labels_
+>>> 
+>>> print("Clusters:")
+>>> for cluster_id in range(max(node_labels) + 1):
+>>>     cluster_nodes = [g for g, c in zip(
+>>>         nxg.nodes(), node_labels) if c == cluster_id]
+>>>     print(f"Cluster {cluster_id}: {','.join(cluster_nodes)}")
+Clusters:
+Cluster 0: HIST1H1D,HIST1H2BN,HIST1H2BK,HIST1H1B,HIST1H2BL,HIST1H2AK,HIST1H1A,HIST1H2AC,HIST1H2BF,HIST1H4K,HIST1H3H,HIST1H2AF,HIST1H2AI,HIST1H2AG,HIST1H2BB,DNMT1,BRCA1,KNTC1,RAD54B,GM44335,FBXO5,TAF1,ABTB1,DEK,KANK3
+Cluster 1: MCM10,TIMELESS,RAD51,RBBP4,RRM2,MCM6,PCNA,E2F1,UHRF1,MCM4,MCM5,UNG,MCM7,MCM3,ZFP367,EZH2,BARD1
+Cluster 2: TOP2A,MAZ,POLR3B,GM10184,ATF4
+Cluster 3: GM26448,EGR1
+```
+
+You can also apply the clustering information to your visual. 
+
+```python
+>>> gene_group_dict = dict()
+>>> gene_group_dict = {g:str(c) for g, c in zip(nxg.nodes(), node_labels)}
+>>> g = grn.visualize_local_neighborhood(
+>>>     'HIST1H1D', k=40, node_group_dict=gene_group_dict
+>>>     )
+>>> g.show('view.html')
+```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs_cluster.png)
 
 ### Result Interpretation 
 

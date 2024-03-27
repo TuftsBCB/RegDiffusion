@@ -24,7 +24,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx_copybutton',
-    "sphinx_panels",
+    # "sphinx_panels",
     'myst_parser'
 ]
 

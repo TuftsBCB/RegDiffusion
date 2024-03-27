@@ -309,6 +309,14 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements">Requirements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-loading">Data Loading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-object">GRN object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-local-network-around-particular-genes">Inspecting the local network around particular genes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-discover-target-genes">Step 1. Discover target genes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-visualize-the-local-network-around-the-selected-gene">Step 2. Visualize the local network around the selected gene</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#result-interpretation">Result Interpretation</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -327,8 +335,8 @@ document.write(`
 <section id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">#</a></h2>
 <p>We will need the python package <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> for GRN inference. For accelerated inference speed, you may want to run <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> on GPU devices with the latest CUDA installation.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">regdiffusion</span> <span class="k">as</span> <span class="nn">rd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">numpy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">regdiffusion</span> <span class="k">as</span> <span class="nn">rd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">numpy</span>
 </pre></div>
 </div>
 </section>
@@ -338,43 +346,96 @@ document.write(`
 <p>The <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> package comes with a set of preprocessed data, including the <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/31907445/">BEELINE benchmarks</a>, <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/30471926/">Hammond microglia</a> in male adult mice, and another labelled microglia subset from a <a class="reference external" href="https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary">mice cerebellum atlas project</a>.</p>
 <p>Here we use the <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data from the BEELINE benchmark. The <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data comes from <a class="reference external" href="https://www.nature.com/articles/s41467-018-02866-0">Mouse embryonic stem cells</a>. It has 421 cells and 1,620 genes.</p>
 <p>If you want to see the inference on a larger network with 14,000+ genes and 8,000+ cells, check out the other example.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bl_dt</span><span class="p">,</span> <span class="n">bl_gt</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_beeline</span><span class="p">(</span>
-    <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">&#39;mESC&#39;</span><span class="p">,</span> <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">&#39;1000_STRING&#39;</span>
-<span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bl_dt</span><span class="p">,</span> <span class="n">bl_gt</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_beeline</span><span class="p">(</span>
+<span class="go">        benchmark_data=&#39;mESC&#39;, benchmark_setting=&#39;1000_STRING&#39;</span>
+<span class="go">    )</span>
 </pre></div>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">load_beeline</span></code> gives you a tuple, where the first element is an anndata of the single cell experession data and the second element is an array of all the ground truth links (based on the STRING network in this case).</p>
-<div class="highlight-md notranslate"><div class="highlight"><pre><span></span>```python
-bl_dt
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bl_dt</span>
+<span class="go">AnnData object with n_obs × n_vars = 421 × 1620</span>
+<span class="go">    obs: &#39;cell_type&#39;, &#39;cell_type_index&#39;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-## GRN Inference
-
-You are recommended to use the provided trainer to train a RegDiffusion Model. You need to provide the expression data in a numpy array to the trainer. 
-
-During the training process, the training loss and the average amount of change on the adjacency matrix are provided on the progress bar. The model converges when the step change n the adjacency matrix is near-zero. By default, the `train` method will train the model for 1,000 iterations. It should be sufficient in most cases. If you want to keep training the model afterwards, you can simply call the `train` methods again with the desired number of iterations. 
-
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bl_gt</span>
+<span class="go">array([[&#39;KLF6&#39;, &#39;JUN&#39;],</span>
+<span class="go">       [&#39;JUN&#39;, &#39;KLF6&#39;],</span>
+<span class="go">       [&#39;KLF6&#39;, &#39;ATF3&#39;],</span>
+<span class="go">       ...,</span>
+<span class="go">       [&#39;SIN3A&#39;, &#39;TET1&#39;],</span>
+<span class="go">       [&#39;MEF2C&#39;, &#39;TCF12&#39;],</span>
+<span class="go">       [&#39;TCF12&#39;, &#39;MEF2C&#39;]], dtype=object)</span>
 </pre></div>
 </div>
-<p>rd_trainer = rd.RegDiffusionTrainer(bl_dt.X)
-rd_trainer.train()</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="n">We</span> <span class="n">run</span> <span class="n">this</span> <span class="n">experiment</span> <span class="n">on</span> <span class="n">an</span> <span class="n">A100</span> <span class="n">card</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">inference</span> <span class="n">finishes</span> <span class="n">within</span> <span class="mi">8</span> <span class="n">seconds</span><span class="o">.</span> 
-
-<span class="n">When</span> <span class="n">ground</span> <span class="n">truth</span> <span class="n">links</span> <span class="n">are</span> <span class="n">avaiable</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">test</span> <span class="n">the</span> <span class="n">inference</span> <span class="n">performance</span> <span class="n">by</span> <span class="n">setting</span> <span class="n">up</span> <span class="n">an</span> <span class="n">evaluator</span><span class="o">.</span> <span class="n">You</span> <span class="n">need</span> <span class="n">to</span> <span class="n">provide</span> <span class="n">both</span> <span class="n">the</span> <span class="n">ground</span> <span class="n">truth</span> <span class="n">links</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">gene</span> <span class="n">names</span><span class="o">.</span> <span class="n">Note</span> <span class="n">that</span> <span class="n">the</span> <span class="n">order</span> <span class="n">of</span> <span class="n">the</span> <span class="n">provided</span> <span class="n">gene</span> <span class="n">names</span> <span class="n">here</span> <span class="n">should</span> <span class="n">be</span> <span class="n">the</span> <span class="n">same</span> <span class="k">as</span> <span class="n">the</span> <span class="n">column</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">expression</span> <span class="n">table</span> <span class="p">(</span><span class="ow">and</span> <span class="n">the</span> <span class="n">inferred</span> <span class="n">adjacency</span> <span class="n">matrix</span><span class="p">)</span><span class="o">.</span> 
-
+</section>
+<section id="grn-inference">
+<h2>GRN Inference<a class="headerlink" href="#grn-inference" title="Link to this heading">#</a></h2>
+<p>You are recommended to use the provided trainer to train a RegDiffusion Model. You need to provide the expression data in a numpy array to the trainer.</p>
+<p>During the training process, the training loss and the average amount of change on the adjacency matrix are provided on the progress bar. The model converges when the step change n the adjacency matrix is near-zero. By default, the <code class="docutils literal notranslate"><span class="pre">train</span></code> method will train the model for 1,000 iterations. It should be sufficient in most cases. If you want to keep training the model afterwards, you can simply call the <code class="docutils literal notranslate"><span class="pre">train</span></code> methods again with the desired number of iterations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rd_trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">bl_dt</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rd_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="go">Training loss: 0.304, Change on Adj: -0.000: 100%|██████████| 1000/1000 [00:06&lt;00:00, 143.53it/s]</span>
 </pre></div>
 </div>
-<p>evaluator = rd.evaluator.GRNEvaluator(bl_gt, bl_dt.var_names)
-inferred_adj = rd_trainer.get_adj()
-evaluator.evaluate(inferred_adj)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-## GRN object
-
-In order to facilitate the downstream analyses on GRN, we defined an `GRN` object in the `regdiffusion` package. You need to provide the gene names in the same order as in your expression table.
+<p>We run this experiment on an A100 card and the inference finishes within 8 seconds.</p>
+<p>When ground truth links are avaiable, you can test the inference performance by setting up an evaluator. You need to provide both the ground truth links and the gene names. Note that the order of the provided gene names here should be the same as the column order in the expression table (and the inferred adjacency matrix).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">GRNEvaluator</span><span class="p">(</span><span class="n">bl_gt</span><span class="p">,</span> <span class="n">bl_dt</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inferred_adj</span> <span class="o">=</span> <span class="n">rd_trainer</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">inferred_adj</span><span class="p">)</span>
+<span class="go">{&#39;AUROC&#39;: 0.6114549433214784,</span>
+<span class="go"> &#39;AUPR&#39;: 0.051973534439936624,</span>
+<span class="go"> &#39;AUPRR&#39;: 2.4439084980230183,</span>
+<span class="go"> &#39;EP&#39;: 755,</span>
+<span class="go"> &#39;EPR&#39;: 4.1870197171394254}</span>
 </pre></div>
 </div>
+</section>
+<section id="grn-object">
+<h2>GRN object<a class="headerlink" href="#grn-object" title="Link to this heading">#</a></h2>
+<p>In order to facilitate the downstream analyses on GRN, we defined an <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object in the <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> package. You need to provide the gene names in the same order as in your expression table.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span> <span class="o">=</span> <span class="n">rd_trainer</span><span class="o">.</span><span class="n">get_grn</span><span class="p">(</span><span class="n">bl_dt</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span>
+<span class="go">Inferred GRN: 1,620 TFs x 1,620 Target Genes</span>
+</pre></div>
+</div>
+<p>You can easily export the GRN object as a HDF5 file. Right now, HDF5 is the only supported export format but more formats will be added in the future.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s1">&#39;demo_mESC_grn.hdf5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Saving the GRN object as hdf5 makes it easy to distribute your inferred networks (or simply move it from a cloud GPU machine to your local desktop for more analysis. You can read the exported file using <code class="docutils literal notranslate"><span class="pre">read_hdf5()</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recovered_grn</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s1">&#39;demo_mESC_grn.hdf5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If size is an issue, you may consider to transform some small numbers in the adjacency matrix to zero using <code class="docutils literal notranslate"><span class="pre">top_gene_percentile</span></code> and then in the <code class="docutils literal notranslate"><span class="pre">to_hdf5</span></code> function, export <code class="docutils literal notranslate"><span class="pre">as_sparse</span></code>.</p>
+</section>
+<section id="inspecting-the-local-network-around-particular-genes">
+<h2>Inspecting the local network around particular genes<a class="headerlink" href="#inspecting-the-local-network-around-particular-genes" title="Link to this heading">#</a></h2>
+<p>In this example, we run GRN inference on one of the BEELINE benchmark single cell datasets. The provided ground truth makes it possible to validate through standard statistical metrics. However, such ground truth is in fact very noisy and incomplete.</p>
+<p>In our paper, we proposed a method to visualize the local 2-hop to 3-hop neighborhood around selected genes. We find that genes with similar function will be topologically bounded together and form obvious functional groups. Inspecting these local networks gives us confidence that the inferred networks are biologically meaningful. Here we show an example of using these inferred networks to discover novel findings.</p>
+<section id="step-1-discover-target-genes">
+<h3>Step 1. Discover target genes<a class="headerlink" href="#step-1-discover-target-genes" title="Link to this heading">#</a></h3>
+<p>There are many ways to discover target genes to study the local networks. For example, you can put your lens on the most varied genes or the top genes that are up/down regulated, using any methods you prefer. Here, we simply pick the gene that has the strongest single regulation based on the inferred adjacency matrix.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">grn</span><span class="o">.</span><span class="n">adj_matrix</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span>
+<span class="go">&#39;HIST1H1D&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-visualize-the-local-network-around-the-selected-gene">
+<h3>Step 2. Visualize the local network around the selected gene<a class="headerlink" href="#step-2-visualize-the-local-network-around-the-selected-gene" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">visualize_local_neighborhood</span></code> method of an <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using <code class="docutils literal notranslate"><span class="pre">pyvis</span></code>/<code class="docutils literal notranslate"><span class="pre">vis.js</span></code>. The default <code class="docutils literal notranslate"><span class="pre">k</span></code> here is 20. However, in cases when the regulatory relationships are strong and bidirectional, <code class="docutils literal notranslate"><span class="pre">k=20</span></code> only gives a very simple network. You may increase the magnitude of <code class="docutils literal notranslate"><span class="pre">k</span></code> to find some meaningful results to you.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">([</span><span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="s1">&#39;MCM3&#39;</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs.png" /></p>
+</section>
+<section id="result-interpretation">
+<h3>Result Interpretation<a class="headerlink" href="#result-interpretation" title="Link to this heading">#</a></h3>
+<p>In the figure below, we clearly see two clusters. Most of the genes on the right side are obviously histone related since they all start with <code class="docutils literal notranslate"><span class="pre">HIST</span></code>. Genes on the left side are not that obvious. Therefore, we did a GO enrichment analysis on this gene set using <a class="reference external" href="http://bioinformatics.sdstate.edu/go/">shinyGo 0.80</a> and found that they are closely related to DNA replication and double strand break repair.</p>
+<p>Recall that the <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data comes from mouse embryonic stem cells, whose core functionality is replication. We believe this region of GRN represents the interaction between the core gene set of embryonic cells and histone related genes.</p>
+<p>An interesting finding is that gene <code class="docutils literal notranslate"><span class="pre">BRCA1</span></code> sits right in the middle of the core gene group and the histone group. It suggests that <code class="docutils literal notranslate"><span class="pre">BRCA1</span></code> might play a role between histone and replication. In fact, we found a <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10292663/">2023 publication</a> to support this hypothesis.</p>
+<p><img alt="Go Enrichment analysis on one cluster" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/shinygo.png" /></p>
+</section>
 </section>
 </section>
 
@@ -425,6 +486,14 @@ In order to facilitate the downstream analyses on GRN, we defined an `GRN` objec
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#requirements">Requirements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-loading">Data Loading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-object">GRN object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-local-network-around-particular-genes">Inspecting the local network around particular genes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-discover-target-genes">Step 1. Discover target genes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-visualize-the-local-network-around-the-selected-gene">Step 2. Visualize the local network around the selected gene</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#result-interpretation">Result Interpretation</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

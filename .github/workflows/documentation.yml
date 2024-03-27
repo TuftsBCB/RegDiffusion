@@ -25,11 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install sphinx
-        pip install sphinx_book_theme
-        pip install myst-parser
-        pip install sphinx-panels
-        pip install sphinx-copybutton
+        pip install sphinx sphinx_book_theme sphinx myst-parser sphinx-copybutton --upgrade
         pip install numpy
         pip install pandas
         pip install torch --index-url https://download.pytorch.org/whl/cpu

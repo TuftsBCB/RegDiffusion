@@ -134,7 +134,7 @@ class RegDiffusion(nn.Module):
     def I_minus_A(self):
         mask = self.mask_nonparam
         if self.train:
-            A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout)
+            A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout).float()
             A_dropout /= (1-self.adj_dropout)
             mask = mask * A_dropout
         clean_A = self.soft_thresholding(self.adj_A, self.gene_reg_norm/2)*mask

@@ -47,7 +47,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="GRN" href="regdiffusion.GRN.html" />
-    <link rel="prev" title="API Reference" href="../modules.html" />
+    <link rel="prev" title="main API" href="../main_api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -154,11 +154,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../main_api.html">main API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -392,13 +398,13 @@ you only has CPU, it will switch back to CPU.</p></li>
 Compile the model is a good idea on large dataset and ofter improves
 inference speed when it works. For smaller dataset, eager execution
 if often good enough.</p></li>
-<li><p><strong>evaluator</strong> (<a class="reference internal" href="../regdiffusion.html#regdiffusion.GRNEvaluator" title="regdiffusion.GRNEvaluator"><em>GRNEvaluator</em></a>) – (Optional) A defined GRNEvaluator if ground
+<li><p><strong>evaluator</strong> (<a class="reference internal" href="regdiffusion.GRNEvaluator.html#regdiffusion.GRNEvaluator" title="regdiffusion.GRNEvaluator"><em>GRNEvaluator</em></a>) – (Optional) A defined GRNEvaluator if ground
 truth data is available. Evaluation will be done every 100 steps by
 default but you can change this setting through the eval_on_n_steps
 option. Default is None</p></li>
 <li><p><strong>eval_on_n_steps</strong> (<em>int</em>) – If an evaluator is provided, the trainer will
 run evaluation every <cite>eval_on_n_steps</cite> steps. Default: 100.</p></li>
-<li><p><strong>logger</strong> (<a class="reference internal" href="../regdiffusion.html#regdiffusion.LightLogger" title="regdiffusion.LightLogger"><em>LightLogger</em></a>) – (Optional) A LightLogger to log training process.
+<li><p><strong>logger</strong> (<em>LightLogger</em>) – (Optional) A LightLogger to log training process.
 The only situation when you need to provide this is when you want
 to save logs from different trainers into the same logger. Default
 is None.</p></li>
@@ -487,12 +493,12 @@ point.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../modules.html"
+       href="../main_api.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">API Reference</p>
+        <p class="prev-next-title">main API</p>
       </div>
     </a>
     <a class="right-next"

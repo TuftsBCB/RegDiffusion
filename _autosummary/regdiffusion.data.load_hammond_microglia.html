@@ -154,11 +154,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">regdiffusion.data.load_hammond_microglia</a></li>
@@ -335,11 +341,9 @@ document.write(`
 <span class="sig-prename descclassname"><span class="pre">regdiffusion.data.</span></span><span class="sig-name descname"><span class="pre">load_hammond_microglia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/data/microglia.html#load_hammond_microglia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.data.load_hammond_microglia" title="Link to this definition">#</a></dt>
 <dd><p>Load single cell for microglia from Hammond Microglia dataset</p>
 <p>Data Source: <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654</a></p>
-<dl class="simple">
-<dt>Paper: Single-Cell RNA Sequencing of Microglia throughout the Mouse Lifespan</dt><dd><p>and in the Injured Brain Reveals Complex Cell-State Changes</p>
-</dd>
-</dl>
-<p>Paper Link: <a class="reference external" href="https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0">https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0</a></p>
+<p>Paper: Single-Cell RNA Sequencing of Microglia throughout the Mouse Lifespan
+and in the Injured Brain Reveals Complex Cell-State Changes
+Paper Link: <a class="reference external" href="https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0">https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0</a></p>
 <p>IMPORTANT! This is not the complete data from the study. We only selected
 data from the 4 adult male mouses at P100. Here are their accession IDs.</p>
 <p>GSM3442026  P100 male no 1
@@ -352,9 +356,12 @@ and ribosome genes.</p>
 <p>The output is an AnnData object where rows are cells and columns are genes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path
-does not exist, it will be created. Data will be saved in a
-subdirectory under the provided path.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path</p></li>
+<li><p><strong>exist</strong> (<em>does not</em>) – </p></li>
+<li><p><strong>a</strong> (<em>it will be created. Data will be saved in</em>) – </p></li>
+<li><p><strong>path.</strong> (<em>subdirectory under the provided</em>) – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

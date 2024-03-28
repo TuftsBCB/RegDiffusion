@@ -153,11 +153,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -279,12 +285,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">download_file</span>
 
 <span class="c1"># Read ground truth</span>
-<div class="viewcode-block" id="load_beeline_ground_truth">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_beeline_ground_truth">[docs]</a>
 <span class="k">def</span> <span class="nf">load_beeline_ground_truth</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
     <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/label.csv&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ground_truth</span><span class="o">.</span><span class="n">values</span></div>
-
+    <span class="k">return</span> <span class="n">ground_truth</span><span class="o">.</span><span class="n">values</span>
 
 <span class="n">beeline_cell_type_dict</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;hESC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -296,8 +299,6 @@ document.write(`
     <span class="s1">&#39;mHSC-L&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="p">}</span>
 
-<div class="viewcode-block" id="cell_type_separator">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.cell_type_separator">[docs]</a>
 <span class="k">def</span> <span class="nf">cell_type_separator</span><span class="p">(</span><span class="n">sc_data</span><span class="p">,</span> <span class="n">cell_type_element_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
     <span class="n">cell_types</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sc_data</span><span class="o">.</span><span class="n">obs_names</span><span class="p">:</span>
@@ -307,41 +308,39 @@ document.write(`
     <span class="n">cell_type_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">cell_types</span><span class="p">)</span>
     <span class="n">cell_type_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">ct</span><span class="p">:</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cell_type_set</span><span class="p">)}</span>
     <span class="n">cell_type_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_type_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cell_types</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">cell_type_indices</span></div>
-
+    <span class="k">return</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">cell_type_indices</span>
 
 <div class="viewcode-block" id="load_beeline">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_beeline">[docs]</a>
+<a class="viewcode-back" href="../../../_autosummary/regdiffusion.data.load_beeline.html#regdiffusion.data.load_beeline">[docs]</a>
 <span class="k">def</span> <span class="nf">load_beeline</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">&#39;hESC&#39;</span><span class="p">,</span> 
                  <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">&#39;500_STRING&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load BEELINE data and its ground truth (download if necessary).</span>
 
 <span class="sd">    Paper: Benchmarking algorithms for gene regulatory network inference from </span>
-<span class="sd">        single-cell transcriptomic data</span>
+<span class="sd">    single-cell transcriptomic data</span>
 <span class="sd">    Paper Link: https://www.nature.com/articles/s41592-019-0690-6</span>
 
-<span class="sd">    BEELINE consists of 7 single-cell datasets (`hESC`, `hHep`, `mDC`, `mESC`, </span>
-<span class="sd">    `mHSC`, `mHSC-GM`, and `mHSC-L) and 3 sets of ground truth networks </span>
-<span class="sd">    (`STRING`, `Non-ChIP`, `ChIP-seq`). </span>
+<span class="sd">    BEELINE consists of 7 single-cell datasets (``hESC``, ``hHep``, ``mDC``, </span>
+<span class="sd">    ``mESC``, ``mHSC``, ``mHSC-GM``, and ``mHSC-L``) and 3 sets of ground truth </span>
+<span class="sd">    networks (``STRING``, ``Non-ChIP``, ``ChIP-seq``). </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
-<span class="sd">            does not exist, it will be created. Data will be saved in a</span>
-<span class="sd">            subdirectory under the provided path. </span>
-<span class="sd">        benchmark_data (str): Benchmark datasets. Choose among `hESC`, `hHep`, </span>
-<span class="sd">            `mDC`, `mESC`, `mHSC`, `mHSC-GM`, and `mHSC-L`.</span>
-<span class="sd">        benchmark_setting (str): Benchmark settings. Choose among `500_STRING`, </span>
-<span class="sd">            `1000_STRING`, `500_Non-ChIP`, `1000_Non-ChIP`, `500_ChIP-seq`, </span>
-<span class="sd">            `1000_ChIP-seq`, `500_lofgof`, and `1000_lofgof`. If either of the </span>
-<span class="sd">            `lofgof` settings is choosed, only `mESC` data is available.  </span>
+<span class="sd">        does not exist, it will be created. Data will be saved in a</span>
+<span class="sd">        subdirectory under the provided path. </span>
+<span class="sd">        benchmark_data (str): Benchmark datasets. Choose among &quot;hESC&quot;, &quot;hHep&quot;, </span>
+<span class="sd">        &quot;mDC&quot;, &quot;mESC&quot;, &quot;mHSC&quot;, &quot;mHSC-GM&quot;, and &quot;mHSC-L&quot;.</span>
+<span class="sd">        benchmark_setting (str): Benchmark settings. Choose among &quot;500_STRING&quot;, </span>
+<span class="sd">        &quot;1000_STRING&quot;, &quot;500_Non-ChIP&quot;, &quot;1000_Non-ChIP&quot;, &quot;500_ChIP-seq&quot;, </span>
+<span class="sd">        &quot;1000_ChIP-seq&quot;, &quot;500_lofgof&quot;, and &quot;1000_lofgof&quot;. If either of the </span>
+<span class="sd">        &quot;lofgof&quot; settings is choosed, only &quot;mESC&quot; data is available.  </span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: A tuple containing two objects for a single BEELINE benchmark. </span>
-<span class="sd">            - The first element is a scanpy AnnData with cells on rows and </span>
-<span class="sd">                genes on columns. </span>
-<span class="sd">            - Second element is an numpy array for the adjacency list of the </span>
-<span class="sd">                ground truth network.  </span>
+<span class="sd">        The first element is a scanpy AnnData with cells on rows and genes on </span>
+<span class="sd">        columns. Second element is an numpy array for the adjacency list of </span>
+<span class="sd">        the ground truth network.  </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
@@ -360,8 +359,6 @@ document.write(`
     <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">ground_truth</span></div>
 
 
-<div class="viewcode-block" id="download_beeline">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.download_beeline">[docs]</a>
 <span class="k">def</span> <span class="nf">download_beeline</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">remove_zip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;save_dir does not exist&quot;</span><span class="p">)</span>
@@ -373,8 +370,7 @@ document.write(`
                          <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">())):</span>
             <span class="n">zip_ref</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">remove_zip</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span></div>
-
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
 </pre></div>
 
                 </article>

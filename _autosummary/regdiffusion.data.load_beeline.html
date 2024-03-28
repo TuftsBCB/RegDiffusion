@@ -47,7 +47,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="regdiffusion.data.load_atlas_microglia" href="regdiffusion.data.load_atlas_microglia.html" />
-    <link rel="prev" title="RegDiffusion" href="regdiffusion.models.RegDiffusion.html" />
+    <link rel="prev" title="data module" href="../data_module.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -154,11 +154,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -334,48 +340,48 @@ document.write(`
 <dt class="sig sig-object py" id="regdiffusion.data.load_beeline">
 <span class="sig-prename descclassname"><span class="pre">regdiffusion.data.</span></span><span class="sig-name descname"><span class="pre">load_beeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">benchmark_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hESC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">benchmark_setting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'500_STRING'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/data/beeline.html#load_beeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.data.load_beeline" title="Link to this definition">#</a></dt>
 <dd><p>Load BEELINE data and its ground truth (download if necessary).</p>
-<dl class="simple">
-<dt>Paper: Benchmarking algorithms for gene regulatory network inference from</dt><dd><p>single-cell transcriptomic data</p>
-</dd>
-</dl>
-<p>Paper Link: <a class="reference external" href="https://www.nature.com/articles/s41592-019-0690-6">https://www.nature.com/articles/s41592-019-0690-6</a></p>
-<p>BEELINE consists of 7 single-cell datasets (<cite>hESC</cite>, <cite>hHep</cite>, <cite>mDC</cite>, <cite>mESC</cite>,
-<cite>mHSC</cite>, <cite>mHSC-GM</cite>, and <cite>mHSC-L) and 3 sets of ground truth networks
-(`STRING</cite>, <cite>Non-ChIP</cite>, <cite>ChIP-seq</cite>).</p>
+<p>Paper: Benchmarking algorithms for gene regulatory network inference from
+single-cell transcriptomic data
+Paper Link: <a class="reference external" href="https://www.nature.com/articles/s41592-019-0690-6">https://www.nature.com/articles/s41592-019-0690-6</a></p>
+<p>BEELINE consists of 7 single-cell datasets (<code class="docutils literal notranslate"><span class="pre">hESC</span></code>, <code class="docutils literal notranslate"><span class="pre">hHep</span></code>, <code class="docutils literal notranslate"><span class="pre">mDC</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mESC</span></code>, <code class="docutils literal notranslate"><span class="pre">mHSC</span></code>, <code class="docutils literal notranslate"><span class="pre">mHSC-GM</span></code>, and <code class="docutils literal notranslate"><span class="pre">mHSC-L</span></code>) and 3 sets of ground truth
+networks (<code class="docutils literal notranslate"><span class="pre">STRING</span></code>, <code class="docutils literal notranslate"><span class="pre">Non-ChIP</span></code>, <code class="docutils literal notranslate"><span class="pre">ChIP-seq</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path
-does not exist, it will be created. Data will be saved in a
-subdirectory under the provided path.</p></li>
-<li><p><strong>benchmark_data</strong> (<em>str</em>) – Benchmark datasets. Choose among <cite>hESC</cite>, <cite>hHep</cite>,
-<cite>mDC</cite>, <cite>mESC</cite>, <cite>mHSC</cite>, <cite>mHSC-GM</cite>, and <cite>mHSC-L</cite>.</p></li>
-<li><p><strong>benchmark_setting</strong> (<em>str</em>) – Benchmark settings. Choose among <cite>500_STRING</cite>,
-<cite>1000_STRING</cite>, <cite>500_Non-ChIP</cite>, <cite>1000_Non-ChIP</cite>, <cite>500_ChIP-seq</cite>,
-<cite>1000_ChIP-seq</cite>, <cite>500_lofgof</cite>, and <cite>1000_lofgof</cite>. If either of the
-<cite>lofgof</cite> settings is choosed, only <cite>mESC</cite> data is available.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>A tuple containing two objects for a single BEELINE benchmark.</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>The first element is a scanpy AnnData with cells on rows and</dt><dd><p>genes on columns.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Second element is an numpy array for the adjacency list of the</dt><dd><p>ground truth network.</p>
-</dd>
-</dl>
-</li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path</p></li>
+<li><p><strong>exist</strong> (<em>does not</em>) – </p></li>
+<li><p><strong>a</strong> (<em>it will be created. Data will be saved in</em>) – </p></li>
+<li><p><strong>path.</strong> (<em>subdirectory under the provided</em>) – </p></li>
+<li><p><strong>benchmark_data</strong> (<em>str</em>) – Benchmark datasets. Choose among “hESC”, “hHep”,</p></li>
+<li><p><strong>&quot;mDC&quot;</strong> – </p></li>
+<li><p><strong>&quot;mESC&quot;</strong> – </p></li>
+<li><p><strong>&quot;mHSC&quot;</strong> – </p></li>
+<li><p><strong>&quot;mHSC-GM&quot;</strong> – </p></li>
+<li><p><strong>&quot;mHSC-L&quot;.</strong> (<em>and</em>) – </p></li>
+<li><p><strong>benchmark_setting</strong> (<em>str</em>) – Benchmark settings. Choose among “500_STRING”,</p></li>
+<li><p><strong>&quot;1000_STRING&quot;</strong> – </p></li>
+<li><p><strong>&quot;500_Non-ChIP&quot;</strong> – </p></li>
+<li><p><strong>&quot;1000_Non-ChIP&quot;</strong> – </p></li>
+<li><p><strong>&quot;500_ChIP-seq&quot;</strong> – </p></li>
 </ul>
 </dd>
 </dl>
-</p>
+<p>:param :
+:param “1000_ChIP-seq”:
+:param “500_lofgof”:
+:param and “1000_lofgof”. If either of the:
+:param “lofgof” settings is choosed:
+:param only “mESC” data is available.:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing two objects for a single BEELINE benchmark.
+The first element is a scanpy AnnData with cells on rows and genes on
+columns. Second element is an numpy array for the adjacency list of
+the ground truth network.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -394,12 +400,12 @@ subdirectory under the provided path.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="regdiffusion.models.RegDiffusion.html"
+       href="../data_module.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">RegDiffusion</p>
+        <p class="prev-next-title"><cite>data</cite> module</p>
       </div>
     </a>
     <a class="right-next"

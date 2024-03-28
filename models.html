@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; regdiffusion 0.0.5 documentation</title>
+    <title>models &#8212; regdiffusion 0.0.5 documentation</title>
   
   
   
@@ -43,11 +43,11 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'modules';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'models';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="RegDiffusionTrainer" href="_autosummary/regdiffusion.RegDiffusionTrainer.html" />
-    <link rel="prev" title="Get Started" href="quick_tour.html" />
+    <link rel="next" title="RegDiffusion" href="_autosummary/regdiffusion.models.RegDiffusion.html" />
+    <link rel="prev" title="GRNEvaluator" href="_autosummary/regdiffusion.GRNEvaluator.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -154,11 +154,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">models</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -222,7 +228,7 @@
       
       
       
-      <li><a href="_sources/modules.rst" target="_blank"
+      <li><a href="_sources/models.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -293,9 +299,7 @@ document.write(`
   </button>
 `);
 </script>
-<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</label>
+
 </div></div>
       
     </div>
@@ -306,21 +310,11 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>API Reference</h1>
+    <h1>models</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-api">Top level API</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">data</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -330,26 +324,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
-<section id="top-level-api">
-<h2>Top level API<a class="headerlink" href="#top-level-api" title="Link to this heading">#</a></h2>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="regdiffusion.html#regdiffusion.RegDiffusionTrainer" title="regdiffusion.RegDiffusionTrainer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.RegDiffusionTrainer</span></code></a>(exp_array)</p></td>
-<td><p>Initialize and Train a RegDiffusion model.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="regdiffusion.html#regdiffusion.GRN" title="regdiffusion.GRN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.GRN</span></code></a>(adj_matrix, gene_names[, ...])</p></td>
-<td><p>A Object to save and analyze gene regulatory network</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="regdiffusion.html#regdiffusion.GRNEvaluator" title="regdiffusion.GRNEvaluator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.GRNEvaluator</span></code></a>(ground_truth, ...)</p></td>
-<td><p>A generalized evaluator for GRN inference.</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="models">
-<h2>models<a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
+  <section id="models">
+<h1>models<a class="headerlink" href="#models" title="Link to this heading">#</a></h1>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion" title="regdiffusion.models.RegDiffusion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.models.RegDiffusion</span></code></a>(n_gene, ...)</p></td>
@@ -357,23 +333,6 @@ document.write(`
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data">
-<h2>data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html#regdiffusion.data.load_beeline" title="regdiffusion.data.load_beeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.data.load_beeline</span></code></a>([data_dir, ...])</p></td>
-<td><p>Load BEELINE data and its ground truth (download if necessary).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html#regdiffusion.data.load_atlas_microglia" title="regdiffusion.data.load_atlas_microglia"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.data.load_atlas_microglia</span></code></a>([...])</p></td>
-<td><p>Load single cell for microglia from Broad Institute SCP795</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html#regdiffusion.data.load_hammond_microglia" title="regdiffusion.data.load_hammond_microglia"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regdiffusion.data.load_hammond_microglia</span></code></a>([...])</p></td>
-<td><p>Load single cell for microglia from Hammond Microglia dataset</p></td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 
 
@@ -388,20 +347,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="quick_tour.html"
+       href="_autosummary/regdiffusion.GRNEvaluator.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Get Started</p>
+        <p class="prev-next-title">GRNEvaluator</p>
       </div>
     </a>
     <a class="right-next"
-       href="_autosummary/regdiffusion.RegDiffusionTrainer.html"
+       href="_autosummary/regdiffusion.models.RegDiffusion.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">RegDiffusionTrainer</p>
+        <p class="prev-next-title">RegDiffusion</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -412,22 +371,7 @@ document.write(`
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-level-api">Top level API</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">data</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
+                <div class="bd-sidebar-secondary bd-toc"></div>
               
             
           </div>

@@ -154,11 +154,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../main_api.html">main API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -346,11 +352,9 @@ document.write(`
 <dt class="sig sig-object py" id="regdiffusion.GRN">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.</span></span><span class="sig-name descname"><span class="pre">GRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN" title="Link to this definition">#</a></dt>
 <dd><p>A Object to save and analyze gene regulatory network</p>
-<dl class="simple">
-<dt>A GRN object includes the adjacency matrix between transcriptional factors</dt><dd><p>and target genes. In many cases, when TFs are not specified, we have a</p>
-</dd>
-</dl>
-<p>square-shaped adjacency matrix. We expected the adjacency
+<p>A GRN object includes the adjacency matrix between transcriptional factors
+and target genes. In many cases, when TFs are not specified, we have a
+square-shaped adjacency matrix. We expected the adjacency
 matrix to hold predicted weights/probabilities for the edges (float).</p>
 <p>To create a GRN object, you need at least two things: the adjacency matrix
 and the corresponding gene names. You can further specify the TF names if
@@ -371,13 +375,13 @@ and <cite>.visualize_local_neighborhood</cite>.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>adj_matrix</strong> (<em>np.ndarray</em>) – A 2D adjacency matrix to save.</p></li>
-<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – A 1D numpy array with all the target gene
-names.</p></li>
-<li><p><strong>tf_names</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – A 1D numpy array with all the TF gene
-names.</p></li>
-<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If this value is set, only the top k absolute
-values in the adjacency matrix will be kept. All the other values
-will be set to zero.</p></li>
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – A 1D numpy array with all the target gene</p></li>
+<li><p><strong>names.</strong> – </p></li>
+<li><p><strong>tf_names</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – A 1D numpy array with all the TF gene</p></li>
+<li><p><strong>names.</strong> – </p></li>
+<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If this value is set, only the top k absolute</p></li>
+<li><p><strong>values</strong> (<em>values in the adjacency matrix will be kept. All the other</em>) – </p></li>
+<li><p><strong>zero.</strong> (<em>will be set to</em>) – </p></li>
 </ul>
 </dd>
 </dl>

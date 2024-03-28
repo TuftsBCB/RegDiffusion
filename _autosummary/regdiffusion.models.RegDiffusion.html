@@ -46,8 +46,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/regdiffusion.models.RegDiffusion';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="regdiffusion.data.load_beeline" href="regdiffusion.data.load_beeline.html" />
-    <link rel="prev" title="GRNEvaluator" href="regdiffusion.GRNEvaluator.html" />
+    <link rel="next" title="data module" href="../data_module.html" />
+    <link rel="prev" title="models" href="../models.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -154,11 +154,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../modules.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../models.html">models</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -382,23 +388,23 @@ document.write(`
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.models.</span></span><span class="sig-name descname"><span class="pre">RegDiffusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_gene</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_celltype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">celltype_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[16,</span> <span class="pre">16,</span> <span class="pre">16]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/models/regdiffusion.html#RegDiffusion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.models.RegDiffusion" title="Link to this definition">#</a></dt>
 <dd><p>A RegDiffusion model. For architecture details, please refer to our paper.</p>
-<p>&gt; From noise to knowledge: probabilistic diffusion-based neural inference</p>
+<p>From noise to knowledge: probabilistic diffusion-based neural inference</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_genes</strong> (<em>int</em>) – Number of Genes</p></li>
 <li><p><strong>time_dim</strong> (<em>int</em>) – Dimension of time step embedding</p></li>
-<li><p><strong>n_celltype</strong> (<em>int</em>) – Number of expected cell types. If it is not provided,
-there would be no celltype embedding. Default is None.</p></li>
+<li><p><strong>n_celltype</strong> (<em>int</em>) – Number of expected cell types. If it is not provided,</p></li>
+<li><p><strong>None.</strong> (<em>there would be no celltype embedding. Default is</em>) – </p></li>
 <li><p><strong>celltype_dim</strong> (<em>int</em>) – Dimension of cell types</p></li>
-<li><p><strong>hidden_dims</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of integer for the dimensions of the
-hidden layers. The first hidden dimension will be used as the size
-for gene embedding.</p></li>
-<li><p><strong>adj_dropout</strong> (<em>float</em>) – A single number between 0 and 1 specifying the
-percentage of values in the adjacency matrix that are dropped
-during training.</p></li>
-<li><p><strong>init_coef</strong> (<em>int</em>) – Coefficient to multiply with gene regulation norm
-(1/(n_gene - 1)) to initialize the adjacency matrix.</p></li>
+<li><p><strong>hidden_dims</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of integer for the dimensions of the</p></li>
+<li><p><strong>size</strong> (<em>hidden layers. The first hidden dimension will be used as the</em>) – </p></li>
+<li><p><strong>embedding.</strong> (<em>for gene</em>) – </p></li>
+<li><p><strong>adj_dropout</strong> (<em>float</em>) – A single number between 0 and 1 specifying the</p></li>
+<li><p><strong>dropped</strong> (<em>percentage</em><em> of </em><em>values in the adjacency matrix that are</em>) – </p></li>
+<li><p><strong>training.</strong> (<em>during</em>) – </p></li>
+<li><p><strong>init_coef</strong> (<em>int</em>) – Coefficient to multiply with gene regulation norm</p></li>
+<li><p><strong>(</strong><strong>1/</strong> (<em>n_gene - 1</em><em>)</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -1656,20 +1662,20 @@ See <code class="xref py py-meth docutils literal notranslate"><span class="pre"
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="regdiffusion.GRNEvaluator.html"
+       href="../models.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">GRNEvaluator</p>
+        <p class="prev-next-title">models</p>
       </div>
     </a>
     <a class="right-next"
-       href="regdiffusion.data.load_beeline.html"
+       href="../data_module.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">regdiffusion.data.load_beeline</p>
+        <p class="prev-next-title"><cite>data</cite> module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -153,11 +153,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -280,7 +286,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="load_atlas_microglia">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_atlas_microglia">[docs]</a>
+<a class="viewcode-back" href="../../../_autosummary/regdiffusion.data.load_atlas_microglia.html#regdiffusion.data.load_atlas_microglia">[docs]</a>
 <span class="k">def</span> <span class="nf">load_atlas_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sc</span><span class="o">.</span><span class="n">AnnData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load single cell for microglia from Broad Institute SCP795</span>
@@ -288,7 +294,8 @@ document.write(`
 <span class="sd">    Data Source: https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary</span>
 
 <span class="sd">    Paper: A transcriptomic atlas of mouse cerebellar cortex comprehensively </span>
-<span class="sd">        defines cell types</span>
+<span class="sd">    defines cell types</span>
+
 <span class="sd">    Paper Link: https://www.nature.com/articles/s41586-021-03220-z</span>
 
 <span class="sd">    Raw data is count data. We select all genes that have non-zero expression. </span>
@@ -299,8 +306,8 @@ document.write(`
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
-<span class="sd">            does not exist, it will be created. Data will be saved in a</span>
-<span class="sd">            subdirectory under the provided path. </span>
+<span class="sd">        does not exist, it will be created. Data will be saved in a </span>
+<span class="sd">        subdirectory under the provided path. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
@@ -322,7 +329,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="load_hammond_microglia">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.load_hammond_microglia">[docs]</a>
+<a class="viewcode-back" href="../../../_autosummary/regdiffusion.data.load_hammond_microglia.html#regdiffusion.data.load_hammond_microglia">[docs]</a>
 <span class="k">def</span> <span class="nf">load_hammond_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load single cell for microglia from Hammond Microglia dataset</span>
@@ -330,7 +337,7 @@ document.write(`
 <span class="sd">    Data Source: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654</span>
 
 <span class="sd">    Paper: Single-Cell RNA Sequencing of Microglia throughout the Mouse Lifespan</span>
-<span class="sd">        and in the Injured Brain Reveals Complex Cell-State Changes</span>
+<span class="sd">    and in the Injured Brain Reveals Complex Cell-State Changes</span>
 <span class="sd">    Paper Link: https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0</span>
 
 <span class="sd">    IMPORTANT! This is not the complete data from the study. We only selected</span>
@@ -349,8 +356,8 @@ document.write(`
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
-<span class="sd">            does not exist, it will be created. Data will be saved in a</span>
-<span class="sd">            subdirectory under the provided path. </span>
+<span class="sd">        does not exist, it will be created. Data will be saved in a</span>
+<span class="sd">        subdirectory under the provided path. </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
@@ -370,8 +377,6 @@ document.write(`
     <span class="k">return</span> <span class="n">ann_dt</span></div>
 
 
-<div class="viewcode-block" id="download_regdiffusion_data">
-<a class="viewcode-back" href="../../../regdiffusion.data.html#regdiffusion.data.download_regdiffusion_data">[docs]</a>
 <span class="k">def</span> <span class="nf">download_regdiffusion_data</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">remove_zip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;save_dir does not exist&quot;</span><span class="p">)</span>
@@ -384,8 +389,7 @@ document.write(`
                          <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">())):</span>
             <span class="n">zip_ref</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">remove_zip</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span></div>
-
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
 </pre></div>
 
                 </article>

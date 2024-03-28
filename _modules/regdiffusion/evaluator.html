@@ -153,11 +153,17 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../main_api.html">main API</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../models.html">models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
@@ -275,7 +281,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">average_precision_score</span><span class="p">,</span> <span class="n">roc_auc_score</span>
 
 <div class="viewcode-block" id="GRNEvaluator">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRNEvaluator">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRNEvaluator.html#regdiffusion.GRNEvaluator">[docs]</a>
 <span class="k">class</span> <span class="nc">GRNEvaluator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A generalized evaluator for GRN inference.</span>
@@ -332,8 +338,6 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">report_ep</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;EP&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">report_epr</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;EPR&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GRNEvaluator.evaluate">
-<a class="viewcode-back" href="../../regdiffusion.html#regdiffusion.GRNEvaluator.evaluate">[docs]</a>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_mask</span><span class="p">,</span> <span class="p">:]</span>
@@ -359,7 +363,6 @@ document.write(`
             <span class="n">eval_results</span><span class="p">[</span><span class="s1">&#39;EPR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="n">eval_results</span><span class="p">[</span><span class="s1">&#39;EP&#39;</span><span class="p">]</span>
             <span class="n">eval_results</span><span class="p">[</span><span class="s1">&#39;EPR&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_true_edges</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">eval_results</span></div>
-</div>
 
 
 </pre></div>

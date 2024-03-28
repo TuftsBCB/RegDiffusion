@@ -14,7 +14,8 @@ def load_atlas_microglia(data_dir='data') -> sc.AnnData:
     Data Source: https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary
 
     Paper: A transcriptomic atlas of mouse cerebellar cortex comprehensively 
-        defines cell types
+    defines cell types
+
     Paper Link: https://www.nature.com/articles/s41586-021-03220-z
 
     Raw data is count data. We select all genes that have non-zero expression. 
@@ -25,8 +26,8 @@ def load_atlas_microglia(data_dir='data') -> sc.AnnData:
 
     Args:
         data_dir (str): Parent directory to save and load the data. If the path
-            does not exist, it will be created. Data will be saved in a
-            subdirectory under the provided path. 
+        does not exist, it will be created. Data will be saved in a 
+        subdirectory under the provided path. 
     """
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
@@ -53,7 +54,7 @@ def load_hammond_microglia(data_dir='data'):
     Data Source: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654
 
     Paper: Single-Cell RNA Sequencing of Microglia throughout the Mouse Lifespan
-        and in the Injured Brain Reveals Complex Cell-State Changes
+    and in the Injured Brain Reveals Complex Cell-State Changes
     Paper Link: https://www.cell.com/immunity/fulltext/S1074-7613(18)30485-0
 
     IMPORTANT! This is not the complete data from the study. We only selected
@@ -72,8 +73,8 @@ def load_hammond_microglia(data_dir='data'):
 
     Args:
         data_dir (str): Parent directory to save and load the data. If the path
-            does not exist, it will be created. Data will be saved in a
-            subdirectory under the provided path. 
+        does not exist, it will be created. Data will be saved in a
+        subdirectory under the provided path. 
     
     """
     if not os.path.exists(data_dir):

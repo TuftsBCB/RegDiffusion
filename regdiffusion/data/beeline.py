@@ -38,30 +38,29 @@ def load_beeline(data_dir='data', benchmark_data='hESC',
     Load BEELINE data and its ground truth (download if necessary).
 
     Paper: Benchmarking algorithms for gene regulatory network inference from 
-        single-cell transcriptomic data
+    single-cell transcriptomic data
     Paper Link: https://www.nature.com/articles/s41592-019-0690-6
 
-    BEELINE consists of 7 single-cell datasets (`hESC`, `hHep`, `mDC`, `mESC`, 
-    `mHSC`, `mHSC-GM`, and `mHSC-L) and 3 sets of ground truth networks 
-    (`STRING`, `Non-ChIP`, `ChIP-seq`). 
+    BEELINE consists of 7 single-cell datasets (``hESC``, ``hHep``, ``mDC``, 
+    ``mESC``, ``mHSC``, ``mHSC-GM``, and ``mHSC-L``) and 3 sets of ground truth 
+    networks (``STRING``, ``Non-ChIP``, ``ChIP-seq``). 
     
     Args:
         data_dir (str): Parent directory to save and load the data. If the path
-            does not exist, it will be created. Data will be saved in a
-            subdirectory under the provided path. 
-        benchmark_data (str): Benchmark datasets. Choose among `hESC`, `hHep`, 
-            `mDC`, `mESC`, `mHSC`, `mHSC-GM`, and `mHSC-L`.
-        benchmark_setting (str): Benchmark settings. Choose among `500_STRING`, 
-            `1000_STRING`, `500_Non-ChIP`, `1000_Non-ChIP`, `500_ChIP-seq`, 
-            `1000_ChIP-seq`, `500_lofgof`, and `1000_lofgof`. If either of the 
-            `lofgof` settings is choosed, only `mESC` data is available.  
+        does not exist, it will be created. Data will be saved in a
+        subdirectory under the provided path. 
+        benchmark_data (str): Benchmark datasets. Choose among "hESC", "hHep", 
+        "mDC", "mESC", "mHSC", "mHSC-GM", and "mHSC-L".
+        benchmark_setting (str): Benchmark settings. Choose among "500_STRING", 
+        "1000_STRING", "500_Non-ChIP", "1000_Non-ChIP", "500_ChIP-seq", 
+        "1000_ChIP-seq", "500_lofgof", and "1000_lofgof". If either of the 
+        "lofgof" settings is choosed, only "mESC" data is available.  
 
     Returns:
         tuple: A tuple containing two objects for a single BEELINE benchmark. 
-            - The first element is a scanpy AnnData with cells on rows and 
-                genes on columns. 
-            - Second element is an numpy array for the adjacency list of the 
-                ground truth network.  
+        The first element is a scanpy AnnData with cells on rows and genes on 
+        columns. Second element is an numpy array for the adjacency list of 
+        the ground truth network.  
     """
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)

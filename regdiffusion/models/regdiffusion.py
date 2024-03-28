@@ -59,22 +59,22 @@ class RegDiffusion(nn.Module):
     """
     A RegDiffusion model. For architecture details, please refer to our paper.
 
-    > From noise to knowledge: probabilistic diffusion-based neural inference
+    From noise to knowledge: probabilistic diffusion-based neural inference
     
     Args:
         n_genes (int): Number of Genes
         time_dim (int): Dimension of time step embedding
         n_celltype (int): Number of expected cell types. If it is not provided, 
-            there would be no celltype embedding. Default is None. 
+        there would be no celltype embedding. Default is None. 
         celltype_dim (int): Dimension of cell types
         hidden_dims (list[int]): List of integer for the dimensions of the 
-            hidden layers. The first hidden dimension will be used as the size
-            for gene embedding. 
+        hidden layers. The first hidden dimension will be used as the size
+        for gene embedding. 
         adj_dropout (float): A single number between 0 and 1 specifying the 
-            percentage of values in the adjacency matrix that are dropped 
-            during training. 
+        percentage of values in the adjacency matrix that are dropped 
+        during training. 
         init_coef (int): Coefficient to multiply with gene regulation norm 
-            (1/(n_gene - 1)) to initialize the adjacency matrix. 
+        (1/(n_gene - 1)) to initialize the adjacency matrix. 
     """
     def __init__(
         self, n_gene, time_dim, 

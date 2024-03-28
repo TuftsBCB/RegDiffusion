@@ -4,6 +4,8 @@ results/
 result_logs/
 __pycache__/
 .ipynb_checkpoints
+.DS_Store
+experiment_used_scripts/
 lib
 view.html
 test.html

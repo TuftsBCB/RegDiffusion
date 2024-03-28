@@ -12,8 +12,8 @@ class GRN:
     """ 
     A Object to save and analyze gene regulatory network
 
-    A GRN object includes the adjacency matrix between transcriptional factors
-     and target genes. In many cases, when TFs are not specified, we have a 
+    A GRN object includes the adjacency matrix between transcriptional factors 
+    and target genes. In many cases, when TFs are not specified, we have a 
     square-shaped adjacency matrix. We expected the adjacency 
     matrix to hold predicted weights/probabilities for the edges (float). 
 
@@ -39,12 +39,12 @@ class GRN:
     Args:
         adj_matrix (np.ndarray): A 2D adjacency matrix to save.
         gene_names (np.ndarray): A 1D numpy array with all the target gene 
-            names.
+        names.
         tf_names (np.ndarray, optional): A 1D numpy array with all the TF gene 
-            names.
+        names.
         top_gene_percentile (int): If this value is set, only the top k absolute
-            values in the adjacency matrix will be kept. All the other values
-            will be set to zero. 
+        values in the adjacency matrix will be kept. All the other values
+        will be set to zero. 
     """
     def __init__(self, adj_matrix: np.ndarray, 
                  gene_names: np.ndarray, 

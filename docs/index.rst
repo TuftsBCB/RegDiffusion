@@ -82,7 +82,9 @@ Please consider cite our work if you found it useful for your work:
    :caption: References:
    :hidden:
 
-   modules
+   main_api
+   models
+   data_module
 
 .. toctree::
    :caption: Paper Supplements

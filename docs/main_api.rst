@@ -1,5 +1,5 @@
-main API
-========
+main Interface
+==============
 
 .. autosummary::
    :toctree: _autosummary

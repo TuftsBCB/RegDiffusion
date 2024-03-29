@@ -1,4 +1,4 @@
-# RegDiffusion <img src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/docs/_static/regdiffusion.png" align="right" alt="logo" width="120" height = "120" style = "border: none; float: right;">
+# RegDiffusion <img src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/docs/_static/regdiffusion.png" align="right" alt="logo" width="200" height = "200" style = "border: none; float: right;">
 
 RegDiffusion is a very fast regulatory network inference algorithm based on probabilistic diffusion model. It works well on genes and is capable to rapidly (<5min) predict biologically verifiable links from large single cell RNA-seq data with 14,000+ genes.
 

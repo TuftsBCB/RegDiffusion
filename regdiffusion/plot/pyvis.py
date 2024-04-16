@@ -39,7 +39,7 @@ def plot_pyvis(
             this_node_size = node_size
         else:
             node_shape = 'star' if node in star_genes else 'dot'
-            this_node_size = 2s * node_size if node in star_genes else node_size
+            this_node_size = 2 * node_size if node in star_genes else node_size
         node_color = None if node_color_dict is None else node_color_dict[node]
         g.add_node(node, label=node, size=this_node_size, 
                    shape=node_shape, color=node_color, 

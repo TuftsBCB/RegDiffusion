@@ -289,8 +289,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span><span class="p">,</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
-<span class="kn">import</span> <span class="nn">pyvis</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">concurrent.futures</span>
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">plot_pyvis</span>
 
 <div class="viewcode-block" id="GRN">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN">[docs]</a>
@@ -360,28 +361,42 @@ document.write(`
             <span class="n">adj_matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">adj_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span> <span class="o">=</span> <span class="n">adj_matrix</span>
+        <span class="c1"># TODO: make it tf safe. </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix_2way</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
+                <span class="n">adj_matrix</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+            <span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix_2way</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gene_names</span><span class="p">)}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tf_indices</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tf_names</span><span class="p">)}</span>
 
-<div class="viewcode-block" id="GRN.generate_adj_list">
-<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.generate_adj_list">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_adj_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated_neighbors</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="GRN.get_edgelist">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.get_edgelist">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Simply generate a dataframe to hold the adjacency list.</span>
+<span class="sd">        Simply generate a dataframe to hold the edge list.</span>
 
 <span class="sd">        The dataframe will have 3 columns: `source`, `target`, `weight`. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all.</span>
+<span class="sd">            workers (int): Number of concurrent workers. Default is 2. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">):</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">all_edges</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_names</span><span class="p">[</span><span class="n">r</span><span class="p">],</span>
-                        <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">c</span><span class="p">],</span>
-                        <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span>
-                    <span class="p">})</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_edges</span><span class="p">)</span></div>
+        <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span>
+            <span class="n">max_workers</span><span class="o">=</span><span class="n">workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span>
+                <span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">)]</span>
+        
+            <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> 
+                <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_edges</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
                 
 
@@ -394,8 +409,7 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
         <span class="n">node_neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[:,</span> <span class="n">gene_idx</span><span class="p">]</span>
@@ -423,8 +437,7 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">source_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_sources_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">top_gene_names</span> <span class="o">=</span> <span class="p">[</span>
@@ -447,8 +460,7 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_indices</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
         <span class="n">node_neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[</span><span class="n">gene_idx</span><span class="p">,</span> <span class="p">:]</span>
@@ -476,8 +488,7 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_targets_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">top_gene_names</span> <span class="o">=</span> <span class="p">[</span>
@@ -500,27 +511,29 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_sources_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_targets_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">all_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
-            <span class="n">sources</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">],</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span>
-        <span class="p">]))</span>
-        <span class="n">cutoff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">all_weights</span><span class="p">,</span> <span class="o">-</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="n">k</span><span class="p">]</span>
-        <span class="n">source_crit</span> <span class="o">=</span> <span class="p">(</span><span class="n">sources</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">cutoff</span><span class="p">)</span>
-        <span class="n">target_crit</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">cutoff</span><span class="p">)</span>
+        <span class="n">gene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">gene_idx</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculated_neighbors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculated_neighbors</span><span class="p">[(</span><span class="n">gene_idx</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span>
+        <span class="n">node_neighbors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix_2way</span><span class="p">[:,</span> <span class="n">gene_idx</span><span class="p">]</span>
+        <span class="n">node_neighbors_abs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">node_neighbors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">node_neighbors_abs</span><span class="p">,</span> <span class="o">-</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="n">k</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">node_neighbors_abs</span><span class="o">!=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">top_edge_weights</span> <span class="o">=</span> <span class="n">node_neighbors</span><span class="p">[</span><span class="n">top_indices</span><span class="p">]</span>
+        <span class="n">top_source_indices</span> <span class="o">=</span> <span class="n">top_indices</span><span class="p">[</span><span class="n">top_indices</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">]</span>
+        <span class="n">top_source_weights</span> <span class="o">=</span> <span class="n">top_edge_weights</span><span class="p">[</span><span class="n">top_indices</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">]</span>
+        <span class="n">top_target_indices</span> <span class="o">=</span> <span class="n">top_indices</span><span class="p">[</span><span class="n">top_indices</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span>
+        <span class="n">top_target_weights</span> <span class="o">=</span> <span class="n">top_edge_weights</span><span class="p">[</span><span class="n">top_indices</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">]</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;sources&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;tf_indices&#39;</span><span class="p">:</span> <span class="n">sources</span><span class="p">[</span><span class="s1">&#39;tf_indices&#39;</span><span class="p">][</span><span class="n">source_crit</span><span class="p">],</span>
-                <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="n">sources</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="n">source_crit</span><span class="p">]</span>
-            <span class="p">},</span>
-            <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;gene_indices&#39;</span><span class="p">:</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;gene_indices&#39;</span><span class="p">][</span><span class="n">target_crit</span><span class="p">],</span>
-                <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">][</span><span class="n">target_crit</span><span class="p">]</span>
-            <span class="p">}</span>
+            <span class="s1">&#39;source_indices&#39;</span><span class="p">:</span> <span class="n">top_source_indices</span><span class="p">,</span> 
+            <span class="s1">&#39;source_weights&#39;</span><span class="p">:</span> <span class="n">top_source_weights</span><span class="p">,</span>
+            <span class="s1">&#39;target_indices&#39;</span><span class="p">:</span> <span class="n">top_target_indices</span><span class="p">,</span> 
+            <span class="s1">&#39;target_weights&#39;</span><span class="p">:</span> <span class="n">top_target_weights</span>
         <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculated_neighbors</span><span class="p">[(</span><span class="n">gene_idx</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">output</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
 
@@ -535,42 +548,55 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">top_sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_sources</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">top_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_targets</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">neighbor_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">source_gene_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tf_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbor_indices</span><span class="p">[</span><span class="s1">&#39;source_indices&#39;</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">source_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source_gene_names</span><span class="p">,</span> 
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">gene</span><span class="p">,</span> 
+            <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="n">neighbor_indices</span><span class="p">[</span><span class="s1">&#39;source_weights&#39;</span><span class="p">]</span>
+        <span class="p">})</span>
+        <span class="n">target_gene_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neighbor_indices</span><span class="p">[</span><span class="s1">&#39;target_indices&#39;</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">target_tbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">gene</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">target_gene_names</span><span class="p">,</span> 
+            <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="n">neighbor_indices</span><span class="p">[</span><span class="s1">&#39;target_weights&#39;</span><span class="p">]</span>
+        <span class="p">})</span>    
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">source_tbl</span><span class="p">,</span> <span class="n">target_tbl</span><span class="p">])</span></div>
 
-        <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">top_sources</span><span class="p">,</span> <span class="n">top_targets</span><span class="p">])</span>
-        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;abs_weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
-            <span class="s1">&#39;abs_weight&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">del</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;abs_weight&#39;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">output</span></div>
 
-
-<div class="viewcode-block" id="GRN.extract_node_2hop_neighborhood">
-<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_node_2hop_neighborhood">[docs]</a>
-    <span class="k">def</span> <span class="nf">extract_node_2hop_neighborhood</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">genes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+<div class="viewcode-block" id="GRN.extract_local_neighborhood">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_local_neighborhood">[docs]</a>
+    <span class="k">def</span> <span class="nf">extract_local_neighborhood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">genes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">hops</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;2.5&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate a pandas dataframe for the local neighborhood (2-hop) around </span>
-<span class="sd">        selected gene(s). </span>
+<span class="sd">        Generate a pandas dataframe for the 2.5 or 1.5 hop local neighborhood </span>
+<span class="sd">        around selected gene(s). &quot;2.5 hop local neighborhood&quot; includes all the </span>
+<span class="sd">        nodes and edges reachable by a 2-hop search from the selected genes and </span>
+<span class="sd">        the edges connecting all the 2-hop nodes. &quot;1.5 hop local neighborhood&quot;</span>
+<span class="sd">        is defined in a similar way but smaller. </span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
+<span class="sd">            hops (str): Number of hops to explore. We can either do a &quot;2.5&quot; or </span>
+<span class="sd">            &quot;1.5&quot; hop travesal around selected genes. Default is &quot;2.5&quot;. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">genes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">genes</span><span class="p">]</span>
         <span class="n">hop0_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span>
+
+        <span class="c1"># Hop 1</span>
         <span class="n">hop1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop0_genes</span>
         <span class="p">])</span>
-        <span class="n">hop1</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">hop1</span><span class="p">[</span><span class="s1">&#39;hop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">hop1_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop1</span><span class="o">.</span><span class="n">source</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop0_genes</span><span class="p">:</span>
@@ -578,77 +604,80 @@ document.write(`
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop1</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop0_genes</span><span class="p">:</span>
                 <span class="n">hop1_genes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
-        <span class="n">hop2s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop1_genes</span>
-        <span class="p">])</span>
-        <span class="n">hop2s</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">hop2_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop2s</span><span class="o">.</span><span class="n">source</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop0_genes</span> <span class="ow">and</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop1_genes</span><span class="p">:</span>
-                <span class="n">hop2_genes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop2s</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop0_genes</span> <span class="ow">and</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop1_genes</span><span class="p">:</span>
-                <span class="n">hop2_genes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
-        <span class="n">hop3s</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop2_genes</span><span class="p">:</span>
-            <span class="n">hop3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-            <span class="n">hop3</span> <span class="o">=</span> <span class="n">hop3</span><span class="p">[</span>
-                <span class="n">hop3</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">hop2_genes</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">hop3</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">hop2_genes</span><span class="p">)</span>
-            <span class="p">]</span>
-            <span class="n">hop3s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hop3</span><span class="p">)</span>
-        <span class="n">hop3s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">hop3s</span><span class="p">)</span>
-        <span class="n">hop3s</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="n">adj_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">hop1</span><span class="p">,</span> <span class="n">hop2s</span><span class="p">,</span> <span class="n">hop3s</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">adj_table</span></div>
+
+        <span class="c1"># Hop 2</span>
+        <span class="k">if</span> <span class="n">hops</span> <span class="o">==</span> <span class="s2">&quot;1.5&quot;</span><span class="p">:</span>
+            <span class="n">hop2s</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop1_genes</span><span class="p">:</span>
+                <span class="n">hop2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">hop2</span> <span class="o">=</span> <span class="n">hop2</span><span class="p">[</span>
+                    <span class="n">hop2</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">hop1_genes</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">hop2</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">hop1_genes</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">hop2s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hop2</span><span class="p">)</span>
+            <span class="n">hop2s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">hop2s</span><span class="p">)</span>
+            <span class="n">hop2s</span><span class="p">[</span><span class="s1">&#39;hop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">adj_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">hop1</span><span class="p">,</span> <span class="n">hop2s</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">adj_table</span>
+        <span class="k">elif</span> <span class="n">hops</span> <span class="o">==</span> <span class="s2">&quot;2.5&quot;</span><span class="p">:</span>   
+            <span class="n">hop2s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop1_genes</span>
+            <span class="p">])</span>
+            <span class="n">hop2s</span><span class="p">[</span><span class="s1">&#39;hop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">hop2_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop2s</span><span class="o">.</span><span class="n">source</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop0_genes</span> <span class="ow">and</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop1_genes</span><span class="p">:</span>
+                    <span class="n">hop2_genes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop2s</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop0_genes</span> <span class="ow">and</span> <span class="n">g</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hop1_genes</span><span class="p">:</span>
+                    <span class="n">hop2_genes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    
+            <span class="c1"># Hop 2.5</span>
+            <span class="n">hop3s</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">hop2_genes</span><span class="p">:</span>
+                <span class="n">hop3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">hop3</span> <span class="o">=</span> <span class="n">hop3</span><span class="p">[</span>
+                    <span class="n">hop3</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">hop2_genes</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">hop3</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">hop2_genes</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">hop3s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hop3</span><span class="p">)</span>
+            <span class="n">hop3s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">hop3s</span><span class="p">)</span>
+            <span class="n">hop3s</span><span class="p">[</span><span class="s1">&#39;hop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="n">adj_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">hop1</span><span class="p">,</span> <span class="n">hop2s</span><span class="p">,</span> <span class="n">hop3s</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">adj_table</span></div>
 
 
 <div class="viewcode-block" id="GRN.visualize_local_neighborhood">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.visualize_local_neighborhood">[docs]</a>
     <span class="k">def</span> <span class="nf">visualize_local_neighborhood</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">genes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> 
-        <span class="n">node_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">edge_widths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> 
-        <span class="n">font_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
-        <span class="n">node_group_dict</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-        <span class="n">cdn_resources</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;remote&#39;</span><span class="p">,</span> <span class="n">notebook</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">genes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">hops</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;2.5&quot;</span><span class="p">,</span>
+        <span class="n">edge_widths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> 
+        <span class="n">plot_engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyvis&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a vis.js network visualization of the local neighborhood </span>
 <span class="sd">        (2-hop) around selected gene(s). </span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
-<span class="sd">            k (int): Top-k edges to inspect on each node.</span>
-<span class="sd">            node_size (int): The size of nodes in the visualization.</span>
-<span class="sd">            edge_widths (List): The widths for edges (1st, 2nd, between 2nd </span>
-<span class="sd">                hops).</span>
-<span class="sd">            font_size (int): The font size for nodes labels.</span>
-<span class="sd">            node_group_dict (dict): A dictionary with keys being the names of </span>
-<span class="sd">                genes and values being the groups. Genes from the same group </span>
-<span class="sd">                will be colored using the same color.</span>
-<span class="sd">            cdn_resources (str): Where to load vis.js resources. Default is</span>
-<span class="sd">                &#39;remote&#39;.</span>
-<span class="sd">            notebook (bool): Boolean value indicating whether the visualization</span>
-<span class="sd">                happens in a jupyter notebook. </span>
+<span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all.</span>
+<span class="sd">            hops (str): Number of hops of the neighborhood to explore. Default</span>
+<span class="sd">            is &quot;2.5&quot;. </span>
+<span class="sd">            edge_widths (List): The widths for edges for different edge width</span>
+<span class="sd">            levels.</span>
+<span class="sd">            plot_engine (str): Choose which network plot engine to use. Default</span>
+<span class="sd">            is &quot;pyvis&quot;. </span>
+<span class="sd">            **kwargs: Keyword arguments to be passed to ``plot_pyvis``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">local_adj_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_2hop_neighborhood</span><span class="p">(</span><span class="n">genes</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">local_adj_table</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">local_adj_table</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">genes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">genes</span><span class="p">]</span>
+        <span class="n">local_adj_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_local_neighborhood</span><span class="p">(</span><span class="n">genes</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">hops</span><span class="p">)</span>
+        <span class="n">local_adj_table</span><span class="p">[</span><span class="s1">&#39;edge_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_adj_table</span><span class="o">.</span><span class="n">hop</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">edge_widths</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
-        
-        <span class="n">g</span> <span class="o">=</span> <span class="n">pyvis</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">Network</span><span class="p">(</span>
-            <span class="n">cdn_resources</span><span class="o">=</span><span class="n">cdn_resources</span><span class="p">,</span> 
-            <span class="n">notebook</span><span class="o">=</span><span class="n">notebook</span>
-        <span class="p">)</span>
-        
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">local_adj_table</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">local_adj_table</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]):</span>
-            <span class="n">node_shape</span> <span class="o">=</span> <span class="s1">&#39;star&#39;</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">genes</span> <span class="k">else</span> <span class="s1">&#39;dot&#39;</span>
-            <span class="n">node_group</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">node_group_dict</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">node_group_dict</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> 
-                       <span class="n">shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">node_group</span><span class="p">,</span> 
-                       <span class="n">font</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">font_size</span><span class="p">})</span>
-        
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">local_adj_table</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">])</span>
-        
-        <span class="n">g</span><span class="o">.</span><span class="n">repulsion</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">plot_engine</span> <span class="o">==</span> <span class="s1">&#39;pyvis&#39;</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">plot_pyvis</span><span class="p">(</span>
+                <span class="n">pandas_edgelist</span> <span class="o">=</span> <span class="n">local_adj_table</span><span class="p">,</span> 
+                <span class="n">star_genes</span> <span class="o">=</span> <span class="n">genes</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not implemented yet&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">g</span></div>
 
 

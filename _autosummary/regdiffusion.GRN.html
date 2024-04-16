@@ -329,14 +329,14 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_2hop_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_2hop_neighborhood()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_local_neighborhood()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.generate_adj_list"><code class="docutils literal notranslate"><span class="pre">GRN.generate_adj_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.get_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.get_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
 </ul>
@@ -392,16 +392,20 @@ and <cite>.visualize_local_neighborhood</cite>.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="regdiffusion.GRN.extract_node_2hop_neighborhood">
-<span class="sig-name descname"><span class="pre">extract_node_2hop_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_node_2hop_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_node_2hop_neighborhood" title="Link to this definition">#</a></dt>
-<dd><p>Generate a pandas dataframe for the local neighborhood (2-hop) around
-selected gene(s).</p>
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_local_neighborhood">
+<span class="sig-name descname"><span class="pre">extract_local_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'2.5'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_local_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_local_neighborhood" title="Link to this definition">#</a></dt>
+<dd><p>Generate a pandas dataframe for the 2.5 or 1.5 hop local neighborhood
+around selected gene(s). “2.5 hop local neighborhood” includes all the
+nodes and edges reachable by a 2-hop search from the selected genes and
+the edges connecting all the 2-hop nodes. “1.5 hop local neighborhood”
+is defined in a similar way but smaller.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
+<li><p><strong>hops</strong> (<em>str</em>) – Number of hops to explore. We can either do a “2.5” or</p></li>
+<li><p><strong>&quot;2.5&quot;.</strong> (<em>&quot;1.5&quot; hop travesal around selected genes. Default is</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -417,8 +421,7 @@ gene. The dataframe will be sorted by the absolute weight of edges.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
 </dl>
@@ -433,8 +436,7 @@ It is slightly faster than the dataframe version.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
 </dl>
@@ -450,8 +452,7 @@ selected gene.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
 </dl>
@@ -466,8 +467,7 @@ selected gene. It is slightly faster than the dataframe version.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
 </dl>
@@ -483,8 +483,7 @@ selected gene.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
 </dl>
@@ -499,18 +498,25 @@ selected gene. It is slightly faster than the dataframe version.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="regdiffusion.GRN.generate_adj_list">
-<span class="sig-name descname"><span class="pre">generate_adj_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.generate_adj_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.generate_adj_list" title="Link to this definition">#</a></dt>
-<dd><p>Simply generate a dataframe to hold the adjacency list.</p>
+<dt class="sig sig-object py" id="regdiffusion.GRN.get_edgelist">
+<span class="sig-name descname"><span class="pre">get_edgelist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.get_edgelist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.get_edgelist" title="Link to this definition">#</a></dt>
+<dd><p>Simply generate a dataframe to hold the edge list.</p>
 <p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all.</p></li>
+<li><p><strong>workers</strong> (<em>int</em>) – Number of concurrent workers. Default is 2.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -531,25 +537,21 @@ adjacency matrix are zeros.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.visualize_local_neighborhood">
-<span class="sig-name descname"><span class="pre">visualize_local_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_widths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[2,</span> <span class="pre">1,</span> <span class="pre">0.5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_group_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cdn_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'remote'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.visualize_local_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.visualize_local_neighborhood" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">visualize_local_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'2.5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_widths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[2,</span> <span class="pre">1,</span> <span class="pre">0.5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pyvis'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.visualize_local_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.visualize_local_neighborhood" title="Link to this definition">#</a></dt>
 <dd><p>Generate a vis.js network visualization of the local neighborhood
 (2-hop) around selected gene(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node.</p></li>
-<li><p><strong>node_size</strong> (<em>int</em>) – The size of nodes in the visualization.</p></li>
-<li><p><strong>edge_widths</strong> (<em>List</em>) – The widths for edges (1st, 2nd, between 2nd
-hops).</p></li>
-<li><p><strong>font_size</strong> (<em>int</em>) – The font size for nodes labels.</p></li>
-<li><p><strong>node_group_dict</strong> (<em>dict</em>) – A dictionary with keys being the names of
-genes and values being the groups. Genes from the same group
-will be colored using the same color.</p></li>
-<li><p><strong>cdn_resources</strong> (<em>str</em>) – Where to load vis.js resources. Default is
-‘remote’.</p></li>
-<li><p><strong>notebook</strong> (<em>bool</em>) – Boolean value indicating whether the visualization
-happens in a jupyter notebook.</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all.</p></li>
+<li><p><strong>hops</strong> (<em>str</em>) – Number of hops of the neighborhood to explore. Default</p></li>
+<li><p><strong>&quot;2.5&quot;.</strong> (<em>is</em>) – </p></li>
+<li><p><strong>edge_widths</strong> (<em>List</em>) – The widths for edges for different edge width</p></li>
+<li><p><strong>levels.</strong> – </p></li>
+<li><p><strong>plot_engine</strong> (<em>str</em>) – Choose which network plot engine to use. Default</p></li>
+<li><p><strong>&quot;pyvis&quot;.</strong> (<em>is</em>) – </p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to be passed to <code class="docutils literal notranslate"><span class="pre">plot_pyvis</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -605,14 +607,14 @@ happens in a jupyter notebook.</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_2hop_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_2hop_neighborhood()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_local_neighborhood()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.generate_adj_list"><code class="docutils literal notranslate"><span class="pre">GRN.generate_adj_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.get_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.get_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
 </ul>

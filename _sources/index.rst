@@ -68,7 +68,7 @@ mid-range 12-core CPU.
 
 Citation
 --------
-Please consider cite our work if you found it useful for your work:
+Please consider cite our work if you found it useful for your work.
 
 
 

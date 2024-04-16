@@ -9,6 +9,8 @@ from tqdm import tqdm
 from .logger import LightLogger
 from datetime import datetime
 from .grn import GRN
+from .evaluator import GRNEvaluator
+from .logger import LightLogger
 import matplotlib.pyplot as plt
 import warnings
 

@@ -38,7 +38,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=6424ca4d"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
@@ -331,6 +331,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-tour">Quick Tour</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-structure">Model Structure</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-inferred-networks">Understanding the Inferred Networks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-speed">Inference Speed</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a><ul class="nav section-nav flex-column">
@@ -381,7 +382,7 @@ using the <code class="docutils literal notranslate"><span class="pre">read_hdf5
 export or visualize local regions. For example, you can use the
 <code class="docutils literal notranslate"><span class="pre">.visualize_local_neighborhood()</span></code> to generate a similar plot as used in
 the RegDiffusion paper. You can also extract the underlying adjacency list
-using the <code class="docutils literal notranslate"><span class="pre">.extract_node_2hop_neighborhood()</span></code> method.</p></li>
+using the <code class="docutils literal notranslate"><span class="pre">.extract_local_neighborhood()</span></code> method.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code>: The ground truth of regulatory relationship often exist as
 list of edges but the values to be evaluated are often in adjacency matrix.
 The <code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code> class is designed to fill the gap. Right now it supports
@@ -389,6 +390,12 @@ common metrics such as AUROC, AUPR, AUPR Ratio, EP, and EPR.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> module: Right now, the <code class="docutils literal notranslate"><span class="pre">data</span></code> module includes quick access to BEELINE
 benchmarks and our preprocessed single cell datasets on mouse microglia.</p></li>
 </ul>
+</section>
+<section id="model-structure">
+<h2>Model Structure<a class="headerlink" href="#model-structure" title="Link to this heading">#</a></h2>
+<p>RegDiffusion includes an innovative model structure to estimate the added noise. Here is an high level illustraction. Please refer to our paper for details.</p>
+<a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/regdiffusion_structure.png?raw=true"><img alt="RegDiffusion Structure" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/regdiffusion_structure.png?raw=true" style="width: 700px;" />
+</a>
 </section>
 <section id="understanding-the-inferred-networks">
 <h2>Understanding the Inferred Networks<a class="headerlink" href="#understanding-the-inferred-networks" title="Link to this heading">#</a></h2>
@@ -399,7 +406,8 @@ propose a way to analyze the local network by focusing on the genes you care
 the most. Check out the tutorials on the left side for how to perform a similar
 network analysis like the one we did in the paper. We are also working on an
 interactive tool to analyze saved GRN object.</p>
-<a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true"><img alt="Inferred network around ApoE" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_reg.png?raw=true" style="width: 700px;" /></a>
+<a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_net.png?raw=true"><img alt="Inferred network around ApoE" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_net.png?raw=true" style="width: 700px;" />
+</a>
 </section>
 <section id="inference-speed">
 <h2>Inference Speed<a class="headerlink" href="#inference-speed" title="Link to this heading">#</a></h2>
@@ -459,6 +467,7 @@ mid-range 12-core CPU.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-tour">Quick Tour</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-structure">Model Structure</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-inferred-networks">Understanding the Inferred Networks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-speed">Inference Speed</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a><ul class="nav section-nav flex-column">

@@ -38,7 +38,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=6424ca4d"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=4ea706d9"></script>
@@ -401,16 +401,16 @@ document.write(`
 <li><p><strong>n_genes</strong> (<em>int</em>) – Number of Genes</p></li>
 <li><p><strong>time_dim</strong> (<em>int</em>) – Dimension of time step embedding</p></li>
 <li><p><strong>n_celltype</strong> (<em>int</em>) – Number of expected cell types. If it is not provided,</p></li>
-<li><p><strong>None.</strong> (<em>there would be no celltype embedding. Default is</em>) – </p></li>
+<li><p><strong>None.</strong> (<em>there would be no celltype embedding. Default is</em>)</p></li>
 <li><p><strong>celltype_dim</strong> (<em>int</em>) – Dimension of cell types</p></li>
 <li><p><strong>hidden_dims</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of integer for the dimensions of the</p></li>
-<li><p><strong>size</strong> (<em>hidden layers. The first hidden dimension will be used as the</em>) – </p></li>
-<li><p><strong>embedding.</strong> (<em>for gene</em>) – </p></li>
+<li><p><strong>size</strong> (<em>hidden layers. The first hidden dimension will be used as the</em>)</p></li>
+<li><p><strong>embedding.</strong> (<em>for gene</em>)</p></li>
 <li><p><strong>adj_dropout</strong> (<em>float</em>) – A single number between 0 and 1 specifying the</p></li>
-<li><p><strong>dropped</strong> (<em>percentage</em><em> of </em><em>values in the adjacency matrix that are</em>) – </p></li>
-<li><p><strong>training.</strong> (<em>during</em>) – </p></li>
+<li><p><strong>dropped</strong> (<em>percentage</em><em> of </em><em>values in the adjacency matrix that are</em>)</p></li>
+<li><p><strong>training.</strong> (<em>during</em>)</p></li>
 <li><p><strong>init_coef</strong> (<em>int</em>) – Coefficient to multiply with gene regulation norm</p></li>
-<li><p><strong>(</strong><strong>1/</strong> (<em>n_gene - 1</em><em>)</em>) – </p></li>
+<li><p><strong>(</strong><strong>1/</strong> (<em>n_gene - 1</em><em>)</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -834,7 +834,8 @@ by this module’s <code class="xref py py-meth docutils literal notranslate"><s
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>If <code class="xref py py-attr docutils literal notranslate"><span class="pre">assign</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> the optimizer must be created after
-the call to <a class="reference internal" href="#regdiffusion.models.RegDiffusion.load_state_dict" title="regdiffusion.models.RegDiffusion.load_state_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">load_state_dict</span></code></a>.</p>
+the call to <a class="reference internal" href="#regdiffusion.models.RegDiffusion.load_state_dict" title="regdiffusion.models.RegDiffusion.load_state_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">load_state_dict</span></code></a> unless
+<code class="xref py py-func docutils literal notranslate"><span class="pre">get_swap_module_params_on_conversion()</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -844,13 +845,11 @@ persistent buffers.</p></li>
 <li><p><strong>strict</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to strictly enforce that the keys
 in <a class="reference internal" href="#regdiffusion.models.RegDiffusion.state_dict" title="regdiffusion.models.RegDiffusion.state_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state_dict</span></code></a> match the keys returned by this module’s
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code> function. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
-<li><p><strong>assign</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to assign items in the state
-dictionary to their corresponding keys in the module instead
-of copying them inplace into the module’s current parameters and buffers.
-When <code class="docutils literal notranslate"><span class="pre">False</span></code>, the properties of the tensors in the current
-module are preserved while when <code class="docutils literal notranslate"><span class="pre">True</span></code>, the properties of the
-Tensors in the state dict are preserved.
-Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><strong>assign</strong> (<em>bool</em><em>, </em><em>optional</em>) – When <code class="docutils literal notranslate"><span class="pre">False</span></code>, the properties of the tensors
+in the current module are preserved while when <code class="docutils literal notranslate"><span class="pre">True</span></code>, the
+properties of the Tensors in the state dict are preserved. The only
+exception is the <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code> field of <code class="xref py py-class docutils literal notranslate">
+<span class="pre">Default:</span> <span class="pre">``False`</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1342,7 +1341,7 @@ module’s <a class="reference internal" href="#regdiffusion.models.RegDiffusion
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.register_state_dict_pre_hook">
 <span class="sig-name descname"><span class="pre">register_state_dict_pre_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.register_state_dict_pre_hook" title="Link to this definition">#</a></dt>
-<dd><p>Register a pre-hook for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state_dict()</span></code> method.</p>
+<dd><p>Register a pre-hook for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code> method.</p>
 <p>These hooks will be called with arguments: <code class="docutils literal notranslate"><span class="pre">self</span></code>, <code class="docutils literal notranslate"><span class="pre">prefix</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">keep_vars</span></code> before calling <code class="docutils literal notranslate"><span class="pre">state_dict</span></code> on <code class="docutils literal notranslate"><span class="pre">self</span></code>. The registered
 hooks can be used to perform pre-processing before the <code class="docutils literal notranslate"><span class="pre">state_dict</span></code>
@@ -1375,7 +1374,7 @@ parameters in this module. Default: <code class="docutils literal notranslate"><
 
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.set_extra_state">
-<span class="sig-name descname"><span class="pre">set_extra_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.set_extra_state" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_extra_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.set_extra_state" title="Link to this definition">#</a></dt>
 <dd><p>Set extra state contained in the loaded <cite>state_dict</cite>.</p>
 <p>This function is called from <a class="reference internal" href="#regdiffusion.models.RegDiffusion.load_state_dict" title="regdiffusion.models.RegDiffusion.load_state_dict"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_state_dict()</span></code></a> to handle any extra state
 found within the <cite>state_dict</cite>. Implement this function and a corresponding

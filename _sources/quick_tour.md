@@ -134,7 +134,7 @@ Here we have a fairly obvious bipartisan graph. It also makes sense to use some 
 >>> from sklearn.cluster import KMeans
 >>> from node2vec import Node2Vec
 >>> 
->>> adj_table = grn.extract_node_2hop_neighborhood('HIST1H1D', 40)
+>>> adj_table = grn.extract_local_neighborhood('HIST1H1D', 40)
 >>> nxg = nx.from_pandas_edgelist(adj_table)
 >>> 
 >>> node2vec = Node2Vec(nxg, dimensions=64, walk_length=30, num_walks=200, 

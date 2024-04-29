@@ -8,6 +8,7 @@ Hao Zhu, Donna K. Slonim
 bioRxiv 2023.11.05.565675; doi: https://doi.org/10.1101/2023.11.05.565675
 ```
 
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regdiffusion_structure.png)
 
 ## Installation
 
@@ -40,7 +41,7 @@ consists of 4 components: the `RegDiffusionTrainer` class, the `GRN` class, the
   export or visualize local regions. For example, you can use the 
   `.visualize_local_neighborhood()` to generate a similar plot as used in 
   the RegDiffusion paper. You can also extract the underlying adjacency list 
-  using the `.extract_node_2hop_neighborhood()` method.
+  using the `.extract_local_neighborhood()` method.
 - `GRNEvaluator`: The ground truth of regulatory relationship often exist as 
   list of edges but the values to be evaluated are often in adjacency matrix. 
   The `GRNEvaluator` class is designed to fill the gap. Right now it supports
@@ -57,7 +58,7 @@ the most. Check out the tutorials on the left side for how to perform a similar
 network analysis like the one we did in the paper. We are also working on an 
 interactive tool to analyze saved GRN object. 
 
-![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/apoe_reg.png)
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/apoe_net.png)
 
 ## Inference Speed
 Inference on networks with 15,000 genes takes under 5 minutes on an A100 GPU. 

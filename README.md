@@ -1,5 +1,8 @@
 # RegDiffusion <a href="https://tuftsbcb.github.io/RegDiffusion/"><img src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/docs/_static/regdiffusion.png" align="right" alt="logo" width="140" height = "140" style = "border: none; float: right;"></a>
 
+[![Downloads](https://static.pepy.tech/badge/regdiffusion)](https://pepy.tech/project/regdiffusion)
+[![Downloads](https://static.pepy.tech/badge/regdiffusion/month)](https://pepy.tech/project/regdiffusion)
+
 RegDiffusion is a very fast regulatory network inference algorithm based on probabilistic diffusion model. It works well on genes and is capable to rapidly (<5min) predict biologically verifiable links from large single cell RNA-seq data with 14,000+ genes.
 
 ```

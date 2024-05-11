@@ -141,8 +141,8 @@ class RegDiffusionTrainer:
         # Prepare Data ---------------------------------------------------------
         if (exp_array.sum(0) == 0).sum() > 0:
             warnings.warn(
-                "Some columns in the exp_array contains all zero values, ",
-                "which often causes trouble in inference. Please consider ",
+                "Some columns in the exp_array contains all zero values, "
+                "which often causes trouble in inference. Please consider "
                 "removing these columns before continuing. "
             )
         if cell_types is None:

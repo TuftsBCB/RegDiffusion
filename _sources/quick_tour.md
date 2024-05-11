@@ -162,11 +162,9 @@ You can also apply the clustering information to your visual.
 
 ```python
 >>> gene_group_dict = dict()
->>> gene_group_dict = {g:[
->>>     'red', 'blue', 'yellow', 'green'
->>> ][c] for g, c in zip(nxg.nodes(), node_labels)}
+>>> gene_group_dict = {g:str(c) for g, c in zip(nxg.nodes(), node_labels)}
 >>> g = grn.visualize_local_neighborhood(
->>>     'HIST1H1D', k=40, node_color_dict=gene_group_dict
+>>>     'HIST1H1D', k=40, node_group_dict=gene_group_dict
 >>>     )
 >>> g.show('view.html')
 ```

@@ -7,6 +7,7 @@ def plot_pyvis(
     node_size: int = 8, 
     font_size: int = 30,
     node_color_dict: Dict = None, 
+    node_group_dict: Dict = None,
     cdn_resources: str = 'remote', notebook: bool = True):
     """
     Generate a vis.js network visualization given an edge list 
@@ -21,6 +22,8 @@ def plot_pyvis(
         font_size (int): The font size for nodes labels.
         node_color_dict (dict): A dictionary with keys being the names of 
             genes and values being the color. 
+        node_group_dict (dict): A dictionary with keys being the names of 
+            genes and values being the group. 
         cdn_resources (str): Where to load vis.js resources. Default is
             'remote'.
         notebook (bool): Boolean value indicating whether the visualization
@@ -41,8 +44,9 @@ def plot_pyvis(
             node_shape = 'star' if node in star_genes else 'dot'
             this_node_size = 2 * node_size if node in star_genes else node_size
         node_color = None if node_color_dict is None else node_color_dict[node]
+        node_group = None if node_group_dict is None else node_group_dict[node]
         g.add_node(node, label=node, size=this_node_size, 
-                   shape=node_shape, color=node_color, 
+                   shape=node_shape, color=node_color, group=node_group,
                    font={"size": font_size})
 
     if 'edge_width' in pandas_edgelist.columns:

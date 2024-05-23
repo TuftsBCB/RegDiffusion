@@ -45,7 +45,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.ipynb_checkpoints', '_
 
 html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
-html_logo = "_static/regdiffusion.png"
+html_logo = "_static/rd_logo_horizontal.png"
 
 html_theme_options = {
     "repository_url": "https://github.com/TuftsBCB/RegDiffusion",

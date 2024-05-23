@@ -1,4 +1,4 @@
-# RegDiffusion <a href="https://tuftsbcb.github.io/RegDiffusion/"><img src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/docs/_static/regdiffusion.png" align="right" alt="logo" width="140" height = "140" style = "border: none; float: right;"></a>
+# RegDiffusion <a href="https://tuftsbcb.github.io/RegDiffusion/"><img src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/docs/_static/rd_logo_horizontal.png" align="right" alt="logo" width="140" height = "140" style = "border: none; float: right;"></a>
 
 [![Downloads](https://static.pepy.tech/badge/regdiffusion)](https://pepy.tech/project/regdiffusion)
 [![Downloads](https://static.pepy.tech/badge/regdiffusion/month)](https://pepy.tech/project/regdiffusion)

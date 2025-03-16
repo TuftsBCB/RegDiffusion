@@ -14,35 +14,35 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../_static/documentation_options.js?v=6424ca4d"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=4ea706d9"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/regdiffusion.models.RegDiffusion';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -57,27 +57,23 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -99,8 +95,13 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
     </header>
   
 
@@ -124,6 +125,8 @@
         <div class="sidebar-primary-item">
 
   
+    
+  
 
 <a class="navbar-brand logo" href="../index.html">
   
@@ -145,7 +148,7 @@
 
  <script>
  document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
     <span class="search-button__default-text">Search</span>
     <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -160,22 +163,22 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../main_api.html">main Interface</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../main_api.html">main Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRN.html">GRN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
 </ul>
-</li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../models.html">models</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../models.html">models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">RegDiffusion</a></li>
 </ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data_module.html"><cite>data</cite> module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
 </ul>
-</li>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Paper Supplements</span></p>
 <ul class="nav bd-sidenav">
@@ -195,7 +198,7 @@
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
 
@@ -204,14 +207,14 @@
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
   <span class="fa-solid fa-bars"></span>
-</label></div>
+</button></div>
       
     </div>
   
@@ -304,10 +307,10 @@
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
   </button>
 `);
 </script>
@@ -315,14 +318,14 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
-<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
-</label>
+</button>
 </div></div>
       
     </div>
@@ -365,6 +368,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.ipu"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.ipu()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.load_state_dict"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.load_state_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.modules"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.modules()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.mtia"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.mtia()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.named_buffers"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.named_buffers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.named_children"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.named_children()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.named_modules"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.named_modules()</span></code></a></li>
@@ -377,11 +381,14 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_full_backward_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_full_backward_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_full_backward_pre_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_full_backward_pre_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_load_state_dict_post_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_load_state_dict_post_hook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_load_state_dict_pre_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_load_state_dict_pre_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_module"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_module()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_parameter"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_parameter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_state_dict_post_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_state_dict_post_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_state_dict_pre_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_state_dict_pre_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.requires_grad_"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.requires_grad_()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.set_extra_state"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.set_extra_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.set_submodule"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.set_submodule()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.share_memory"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.share_memory()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.state_dict"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.state_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.to"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.to()</span></code></a></li>
@@ -464,7 +471,7 @@ accessed from this module using the given name</p></li>
 </dl>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">init_weights</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">init_weights</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">:</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">m</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
@@ -572,7 +579,7 @@ to <code class="xref py py-func docutils literal notranslate"><span class="pre">
 <span class="sig-name descname"><span class="pre">cuda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.cuda" title="Link to this definition">#</a></dt>
 <dd><p>Move all model parameters and buffers to the GPU.</p>
 <p>This also makes associated parameters and buffers different objects. So
-it should be called before constructing optimizer if the module will
+it should be called before constructing the optimizer if the module will
 live on GPU while being optimized.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -614,9 +621,9 @@ copied to that device</p>
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.eval">
 <span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.eval" title="Link to this definition">#</a></dt>
 <dd><p>Set the module in evaluation mode.</p>
-<p>This has any effect only on certain modules. See documentations of
+<p>This has an effect only on certain modules. See the documentation of
 particular modules for details of their behaviors in training/evaluation
-mode, if they are affected, e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Dropout</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchNorm</span></code>,
+mode, i.e. whether they are affected, e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Dropout</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchNorm</span></code>,
 etc.</p>
 <p>This is equivalent with <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.train(False)</span></code>.</p>
 <p>See <span class="xref std std-ref">locally-disable-grad-doc</span> for a comparison between
@@ -634,7 +641,7 @@ etc.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.extra_repr">
 <span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.extra_repr" title="Link to this definition">#</a></dt>
-<dd><p>Set the extra representation of the module.</p>
+<dd><p>Return the extra representation of the module.</p>
 <p>To print customized extra information, you should re-implement
 this method in your own modules. Both single-line and multi-line
 strings are acceptable.</p>
@@ -707,7 +714,7 @@ fully-qualified string.)</p>
 if you need to store extra state. This function is called when building the
 module’s <cite>state_dict()</cite>.</p>
 <p>Note that extra state should be picklable to ensure working serialization
-of the state_dict. We only provide provide backwards compatibility guarantees
+of the state_dict. We only provide backwards compatibility guarantees
 for serializing Tensors; other objects may break backwards compatibility if
 their serialized pickled form changes.</p>
 <dl class="field-list simple">
@@ -763,7 +770,7 @@ looks like this:</p>
 )
 </pre></div>
 </div>
-<p>(The diagram shows an <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> <code class="docutils literal notranslate"><span class="pre">A</span></code>. <code class="docutils literal notranslate"><span class="pre">A</span></code> has a nested
+<p>(The diagram shows an <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> <code class="docutils literal notranslate"><span class="pre">A</span></code>. <code class="docutils literal notranslate"><span class="pre">A</span></code> which has a nested
 submodule <code class="docutils literal notranslate"><span class="pre">net_b</span></code>, which itself has two submodules <code class="docutils literal notranslate"><span class="pre">net_c</span></code>
 and <code class="docutils literal notranslate"><span class="pre">linear</span></code>. <code class="docutils literal notranslate"><span class="pre">net_c</span></code> then has a submodule <code class="docutils literal notranslate"><span class="pre">conv</span></code>.)</p>
 <p>To check whether or not we have the <code class="docutils literal notranslate"><span class="pre">linear</span></code> submodule, we
@@ -819,7 +826,7 @@ fully-qualified string.)</p>
 <span class="sig-name descname"><span class="pre">ipu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.ipu" title="Link to this definition">#</a></dt>
 <dd><p>Move all model parameters and buffers to the IPU.</p>
 <p>This also makes associated parameters and buffers different objects. So
-it should be called before constructing optimizer if the module will
+it should be called before constructing the optimizer if the module will
 live on IPU while being optimized.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -860,17 +867,25 @@ persistent buffers.</p></li>
 <li><p><strong>strict</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to strictly enforce that the keys
 in <a class="reference internal" href="#regdiffusion.models.RegDiffusion.state_dict" title="regdiffusion.models.RegDiffusion.state_dict"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state_dict</span></code></a> match the keys returned by this module’s
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code> function. Default: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
-<li><p><strong>assign</strong> (<em>bool</em><em>, </em><em>optional</em>) – When <code class="docutils literal notranslate"><span class="pre">False</span></code>, the properties of the tensors
-in the current module are preserved while when <code class="docutils literal notranslate"><span class="pre">True</span></code>, the
-properties of the Tensors in the state dict are preserved. The only
+<li><p><strong>assign</strong> (<em>bool</em><em>, </em><em>optional</em>) – When set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the properties of the tensors
+in the current module are preserved whereas setting it to <code class="docutils literal notranslate"><span class="pre">True</span></code> preserves
+properties of the Tensors in the state dict. The only
 exception is the <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code> field of <code class="xref py py-class docutils literal notranslate">
 <span class="pre">Default:</span> <span class="pre">``False`</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>missing_keys</strong> is a list of str containing the missing keys</p></li>
-<li><p><strong>unexpected_keys</strong> is a list of str containing the unexpected keys</p></li>
+<li><dl class="simple">
+<dt><strong>missing_keys</strong> is a list of str containing any keys that are expected</dt><dd><p>by this module but missing from the provided <code class="docutils literal notranslate"><span class="pre">state_dict</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>unexpected_keys</strong> is a list of str containing the keys that are not</dt><dd><p>expected by this module but present in the provided <code class="docutils literal notranslate"><span class="pre">state_dict</span></code>.</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p>
 </dd>
@@ -913,6 +928,31 @@ example, <code class="docutils literal notranslate"><span class="pre">l</span></
 <span class="go">1 -&gt; Linear(in_features=2, out_features=2, bias=True)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.mtia">
+<span class="sig-name descname"><span class="pre">mtia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.mtia" title="Link to this definition">#</a></dt>
+<dd><p>Move all model parameters and buffers to the MTIA.</p>
+<p>This also makes associated parameters and buffers different objects. So
+it should be called before constructing the optimizer if the module will
+live on MTIA while being optimized.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method modifies the module in-place.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device</strong> (<em>int</em><em>, </em><em>optional</em>) – if specified, all parameters will be
+copied to that device</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Module</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1301,7 +1341,7 @@ all hooks registered by this method.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.register_load_state_dict_post_hook">
 <span class="sig-name descname"><span class="pre">register_load_state_dict_post_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.register_load_state_dict_post_hook" title="Link to this definition">#</a></dt>
-<dd><p>Register a post hook to be run after module’s <code class="docutils literal notranslate"><span class="pre">load_state_dict</span></code> is called.</p>
+<dd><p>Register a post-hook to be run after module’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state_dict()</span></code> is called.</p>
 <dl class="simple">
 <dt>It should have the following signature::</dt><dd><p>hook(module, incompatible_keys) -&gt; None</p>
 </dd>
@@ -1324,6 +1364,22 @@ clearing out both missing and unexpected keys will avoid an error.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.register_load_state_dict_pre_hook">
+<span class="sig-name descname"><span class="pre">register_load_state_dict_pre_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.register_load_state_dict_pre_hook" title="Link to this definition">#</a></dt>
+<dd><p>Register a pre-hook to be run before module’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state_dict()</span></code> is called.</p>
+<dl class="simple">
+<dt>It should have the following signature::</dt><dd><p>hook(module, state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs) -&gt; None  # noqa: B950</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hook</strong> (<em>Callable</em>) – Callable hook that will be invoked before
+loading the state dict.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1354,12 +1410,25 @@ module’s <a class="reference internal" href="#regdiffusion.models.RegDiffusion
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.register_state_dict_post_hook">
+<span class="sig-name descname"><span class="pre">register_state_dict_post_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.register_state_dict_post_hook" title="Link to this definition">#</a></dt>
+<dd><p>Register a post-hook for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code> method.</p>
+<dl class="simple">
+<dt>It should have the following signature::</dt><dd><p>hook(module, state_dict, prefix, local_metadata) -&gt; None</p>
+</dd>
+</dl>
+<p>The registered hooks can modify the <code class="docutils literal notranslate"><span class="pre">state_dict</span></code> inplace.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.register_state_dict_pre_hook">
 <span class="sig-name descname"><span class="pre">register_state_dict_pre_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.register_state_dict_pre_hook" title="Link to this definition">#</a></dt>
 <dd><p>Register a pre-hook for the <code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code> method.</p>
-<p>These hooks will be called with arguments: <code class="docutils literal notranslate"><span class="pre">self</span></code>, <code class="docutils literal notranslate"><span class="pre">prefix</span></code>,
-and <code class="docutils literal notranslate"><span class="pre">keep_vars</span></code> before calling <code class="docutils literal notranslate"><span class="pre">state_dict</span></code> on <code class="docutils literal notranslate"><span class="pre">self</span></code>. The registered
-hooks can be used to perform pre-processing before the <code class="docutils literal notranslate"><span class="pre">state_dict</span></code>
+<dl class="simple">
+<dt>It should have the following signature::</dt><dd><p>hook(module, prefix, keep_vars) -&gt; None</p>
+</dd>
+</dl>
+<p>The registered hooks can be used to perform pre-processing before the <code class="docutils literal notranslate"><span class="pre">state_dict</span></code>
 call is made.</p>
 </dd></dl>
 
@@ -1398,6 +1467,48 @@ found within the <cite>state_dict</cite>. Implement this function and a correspo
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> (<em>dict</em>) – Extra state from the <cite>state_dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.set_submodule">
+<span class="sig-name descname"><span class="pre">set_submodule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.set_submodule" title="Link to this definition">#</a></dt>
+<dd><p>Set the submodule given by <code class="docutils literal notranslate"><span class="pre">target</span></code> if it exists, otherwise throw an error.</p>
+<p>For example, let’s say you have an <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> <code class="docutils literal notranslate"><span class="pre">A</span></code> that
+looks like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>A(
+    (net_b): Module(
+        (net_c): Module(
+            (conv): Conv2d(16, 33, kernel_size=(3, 3), stride=(2, 2))
+        )
+        (linear): Linear(in_features=100, out_features=200, bias=True)
+    )
+)
+</pre></div>
+</div>
+<p>(The diagram shows an <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> <code class="docutils literal notranslate"><span class="pre">A</span></code>. <code class="docutils literal notranslate"><span class="pre">A</span></code> has a nested
+submodule <code class="docutils literal notranslate"><span class="pre">net_b</span></code>, which itself has two submodules <code class="docutils literal notranslate"><span class="pre">net_c</span></code>
+and <code class="docutils literal notranslate"><span class="pre">linear</span></code>. <code class="docutils literal notranslate"><span class="pre">net_c</span></code> then has a submodule <code class="docutils literal notranslate"><span class="pre">conv</span></code>.)</p>
+<p>To overide the <code class="docutils literal notranslate"><span class="pre">Conv2d</span></code> with a new submodule <code class="docutils literal notranslate"><span class="pre">Linear</span></code>, you
+would call
+<code class="docutils literal notranslate"><span class="pre">set_submodule(&quot;net_b.net_c.conv&quot;,</span> <span class="pre">nn.Linear(33,</span> <span class="pre">16))</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> – The fully-qualified string name of the submodule
+to look for. (See above example for how to specify a
+fully-qualified string.)</p></li>
+<li><p><strong>module</strong> – The module to set the submodule to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the target string is empty</p></li>
+<li><p><strong>AttributeError</strong> – If the target string references an invalid
+    path or resolves to something that is not an
+    <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code></p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1589,9 +1700,9 @@ be recursively moved to the specified device.</p></li>
 <dt class="sig sig-object py" id="regdiffusion.models.RegDiffusion.train">
 <span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#regdiffusion.models.RegDiffusion.train" title="Link to this definition">#</a></dt>
 <dd><p>Set the module in training mode.</p>
-<p>This has any effect only on certain modules. See documentations of
+<p>This has an effect only on certain modules. See the documentation of
 particular modules for details of their behaviors in training/evaluation
-mode, if they are affected, e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Dropout</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchNorm</span></code>,
+mode, i.e., whether they are affected, e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Dropout</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchNorm</span></code>,
 etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1678,7 +1789,7 @@ See <code class="xref py py-meth docutils literal notranslate"><span class="pre"
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -1737,6 +1848,7 @@ See <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.ipu"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.ipu()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.load_state_dict"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.load_state_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.modules"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.modules()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.mtia"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.mtia()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.named_buffers"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.named_buffers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.named_children"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.named_children()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.named_modules"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.named_modules()</span></code></a></li>
@@ -1749,11 +1861,14 @@ See <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_full_backward_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_full_backward_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_full_backward_pre_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_full_backward_pre_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_load_state_dict_post_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_load_state_dict_post_hook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_load_state_dict_pre_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_load_state_dict_pre_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_module"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_module()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_parameter"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_parameter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_state_dict_post_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_state_dict_post_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.register_state_dict_pre_hook"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.register_state_dict_pre_hook()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.requires_grad_"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.requires_grad_()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.set_extra_state"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.set_extra_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.set_submodule"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.set_submodule()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.share_memory"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.share_memory()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.state_dict"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.state_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.models.RegDiffusion.to"><code class="docutils literal notranslate"><span class="pre">RegDiffusion.to()</span></code></a></li>
@@ -1812,8 +1927,8 @@ By Hao Zhu, Donna Slonim
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>

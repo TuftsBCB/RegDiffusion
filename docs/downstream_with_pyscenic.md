@@ -1,24 +1,23 @@
-# Integrating RegDiffusion with SCENIC for Downstream GRN Analysis
+# Fast SCENIC GRN Analysis with RegDiffusion
 
-Author: Nicky Jin
-Edited by: Hao
+Author: Nicky-Jin, edited by Hao
 
-This tutorial demonstrates how to integrate GRN inference results from RegDiffusion into the SCENIC pipeline for downstream gene regulatory network (GRN) analysis. In this workflow, RegDiffusion replaces GRNBoost2 (or GENIE3) by providing a much faster method to generate the adjacency matrix of the regulatory network. We then use PySCENIC's pruning, cell scoring, and downstream visualization tools on the output of RegDiffusion. 
+This tutorial demonstrates how to integrate GRN inference results from RegDiffusion into the SCENIC pipeline (Aibar 2017) for downstream gene regulatory network (GRN) analysis. In this workflow, RegDiffusion replaces GRNBoost2 (or GENIE3) by providing a much faster method to generate the adjacency matrix of the regulatory network. We then use PySCENIC's pruning, cell scoring, and downstream visualization tools on the output of RegDiffusion. 
 
 ## Introduction
 
-SCENIC (https://github.com/aertslab/pySCENIC) is a widely used pipeline for inferring and analyzing GRNs in single-cell transcriptomics. Typically, its workflow consists of the following stages:
+SCENIC (Aibar 2017) is a widely used pipeline for inferring and analyzing GRNs in single-cell transcriptomics. Typically, its workflow consists of the following stages:
 
 - **GRN inference**: Done by GRNBoost2 or GENIE3.
 - **Pruning**: Refines co-expression modules using cisTarget to retain genes with TF-binding motifs.
 - **Cell Scoring**: Quantifies TF activity in individual cells via AUCell, a score measuring the activity of regulons.
 - **Clustering and Visualization**: The AUCell scores could be used as features to do dimension reduction and cell type identification. 
 
-One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive, especially on large datasets. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM), which can seamlessly replace the output from GRNBoost2/GENIE3. 
+One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive. Today, As the sizes of single-cell datasets continue to grow, running the SCENIC pipeline with default settings is becoming increasingly challenging. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM), which can seamlessly replace the output from GRNBoost2/GENIE3. 
 
 ## Prerequisites and Data Preparation
 
-`pyscenic` has some version conflicts with the latest packages. We recommend setting up a separate conda environement to hold it. The following versions on the dependencies work well for us today (2025.3). 
+`pyscenic` has some version conflicts with the latest packages and it may trigger some runtime error when performing specific tasks. We recommend setting up a separate conda environement to hold it. The following versions on the dependencies work well for us today (2025.3). 
 
 ```
 >>> conda create -y -n pyscenic-env python=3.10
@@ -27,7 +26,11 @@ One limitation with the default SCENIC pipeline is that the matrix calculation s
 >>> conda deactivate
 ```
 
-You also probably need to install pyscenic to your working environment.
+You also need to install pyscenic to your working environment. We recommand the github version as it fixed many bugs. 
+
+```
+>>> pip install git+https://github.com/aertslab/pySCENIC
+```
 
 ### Data Sources
 
@@ -68,6 +71,7 @@ To get started, we first load the data and perfrom necessary data cleaning.
 >>> from pyscenic.plotting import plot_rss
 >>> import matplotlib.pyplot as plt
 >>> import seaborn as sns
+>>> sns.set_theme(style="white")
 >>> 
 >>> # Change the path if needed
 >>> wd = '../..'
@@ -101,11 +105,12 @@ The input of `regdiffusion` is log transformed raw counts data. The `.X` in the 
 >>> x = np.log(x+1.0)
 ```
 
-Now run `RegDiffusionTrainer` and save the output to a GRN. 
+Now run `RegDiffusionTrainer`. 
 
 ```python
 >>> rd_trainer = rd.RegDiffusionTrainer(x)
 >>> rd_trainer.train()
+Training loss: 0.221, Change on Adj: -0.000: 100%|██████████| 1000/1000 [00:19<00:00, 50.85it/s]
 ```
 
 ## Extract edges from GRN
@@ -128,6 +133,8 @@ The inferred GRN is represented by a weighted adjacency matrix and we would like
 >>> # check edgelist.  
 >>> edgelist
 ```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/edgelist.png)
 
 You also need to save the expression matrix for pyscenic in the next step.
 
@@ -166,12 +173,25 @@ In this step, we are going to call `pyscenic` from command line to prune the edg
 >>>     --expression_mtx_fname {exp_mtx_fp} \
 >>>     --output {ctx_output} \
 >>>     --num_workers 64
->>> 
 >>> ## AUCell Calculation
 >>> !conda run -n pyscenic-env pyscenic aucell {exp_mtx_fp} \
 >>>     {ctx_output} \
 >>>     --output {aucell_output} \
 >>>     --num_workers 64
+2025-03-26 11:43:14,528 - pyscenic.cli.pyscenic - INFO - Creating modules.
+2025-03-26 11:43:16,110 - pyscenic.cli.pyscenic - INFO - Loading expression matrix.
+2025-03-26 11:43:18,362 - pyscenic.utils - INFO - Calculating Pearson correlations.
+...
+2025-03-26 11:47:11,450 - pyscenic.prune - INFO - Worker mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings(4): Done.
+2025-03-26 11:47:11,450 - pyscenic.prune - INFO - Worker mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings(4): Done.
+2025-03-26 11:47:11,521 - pyscenic.cli.pyscenic - INFO - Writing results to file.
+
+Create regulons from a dataframe of enriched features.
+Additional columns saved: []
+2025-03-26 11:47:20,539 - pyscenic.cli.pyscenic - INFO - Loading expression matrix.
+2025-03-26 11:47:22,420 - pyscenic.cli.pyscenic - INFO - Loading gene signatures.
+2025-03-26 11:47:22,722 - pyscenic.cli.pyscenic - INFO - Calculating cellular enrichment.
+2025-03-26 11:47:34,316 - pyscenic.cli.pyscenic - INFO - Writing results to file.
 ```
 
 Once it's finished, you can check the calculated AUCell values for each cell. 
@@ -183,7 +203,11 @@ Once it's finished, you can check the calculated AUCell values for each cell.
 >>> auc_mtx.head()
 ```
 
-## Dimension reduction
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/aucell_mtx.png)
+
+## Dimension reduction and cell type identification. 
+
+Following the AUCell calcuation, UMAP can be used to perform additional dimensionality reduction for cell type identification. 
 
 ```python
 >>> adata.obsm['X_aucell'] = auc_mtx.values
@@ -193,10 +217,121 @@ Once it's finished, you can check the calculated AUCell values for each cell.
 >>> 
 >>> sc.pl.scatter( adata, basis='aucell_umap', 
 >>>     color=['celltype'],
->>>     title=['AUCell - UMAP (Celltype)'],
+>>>     title=['RegDiffusion - AUCell - UMAP'],
 >>>     alpha=0.8
 >>>     )
 ```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/aucell_umap.png)
+
+We can compare the results with standard PCA-based UMAPs. 
+
+```python
+>>> sc.pp.neighbors(adata, n_neighbors=15, n_pcs=50, use_rep="X_pca")
+>>> sc.tl.umap(adata)
+>>> adata.obsm["X_pca_umap"] = adata.obsm["X_umap"].copy()
+>>> 
+>>> # Remove batch effect with Harmony
+>>> #!pip install harmonypy
+>>> #sc.external.pp.harmony_integrate(adata, key = "sample")
+>>> sc.pp.neighbors(adata, n_neighbors=15, n_pcs=50, use_rep="X_pca_harmony")
+>>> sc.tl.umap(adata)
+>>> adata.obsm["X_harmony_pca_umap"] = adata.obsm["X_umap"].copy()
+>>> 
+>>> fig, axs = plt.subplots(1, 3, figsize=(18, 5))
+>>> 
+>>> sc.pl.scatter(
+>>>     adata, basis='pca_umap',
+>>>     color='celltype',
+>>>     title='PCA - UMAP',
+>>>     alpha=0.8, ax=axs[0], show=False
+>>> )
+>>> 
+>>> sc.pl.scatter(
+>>>     adata, basis='harmony_pca_umap',
+>>>     color='celltype',
+>>>     title='Harmony - PCA - UMAP',
+>>>     alpha=0.8, ax=axs[0], show=False
+>>> )
+>>> 
+>>> sc.pl.scatter(
+>>>     adata, basis='aucell_umap',
+>>>     color='celltype',
+>>>     title='RegDiffusion - AUCell - UMAP',
+>>>     alpha=0.8, ax=axs[0], show=False
+>>> )
+>>> 
+>>> axs[0].get_legend().remove()
+>>> axs[1].get_legend().remove()
+>>> 
+>>> plt.tight_layout()
+>>> plt.show()
+```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/umap_comparison.png)
+
+The RegDiffusion-AUCell-based UMAP plot provides a high degree of clarity, allowing the major cell types to be easily distinguished. Compared with standard PCA-based UMAPs, whether or not batch effects are corrected with harmonypy, the AUCell plot produces fewer, more distinctly separated clusters. This clear separation remains interpretable even in the absence of cell labels, which suggests its capacity for identifying novel cell subtypes.
+
+```python
+>>> fig, axs = plt.subplots(1, 3, figsize=(18, 5))
+>>> 
+>>> sc.pl.scatter( adata, basis='pca_umap', 
+>>>     color=['sample'],
+>>>     title=['PCA - UMAP'],
+>>>     alpha=0.8, ax=axs[0], show=False, palette='Set1'
+>>>     )
+>>> 
+>>> sc.pl.scatter( adata, basis='harmony_pca_umap', 
+>>>     color=['sample'],
+>>>     title=['Harmony - PCA - UMAP'],
+>>>     alpha=0.8, ax=axs[1], show=False, palette='Set1'
+>>>     )
+>>> 
+>>> sc.pl.scatter( adata, basis='aucell_umap', 
+>>>     color=['sample'],
+>>>     title=['RegDiffusion - AUCell - UMAP'],
+>>>     alpha=0.8, ax=axs[2], show=False, palette='Set1'
+>>>     )
+>>> 
+>>> axs[0].get_legend().remove()
+>>> axs[1].get_legend().remove()
+>>> 
+>>> plt.tight_layout()
+>>> plt.show()
+```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/cellnames.png)
+
+If we color the UMAPs by sample IDs, we can see Harmony seems to suffer the least from batch effect. In RegDiffusion-AUCell UMAP, the batch effect in most cells are minimized. This consists with previous literature (Aibar, 2017; Malagola, 2024) and shows that AUCell scores capture high-level interaction features. However, we also noticed that there are still clear batch separations in Monocytes and Neutrophil and the reason is unknown. 
+
+## Expression levels of Bio-markers
+
+```python
+markers= ['Ptprc',
+          'Mmp9', # Neutrophil
+          'Cd14', 'Itgam',  # Monocyte
+          'Marco',  # Macrophage
+          'Clec9a',  # DC
+          'Ms4a1', # B
+          'Cd3d', # T
+          'Klrc1',  # NK
+          'Cd200r3',  # Basophil
+          'Il2ra', # ILC
+          'Itga2b', # Platelets
+          'Cdh5', # Endothelial
+          'Epcam', # Epithelial 
+          'Msln', # Mesothelial
+          'Col1a2' # Mesenchymal cells
+]
+
+sc.pl.embedding(
+    adata, basis='aucell_umap', 
+    color=markers,
+    ncols=4, alpha=0.8
+)
+```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/biomarkers.png)
 
 
 ## Regulon specificity scores by cell types
@@ -229,3 +364,57 @@ Once it's finished, you can check the calculated AUCell values for each cell.
 >>>         })
 >>> plt.show()
 ```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regulon_scores.png)
+
+## Heatmap
+
+```python
+>>> # Top 5 regulons for each cell type
+>>> topreg = []
+>>> for i,c in enumerate(cats):
+>>>     topreg.extend(
+>>>         list(rss.T[c].sort_values(ascending=False)[:5].index)
+>>>     )
+>>> topreg = list(set(topreg))
+>>> 
+>>> # Normalized z scores
+>>> auc_mtx_Z = pd.DataFrame( index=auc_mtx.index )
+>>> for col in list(auc_mtx.columns):
+>>>     auc_mtx_Z[ col ] = ( auc_mtx[col] - auc_mtx[col].mean()) / auc_mtx[col].std(ddof=0)
+>>> 
+>>> # Heatmap
+>>> def palplot(pal, names, colors=None, size=1):
+>>>     n = len(pal)
+>>>     f, ax = plt.subplots(1, 1, figsize=(n * size, size))
+>>>     ax.imshow(np.arange(n).reshape(1, n),
+>>>               cmap=matplotlib.colors.ListedColormap(list(pal)),
+>>>               interpolation="nearest", aspect="auto")
+>>>     ax.set_xticks(np.arange(n) - .5)
+>>>     ax.set_yticks([-.5, .5])
+>>>     ax.set_xticklabels([])
+>>>     ax.set_yticklabels([])
+>>>     colors = n * ['k'] if colors is None else colors
+>>>     for idx, (name, color) in enumerate(zip(names, colors)):
+>>>         ax.text(0.0+idx, 0.0, name, color=color, horizontalalignment='center', verticalalignment='center')
+>>>     return f
+>>> 
+>>> colors = sns.color_palette('bright',n_colors=len(cats) )
+>>> colorsd = dict(zip( cats, colors ))
+>>> colormap = [colorsd[x] for x in adata.obs['celltype']]
+>>> 
+>>> sns.set(font_scale=1.2)
+>>> g = sns.clustermap(auc_mtx_Z[topreg], annot=False,  square=False,  linecolor='gray',
+>>>     yticklabels=False, xticklabels=True, vmin=-2, vmax=6, row_colors=colormap,
+>>>     cmap="YlGnBu", figsize=(21,16) )
+>>> g.cax.set_visible(True)
+>>> g.ax_heatmap.set_ylabel('')
+>>> g.ax_heatmap.set_xlabel('')
+```
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/heatmap.png)
+
+
+1. Aibar, S., et al. 2017. SCENIC: single-cell regulatory network inference and clustering. Nat Methods 14, 1083–1086. https://doi.org/10.1038/nmeth.4463
+2. Malagola, E., et al. 2024. Isthmus progenitor cells contribute to homeostatic cellular turnover and support regeneration following intestinal injury. Cell 187, 3056-3071.e17. https://doi.org/10.1016/j.cell.2024.05.004
+

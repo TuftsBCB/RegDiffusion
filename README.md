@@ -34,6 +34,26 @@ device. Even if you don't have access to those fancy GPU cards, RegDiffusion
 still works. Inference on the same large network takes roughly 3 hours on a 
 mid-range 12-core CPU. 
 
+## CLI tool
+regdiffusion has a CLI tool now! It takes a count matrix as the input (different from the main API, which needs the data to be log transformed) and returns a table of inferred edges. 
+
+```
+usage: regdiffusion [-h] [--output OUTPUT] [--top_gene_percentile TOP_GENE_PERCENTILE] [--k K] [--workers WORKERS] input
+
+Infer a gene regulatory network (GRN) from a single-cell count dataset.
+
+positional arguments:
+  input                 Input single-cell count dataset file (CSV or H5AD format).
+
+options:
+  -h, --help            show this help message and exit
+  --output OUTPUT       Output file path for the edgelist (CSV). Default: rd_grn.csv
+  --top_gene_percentile TOP_GENE_PERCENTILE
+                        Percentile cutoff to filter weak edges (e.g., 50 for the top 50%). Default: 50
+  --k K                 Number of edges per gene to extract (-1 for all edges). Default: -1
+  --workers WORKERS     Number of workers to use for edgelist extraction. Default: 4
+```
+
 ## Citation 
 
 If you find our package useful, consider cite our paper! =)

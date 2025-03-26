@@ -145,6 +145,10 @@ class RegDiffusionTrainer:
                 "which often causes trouble in inference. Please consider "
                 "removing these columns before continuing. "
             )
+        if (exp_array.shape[0] < batch_size):
+            warnings.warn(
+                "Batch size needs to be smaller than the number of cells. "
+            )
         if cell_types is None:
             cell_types = np.zeros(exp_array.shape[0], dtype=int)
         self.n_celltype = len(np.unique(cell_types))

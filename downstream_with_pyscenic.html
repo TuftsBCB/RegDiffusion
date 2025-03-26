@@ -1,0 +1,704 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Integrating RegDiffusion with SCENIC for Downstream GRN Analysis &#8212; regdiffusion 0.0.9 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=4ea706d9"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'downstream_with_pyscenic';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="main Interface" href="main_api.html" />
+    <link rel="prev" title="Get Started" href="quick_tour.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Integrating RegDiffusion with SCENIC for Downstream GRN Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="main_api.html">main Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="models.html">models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="data_module.html"><cite>data</cite> module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Paper Supplements</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supplements.html">Additional local networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/TuftsBCB/RegDiffusion" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/downstream_with_pyscenic.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Integrating RegDiffusion with SCENIC for Downstream GRN Analysis</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites-and-data-preparation">Prerequisites and Data Preparation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-sources">Data Sources</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#single-cell-transcriptomic-data">Single-cell transcriptomic data</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#auxiliary-datasets-for-pyscenic">Auxiliary datasets for PySCENIC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-edges-from-grn">Extract edges from GRN</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prunning-and-aucell-calculation-in-pyscenic">Prunning and AUCell Calculation in PySCENIC</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-reduction">Dimension reduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulon-specificity-scores-by-cell-types">Regulon specificity scores by cell types</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="integrating-regdiffusion-with-scenic-for-downstream-grn-analysis">
+<h1>Integrating RegDiffusion with SCENIC for Downstream GRN Analysis<a class="headerlink" href="#integrating-regdiffusion-with-scenic-for-downstream-grn-analysis" title="Link to this heading">#</a></h1>
+<p>Author: Nicky Jin
+Edited by: Hao</p>
+<p>This tutorial demonstrates how to integrate GRN inference results from RegDiffusion into the SCENIC pipeline for downstream gene regulatory network (GRN) analysis. In this workflow, RegDiffusion replaces GRNBoost2 (or GENIE3) by providing a much faster method to generate the adjacency matrix of the regulatory network. We then use PySCENIC’s pruning, cell scoring, and downstream visualization tools on the output of RegDiffusion.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>SCENIC (https://github.com/aertslab/pySCENIC) is a widely used pipeline for inferring and analyzing GRNs in single-cell transcriptomics. Typically, its workflow consists of the following stages:</p>
+<ul class="simple">
+<li><p><strong>GRN inference</strong>: Done by GRNBoost2 or GENIE3.</p></li>
+<li><p><strong>Pruning</strong>: Refines co-expression modules using cisTarget to retain genes with TF-binding motifs.</p></li>
+<li><p><strong>Cell Scoring</strong>: Quantifies TF activity in individual cells via AUCell, a score measuring the activity of regulons.</p></li>
+<li><p><strong>Clustering and Visualization</strong>: The AUCell scores could be used as features to do dimension reduction and cell type identification.</p></li>
+</ul>
+<p>One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive, especially on large datasets. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM), which can seamlessly replace the output from GRNBoost2/GENIE3.</p>
+</section>
+<section id="prerequisites-and-data-preparation">
+<h2>Prerequisites and Data Preparation<a class="headerlink" href="#prerequisites-and-data-preparation" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pyscenic</span></code> has some version conflicts with the latest packages. We recommend setting up a separate conda environement to hold it. The following versions on the dependencies work well for us today (2025.3).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">n</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">activate</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyscenic</span><span class="o">==</span><span class="mf">0.12.1</span> <span class="n">numpy</span><span class="o">==</span><span class="mf">1.23.5</span> <span class="n">pandas</span><span class="o">==</span><span class="mf">1.3.5</span> <span class="n">dask</span><span class="o">==</span><span class="mf">2023.10.0</span> <span class="n">matplotlib</span> <span class="n">decorator</span><span class="o">==</span><span class="mf">4.3.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">deactivate</span>
+</pre></div>
+</div>
+<p>You also probably need to install pyscenic to your working environment.</p>
+<section id="data-sources">
+<h3>Data Sources<a class="headerlink" href="#data-sources" title="Link to this heading">#</a></h3>
+<section id="single-cell-transcriptomic-data">
+<h4>Single-cell transcriptomic data<a class="headerlink" href="#single-cell-transcriptomic-data" title="Link to this heading">#</a></h4>
+<p>For this tutorial, we use the mice lung dataset from GSE276682 (<a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682</a>). This data includes a control group (n=3) and an intervention group (n=3). In the intervention group, mices were administered with intraperitoneal injection of 30mg/ml lipopolysaccharide (LPS) in saline to induce acute lung injury.</p>
+<p>The raw FASTQ data was processed with cellranger to generate expression matrix. The count matrix was then processed following standard scanpy procedure and we focused on genes expressed in at least 5 cells. The input data has 55,129 cells and 3,701 genes.</p>
+<p>Most of this tutorial is to illustrate the process. If you need access to the processed data, please download it from this link.</p>
+</section>
+<section id="auxiliary-datasets-for-pyscenic">
+<h4>Auxiliary datasets for PySCENIC<a class="headerlink" href="#auxiliary-datasets-for-pyscenic" title="Link to this heading">#</a></h4>
+<p>To run pySCENIC, you also need a set of auxiliary files. We recommend following the offical tutorial and download it from the official website. Basically, you would expect to download the following species-specific files.</p>
+<ul class="simple">
+<li><p>The whole genome: <a class="reference external" href="https://resources.aertslab.org/cistarget/databases/">https://resources.aertslab.org/cistarget/databases/</a></p></li>
+<li><p>Motif to TF annotations database: <a class="reference external" href="https://resources.aertslab.org/cistarget/motif2tf/">https://resources.aertslab.org/cistarget/motif2tf/</a></p></li>
+</ul>
+<p>For this tutorial, since we are working with mice, you will need to download the following files:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://resources.aertslab.org/cistarget/databases/mus_musculus/mm10/refseq_r80/mc_v10_clust/gene_based/mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather">https://resources.aertslab.org/cistarget/databases/mus_musculus/mm10/refseq_r80/mc_v10_clust/gene_based/mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather</a></p></li>
+<li><p><a class="reference external" href="https://resources.aertslab.org/cistarget/databases/mus_musculus/mm10/refseq_r80/mc_v10_clust/gene_based/mm10_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather">https://resources.aertslab.org/cistarget/databases/mus_musculus/mm10/refseq_r80/mc_v10_clust/gene_based/mm10_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather</a></p></li>
+<li><p><a class="reference external" href="https://resources.aertslab.org/cistarget/motif2tf/motifs-v10nr_clust-nr.mgi-m0.001-o0.0.tbl">https://resources.aertslab.org/cistarget/motif2tf/motifs-v10nr_clust-nr.mgi-m0.001-o0.0.tbl</a></p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="grn-inference">
+<h2>GRN Inference<a class="headerlink" href="#grn-inference" title="Link to this heading">#</a></h2>
+<p>To get started, we first load the data and perfrom necessary data cleaning.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">scanpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">regdiffusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">loompy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscenic.rss</span><span class="w"> </span><span class="kn">import</span> <span class="n">regulon_specificity_scores</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscenic.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_rss</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change the path if needed</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="s1">&#39;../..&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mice_data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/samples_cluster_ann.h5ad&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cisdb_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/mm10_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load data. Data shape: 55,129 x 3701. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="n">mice_data_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Filter the gene not present in the cisTargetDB. Data shape: 55,129 x 3,206</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cisdb</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_feather</span><span class="p">(</span><span class="n">cisdb_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">adata</span><span class="p">[:,</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cisdb</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span>
+<span class="go">View of AnnData object with n_obs × n_vars = 55129 × 3206</span>
+<span class="go">    obs: &#39;sample&#39;, &#39;cellname&#39;, &#39;celltype&#39;</span>
+<span class="go">    var: &#39;mt&#39;, &#39;ribo&#39;, &#39;hb&#39;</span>
+<span class="go">    uns: &#39;X_name&#39;</span>
+<span class="go">    obsm: &#39;X_pca&#39;, &#39;X_pca_harmony&#39;, &#39;X_umap&#39;</span>
+<span class="go">    varm: &#39;PCs&#39;</span>
+<span class="go">    layers: &#39;counts&#39;</span>
+<span class="go">    obsp: &#39;connectivities&#39;, &#39;distances&#39;</span>
+</pre></div>
+</div>
+<p>The input of <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> is log transformed raw counts data. The <code class="docutils literal notranslate"><span class="pre">.X</span></code> in the provided file has been normalized so we need to starts from the <code class="docutils literal notranslate"><span class="pre">counts</span></code> layer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># .X has been normalized so we need to get from the counts layer.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Counts is stored in a sparse matrix so we need to turn it to an array and </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># then perform log + 1 transformation.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now run <code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code> and save the output to a GRN.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rd_trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rd_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-edges-from-grn">
+<h2>Extract edges from GRN<a class="headerlink" href="#extract-edges-from-grn" title="Link to this heading">#</a></h2>
+<p>The inferred GRN is represented by a weighted adjacency matrix and we would like to remove those weak edges. Here we recommend 2 strategies to do that. You can use either one of them or both depending on your need.</p>
+<ol class="arabic simple">
+<li><p><strong>Focus on the top x% of edges based on the inferred weights</strong>. To do that you can use the <code class="docutils literal notranslate"><span class="pre">top_gene_percentile</span></code> option when you create an GRN object. Alternatively, after a GRN object is created, you can use the <code class="docutils literal notranslate"><span class="pre">remove_weak_edges</span></code> and remove edges based on a manually specified threshold.</p></li>
+<li><p><strong>For each gene, focus on the top-k regulator/targets</strong>. This is in fact the default way of getting edges in GENIE3. In <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code>, once you have your GRN object, you can specify <code class="docutils literal notranslate"><span class="pre">k</span></code> in the <code class="docutils literal notranslate"><span class="pre">extract_edgelist</span></code> method of a GRN object (By default, k=20. If you want to extract all edges, you can set k=-1).</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now we focus on edges with weight &gt; 50 percentile. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span> <span class="o">=</span> <span class="n">rd_trainer</span><span class="o">.</span><span class="n">get_grn</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here for each gene, we are going to extract all edges</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edgelist</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edgelist</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TF&#39;</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;importance&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edgelist</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/grn_naive.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># check edgelist.  </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edgelist</span>
+</pre></div>
+</div>
+<p>You also need to save the expression matrix for pyscenic in the next step.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lp</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/exp_mtx.loom&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">layers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">()},</span>  
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">row_attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Gene&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="p">)},</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">col_attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;CellID&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obs_names</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="prunning-and-aucell-calculation-in-pyscenic">
+<h2>Prunning and AUCell Calculation in PySCENIC<a class="headerlink" href="#prunning-and-aucell-calculation-in-pyscenic" title="Link to this heading">#</a></h2>
+<p>In this step, we are going to call <code class="docutils literal notranslate"><span class="pre">pyscenic</span></code> from command line to prune the edges and generate the AUCell Scores for each individual cell. The whole process may take 5-20 minutes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">## inputs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grn_fp</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/grn_naive.tsv&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp_mtx_fp</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/exp_mtx.loom&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">## outputs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx_output</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/ctx_output.tsv&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aucell_output</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/aucell.loom&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">## reference</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_motif_path</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/motifs-v10nr_clust-nr.mgi-m0.001-o0.0.tbl&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_db_500bp</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_db_10kb</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/mm10_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">## Prunning. You may need to adjust the number of workers. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="err">!</span><span class="n">conda</span> <span class="n">run</span> <span class="o">-</span><span class="n">n</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span> <span class="n">pyscenic</span> <span class="n">ctx</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">{</span><span class="n">grn_fp</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">{</span><span class="n">f_db_500bp</span><span class="p">}</span> <span class="p">{</span><span class="n">f_db_10kb</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">annotations_fname</span> <span class="p">{</span><span class="n">f_motif_path</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">expression_mtx_fname</span> <span class="p">{</span><span class="n">exp_mtx_fp</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">output</span> <span class="p">{</span><span class="n">ctx_output</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">num_workers</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">## AUCell Calculation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="err">!</span><span class="n">conda</span> <span class="n">run</span> <span class="o">-</span><span class="n">n</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span> <span class="n">pyscenic</span> <span class="n">aucell</span> <span class="p">{</span><span class="n">exp_mtx_fp</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">{</span><span class="n">ctx_output</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">output</span> <span class="p">{</span><span class="n">aucell_output</span><span class="p">}</span> \
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">num_workers</span> <span class="mi">64</span>
+</pre></div>
+</div>
+<p>Once it’s finished, you can check the calculated AUCell values for each cell.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span> <span class="o">=</span> <span class="n">lp</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">aucell_output</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r+&quot;</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc_mtx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">RegulonsAUC</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">lf</span><span class="o">.</span><span class="n">ca</span><span class="o">.</span><span class="n">CellID</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc_mtx</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="dimension-reduction">
+<h2>Dimension reduction<a class="headerlink" href="#dimension-reduction" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_aucell&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">auc_mtx</span><span class="o">.</span><span class="n">values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;correlation&quot;</span><span class="p">,</span> <span class="n">use_rep</span><span class="o">=</span><span class="s2">&quot;X_aucell&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">&quot;X_aucell_umap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">&quot;X_umap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;aucell_umap&#39;</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;celltype&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;AUCell - UMAP (Celltype)&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="regulon-specificity-scores-by-cell-types">
+<h2>Regulon specificity scores by cell types<a class="headerlink" href="#regulon-specificity-scores-by-cell-types" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rss</span> <span class="o">=</span> <span class="n">regulon_specificity_scores</span><span class="p">(</span><span class="n">auc_mtx</span><span class="p">,</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">celltype</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cats</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;celltype&#39;</span><span class="p">])))</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">num</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cats</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">cats</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">x</span><span class="o">=</span><span class="n">rss</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">num</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">plot_rss</span><span class="p">(</span><span class="n">rss</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">*</span><span class="mf">0.05</span> <span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">*</span><span class="mf">0.05</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">texts</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">t</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;Regulon&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;x-large&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.00</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;Regulon specificity score (RSS)&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;x-large&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;figure.autolayout&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="s1">&#39;figure.titlesize&#39;</span><span class="p">:</span> <span class="s1">&#39;large&#39;</span> <span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="s1">&#39;axes.labelsize&#39;</span><span class="p">:</span> <span class="s1">&#39;medium&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="s1">&#39;axes.titlesize&#39;</span><span class="p">:</span><span class="s1">&#39;large&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">:</span><span class="s1">&#39;medium&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">:</span><span class="s1">&#39;medium&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="quick_tour.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Get Started</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="main_api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">main Interface</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites-and-data-preparation">Prerequisites and Data Preparation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-sources">Data Sources</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#single-cell-transcriptomic-data">Single-cell transcriptomic data</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#auxiliary-datasets-for-pyscenic">Auxiliary datasets for PySCENIC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-edges-from-grn">Extract edges from GRN</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prunning-and-aucell-calculation-in-pyscenic">Prunning and AUCell Calculation in PySCENIC</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-reduction">Dimension reduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulon-specificity-scores-by-cell-types">Regulon specificity scores by cell types</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hao Zhu, Donna Slonim
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Hao Zhu, Donna Slonim.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

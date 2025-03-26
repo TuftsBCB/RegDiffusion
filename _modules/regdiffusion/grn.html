@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>regdiffusion.grn &#8212; regdiffusion 0.0.5 documentation</title>
+    <title>regdiffusion.grn &#8212; regdiffusion 0.0.9 documentation</title>
   
   
   
@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=6424ca4d"></script>
+    <script src="../../_static/documentation_options.js?v=39f6cbd5"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -138,8 +138,8 @@
       
     
     
-    <img src="../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.5 documentation - Home"/>
-    <script>document.write(`<img src="../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.5 documentation - Home"/>`);</script>
+    <img src="../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -159,6 +159,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../quick_tour.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../downstream_with_pyscenic.html">Integrating RegDiffusion with SCENIC for Downstream GRN Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -392,9 +393,14 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">calculated_neighbors</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="GRN.get_edgelist">
-<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.get_edgelist">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_weak_edges</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">threshold</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        
+<div class="viewcode-block" id="GRN.extract_edgelist">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_edgelist">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simply generate a dataframe to hold the edge list.</span>
 
@@ -408,13 +414,22 @@ document.write(`
             <span class="n">max_workers</span><span class="o">=</span><span class="n">workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
             <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_sources</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span>
                 <span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">)]</span>
         
             <span class="n">all_edges</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> 
                 <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_edges</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GRN.get_edgelist">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.get_edgelist">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deprecated API. Use extract_edgelist instead. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">workers</span><span class="p">)</span></div>
 
                 
 
@@ -715,6 +730,9 @@ document.write(`
             <span class="n">sp_adj</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.hdf5&#39;</span><span class="p">):</span>
             <span class="n">file_path</span> <span class="o">+=</span> <span class="s1">&#39;.hdf5&#39;</span>
+
+        <span class="n">stringtype</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">adj_group</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;adj_matrix&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">as_sparse</span><span class="p">:</span>
@@ -740,11 +758,11 @@ document.write(`
                 <span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
                 <span class="s1">&#39;gene_names&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span>
+                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">stringtype</span>
             <span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
                 <span class="s1">&#39;tf_names&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_names</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span>
+                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">stringtype</span>
             <span class="p">)</span></div>
 
             
@@ -818,7 +836,7 @@ By Hao Zhu, Donna Slonim
 
   <p class="copyright">
     
-      © Copyright 2024, Hao Zhu, Donna Slonim.
+      © Copyright 2025, Hao Zhu, Donna Slonim.
       <br/>
     
   </p>

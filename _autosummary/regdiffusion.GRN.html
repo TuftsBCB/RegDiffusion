@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>GRN &#8212; regdiffusion 0.0.5 documentation</title>
+    <title>GRN &#8212; regdiffusion 0.0.9 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=6424ca4d"></script>
+    <script src="../_static/documentation_options.js?v=39f6cbd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -139,8 +139,8 @@
       
     
     
-    <img src="../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.5 documentation - Home"/>
-    <script>document.write(`<img src="../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.5 documentation - Home"/>`);</script>
+    <img src="../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
+    <script>document.write(`<img src="../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -160,6 +160,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../quick_tour.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../downstream_with_pyscenic.html">Integrating RegDiffusion with SCENIC for Downstream GRN Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="current nav bd-sidenav">
@@ -347,6 +348,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.extract_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_local_neighborhood()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
@@ -409,6 +411,21 @@ and <cite>.visualize_local_neighborhood</cite>.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.extract_edgelist">
+<span class="sig-name descname"><span class="pre">extract_edgelist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_edgelist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_edgelist" title="Link to this definition">#</a></dt>
+<dd><p>Simply generate a dataframe to hold the edge list.</p>
+<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all.</p></li>
+<li><p><strong>workers</strong> (<em>int</em>) – Number of concurrent workers. Default is 2.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.extract_local_neighborhood">
 <span class="sig-name descname"><span class="pre">extract_local_neighborhood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'2.5'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_local_neighborhood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_local_neighborhood" title="Link to this definition">#</a></dt>
@@ -524,17 +541,8 @@ selected gene. It is slightly faster than the dataframe version.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.get_edgelist">
-<span class="sig-name descname"><span class="pre">get_edgelist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.get_edgelist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.get_edgelist" title="Link to this definition">#</a></dt>
-<dd><p>Simply generate a dataframe to hold the edge list.</p>
-<p>The dataframe will have 3 columns: <cite>source</cite>, <cite>target</cite>, <cite>weight</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all.</p></li>
-<li><p><strong>workers</strong> (<em>int</em>) – Number of concurrent workers. Default is 2.</p></li>
-</ul>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">get_edgelist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.get_edgelist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.get_edgelist" title="Link to this definition">#</a></dt>
+<dd><p>Deprecated API. Use extract_edgelist instead.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -625,6 +633,7 @@ adjacency matrix are zeros.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.extract_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_local_neighborhood()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors_as_indices()</span></code></a></li>
@@ -661,7 +670,7 @@ By Hao Zhu, Donna Slonim
 
   <p class="copyright">
     
-      © Copyright 2024, Hao Zhu, Donna Slonim.
+      © Copyright 2025, Hao Zhu, Donna Slonim.
       <br/>
     
   </p>

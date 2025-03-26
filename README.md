@@ -7,9 +7,7 @@
 RegDiffusion is a very fast regulatory network inference algorithm based on probabilistic diffusion model. It works well on genes and is capable to rapidly (<5min) predict biologically verifiable links from large single cell RNA-seq data with 14,000+ genes.
 
 ```
-From Noise to Knowledge: Probabilistic Diffusion-Based Neural Inference of Gene Regulatory Networks
-Hao Zhu, Donna K. Slonim
-bioRxiv 2023.11.05.565675; doi: https://doi.org/10.1101/2023.11.05.565675
+Zhu H, Slonim D. From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks. J Comput Biol. 2024 Nov;31(11):1087-1103. doi: 10.1089/cmb.2024.0607. Epub 2024 Oct 10. PMID: 39387266; PMCID: PMC11698671.
 ```
 
 ![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regdiffusion_structure.png)
@@ -70,3 +68,18 @@ In contrast, previous VAE based models would take more than 4 hours on the same
 device. Even if you don't have access to those fancy GPU cards, RegDiffusion 
 still works. Inference on the same large network takes roughly 3 hours on a 
 mid-range 12-core CPU. 
+
+## Citation 
+
+```
+@article{zhu2024noise,
+  title={From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks},
+  author={Zhu, Hao and Slonim, Donna},
+  journal={Journal of Computational Biology},
+  volume={31},
+  number={11},
+  pages={1087--1103},
+  year={2024},
+  publisher={Mary Ann Liebert, Inc., publishers 140 Huguenot Street, 3rd Floor New~…}
+}
+```

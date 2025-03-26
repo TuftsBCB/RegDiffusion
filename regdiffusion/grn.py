@@ -88,7 +88,12 @@ class GRN:
 
         self.calculated_neighbors = {}
 
-    def get_edgelist(self, k: int = 20, workers: int = 2) -> pd.DataFrame:
+    def remove_weak_edges(threshold=None):
+        if threshold > self.cutoff_threshold:
+            self.cutoff_threshold = threshold
+        self.adj_matrix[np.abs(self.adj_matrix) < threshold] = 0
+        
+    def extract_edgelist(self, k: int = 20, workers: int = 2) -> pd.DataFrame:
         """
         Simply generate a dataframe to hold the edge list.
 
@@ -102,13 +107,19 @@ class GRN:
             max_workers=workers) as executor:
             futures = [
                 executor.submit(
-                    self.extract_node_neighbors, g, k
+                    self.extract_node_sources, g, k
                 ) for g in list(self.gene_names)]
         
             all_edges = [
                 future.result() for future in 
                 concurrent.futures.as_completed(futures)]
         return pd.concat(all_edges).reset_index(drop=True)
+
+    def get_edgelist(self, k: int = 100, workers: int = 4) -> pd.DataFrame:
+        """
+        Deprecated API. Use extract_edgelist instead. 
+        """
+        return self.extract_edgelist(self, k, workers)
                 
 
     def extract_node_sources_as_indices(self, gene: str, k: int = 20) -> Dict:
@@ -382,6 +393,9 @@ class GRN:
             sp_adj = csr_matrix(self.adj_matrix)
         if not file_path.endswith('.hdf5'):
             file_path += '.hdf5'
+
+        stringtype = h5py.string_dtype(encoding='utf-8')
+
         with h5py.File(file_path, 'w') as f:
             adj_group = f.create_group('adj_matrix')
             if as_sparse:
@@ -407,11 +421,11 @@ class GRN:
                 )
             f.create_dataset(
                 'gene_names', data=list(self.gene_names), chunks=True, 
-                compression="gzip", compression_opts=9
+                compression="gzip", compression_opts=9, dtype=stringtype
             )
             f.create_dataset(
                 'tf_names', data=list(self.tf_names), chunks=True, 
-                compression="gzip", compression_opts=9
+                compression="gzip", compression_opts=9, dtype=stringtype
             )
             
     def __repr__(self):

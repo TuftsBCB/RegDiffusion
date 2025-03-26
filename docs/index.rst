@@ -86,6 +86,7 @@ Please consider cite our work if you found it useful for your work.
    :hidden:
 
    quick_tour
+   downstream_with_pyscenic
 
 .. toctree::
    :caption: References:

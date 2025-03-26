@@ -10,9 +10,9 @@ sys.path.insert(0, os.path.abspath('..'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'regdiffusion'
-copyright = '2024, Hao Zhu, Donna Slonim'
+copyright = '2025, Hao Zhu, Donna Slonim'
 author = 'Hao Zhu, Donna Slonim'
-release = '0.0.5'
+release = '0.0.9'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating RegDiffusion with SCENIC for Downstream GRN Analysis &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>Fast SCENIC GRN Analysis with RegDiffusion &#8212; regdiffusion 0.0.9 documentation</title>
   
   
   
@@ -160,7 +160,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Integrating RegDiffusion with SCENIC for Downstream GRN Analysis</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -337,7 +337,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Integrating RegDiffusion with SCENIC for Downstream GRN Analysis</h1>
+    <h1>Fast SCENIC GRN Analysis with RegDiffusion</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -359,8 +359,10 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-edges-from-grn">Extract edges from GRN</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prunning-and-aucell-calculation-in-pyscenic">Prunning and AUCell Calculation in PySCENIC</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-reduction">Dimension reduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-reduction-and-cell-type-identification">Dimension reduction and cell type identification.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expression-levels-of-bio-markers">Expression levels of Bio-markers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulon-specificity-scores-by-cell-types">Regulon specificity scores by cell types</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
 </ul>
             </nav>
         </div>
@@ -372,32 +374,34 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="integrating-regdiffusion-with-scenic-for-downstream-grn-analysis">
-<h1>Integrating RegDiffusion with SCENIC for Downstream GRN Analysis<a class="headerlink" href="#integrating-regdiffusion-with-scenic-for-downstream-grn-analysis" title="Link to this heading">#</a></h1>
-<p>Author: Nicky Jin
-Edited by: Hao</p>
-<p>This tutorial demonstrates how to integrate GRN inference results from RegDiffusion into the SCENIC pipeline for downstream gene regulatory network (GRN) analysis. In this workflow, RegDiffusion replaces GRNBoost2 (or GENIE3) by providing a much faster method to generate the adjacency matrix of the regulatory network. We then use PySCENIC’s pruning, cell scoring, and downstream visualization tools on the output of RegDiffusion.</p>
+  <section id="fast-scenic-grn-analysis-with-regdiffusion">
+<h1>Fast SCENIC GRN Analysis with RegDiffusion<a class="headerlink" href="#fast-scenic-grn-analysis-with-regdiffusion" title="Link to this heading">#</a></h1>
+<p>Author: Nicky-Jin, edited by Hao</p>
+<p>This tutorial demonstrates how to integrate GRN inference results from RegDiffusion into the SCENIC pipeline (Aibar 2017) for downstream gene regulatory network (GRN) analysis. In this workflow, RegDiffusion replaces GRNBoost2 (or GENIE3) by providing a much faster method to generate the adjacency matrix of the regulatory network. We then use PySCENIC’s pruning, cell scoring, and downstream visualization tools on the output of RegDiffusion.</p>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p>SCENIC (https://github.com/aertslab/pySCENIC) is a widely used pipeline for inferring and analyzing GRNs in single-cell transcriptomics. Typically, its workflow consists of the following stages:</p>
+<p>SCENIC (Aibar 2017) is a widely used pipeline for inferring and analyzing GRNs in single-cell transcriptomics. Typically, its workflow consists of the following stages:</p>
 <ul class="simple">
 <li><p><strong>GRN inference</strong>: Done by GRNBoost2 or GENIE3.</p></li>
 <li><p><strong>Pruning</strong>: Refines co-expression modules using cisTarget to retain genes with TF-binding motifs.</p></li>
 <li><p><strong>Cell Scoring</strong>: Quantifies TF activity in individual cells via AUCell, a score measuring the activity of regulons.</p></li>
 <li><p><strong>Clustering and Visualization</strong>: The AUCell scores could be used as features to do dimension reduction and cell type identification.</p></li>
 </ul>
-<p>One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive, especially on large datasets. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM), which can seamlessly replace the output from GRNBoost2/GENIE3.</p>
+<p>One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive. Today, As the sizes of single-cell datasets continue to grow, running the SCENIC pipeline with default settings is becoming increasingly challenging. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM), which can seamlessly replace the output from GRNBoost2/GENIE3.</p>
 </section>
 <section id="prerequisites-and-data-preparation">
 <h2>Prerequisites and Data Preparation<a class="headerlink" href="#prerequisites-and-data-preparation" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">pyscenic</span></code> has some version conflicts with the latest packages. We recommend setting up a separate conda environement to hold it. The following versions on the dependencies work well for us today (2025.3).</p>
+<p><code class="docutils literal notranslate"><span class="pre">pyscenic</span></code> has some version conflicts with the latest packages and it may trigger some runtime error when performing specific tasks. We recommend setting up a separate conda environement to hold it. The following versions on the dependencies work well for us today (2025.3).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">n</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">activate</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyscenic</span><span class="o">==</span><span class="mf">0.12.1</span> <span class="n">numpy</span><span class="o">==</span><span class="mf">1.23.5</span> <span class="n">pandas</span><span class="o">==</span><span class="mf">1.3.5</span> <span class="n">dask</span><span class="o">==</span><span class="mf">2023.10.0</span> <span class="n">matplotlib</span> <span class="n">decorator</span><span class="o">==</span><span class="mf">4.3.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">conda</span> <span class="n">deactivate</span>
 </pre></div>
 </div>
-<p>You also probably need to install pyscenic to your working environment.</p>
+<p>You also need to install pyscenic to your working environment. We recommand the github version as it fixed many bugs.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">aertslab</span><span class="o">/</span><span class="n">pySCENIC</span>
+</pre></div>
+</div>
 <section id="data-sources">
 <h3>Data Sources<a class="headerlink" href="#data-sources" title="Link to this heading">#</a></h3>
 <section id="single-cell-transcriptomic-data">
@@ -434,6 +438,7 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscenic.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_rss</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Change the path if needed</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="s1">&#39;../..&#39;</span>
@@ -465,9 +470,10 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mf">1.0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now run <code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code> and save the output to a GRN.</p>
+<p>Now run <code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rd_trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rd_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="go">Training loss: 0.221, Change on Adj: -0.000: 100%|██████████| 1000/1000 [00:19&lt;00:00, 50.85it/s]</span>
 </pre></div>
 </div>
 </section>
@@ -490,6 +496,7 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">edgelist</span>
 </pre></div>
 </div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/edgelist.png" /></p>
 <p>You also need to save the expression matrix for pyscenic in the next step.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lp</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">wd</span><span class="si">}</span><span class="s1">/exp_mtx.loom&#39;</span><span class="p">,</span>
@@ -524,12 +531,25 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">expression_mtx_fname</span> <span class="p">{</span><span class="n">exp_mtx_fp</span><span class="p">}</span> \
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">output</span> <span class="p">{</span><span class="n">ctx_output</span><span class="p">}</span> \
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">num_workers</span> <span class="mi">64</span>
-<span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">## AUCell Calculation</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="err">!</span><span class="n">conda</span> <span class="n">run</span> <span class="o">-</span><span class="n">n</span> <span class="n">pyscenic</span><span class="o">-</span><span class="n">env</span> <span class="n">pyscenic</span> <span class="n">aucell</span> <span class="p">{</span><span class="n">exp_mtx_fp</span><span class="p">}</span> \
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">{</span><span class="n">ctx_output</span><span class="p">}</span> \
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">output</span> <span class="p">{</span><span class="n">aucell_output</span><span class="p">}</span> \
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">--</span><span class="n">num_workers</span> <span class="mi">64</span>
+<span class="go">2025-03-26 11:43:14,528 - pyscenic.cli.pyscenic - INFO - Creating modules.</span>
+<span class="go">2025-03-26 11:43:16,110 - pyscenic.cli.pyscenic - INFO - Loading expression matrix.</span>
+<span class="go">2025-03-26 11:43:18,362 - pyscenic.utils - INFO - Calculating Pearson correlations.</span>
+<span class="go">...</span>
+<span class="go">2025-03-26 11:47:11,450 - pyscenic.prune - INFO - Worker mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings(4): Done.</span>
+<span class="go">2025-03-26 11:47:11,450 - pyscenic.prune - INFO - Worker mm10_500bp_up_100bp_down_full_tx_v10_clust.genes_vs_motifs.rankings(4): Done.</span>
+<span class="go">2025-03-26 11:47:11,521 - pyscenic.cli.pyscenic - INFO - Writing results to file.</span>
+
+<span class="go">Create regulons from a dataframe of enriched features.</span>
+<span class="go">Additional columns saved: []</span>
+<span class="go">2025-03-26 11:47:20,539 - pyscenic.cli.pyscenic - INFO - Loading expression matrix.</span>
+<span class="go">2025-03-26 11:47:22,420 - pyscenic.cli.pyscenic - INFO - Loading gene signatures.</span>
+<span class="go">2025-03-26 11:47:22,722 - pyscenic.cli.pyscenic - INFO - Calculating cellular enrichment.</span>
+<span class="go">2025-03-26 11:47:34,316 - pyscenic.cli.pyscenic - INFO - Writing results to file.</span>
 </pre></div>
 </div>
 <p>Once it’s finished, you can check the calculated AUCell values for each cell.</p>
@@ -539,9 +559,11 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">auc_mtx</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/aucell_mtx.png" /></p>
 </section>
-<section id="dimension-reduction">
-<h2>Dimension reduction<a class="headerlink" href="#dimension-reduction" title="Link to this heading">#</a></h2>
+<section id="dimension-reduction-and-cell-type-identification">
+<h2>Dimension reduction and cell type identification.<a class="headerlink" href="#dimension-reduction-and-cell-type-identification" title="Link to this heading">#</a></h2>
+<p>Following the AUCell calcuation, UMAP can be used to perform additional dimensionality reduction for cell type identification.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s1">&#39;X_aucell&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">auc_mtx</span><span class="o">.</span><span class="n">values</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;correlation&quot;</span><span class="p">,</span> <span class="n">use_rep</span><span class="o">=</span><span class="s2">&quot;X_aucell&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
@@ -549,11 +571,113 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;aucell_umap&#39;</span><span class="p">,</span> 
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;celltype&#39;</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;AUCell - UMAP (Celltype)&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RegDiffusion - AUCell - UMAP&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
 </pre></div>
 </div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/aucell_umap.png" /></p>
+<p>We can compare the results with standard PCA-based UMAPs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">n_pcs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">use_rep</span><span class="o">=</span><span class="s2">&quot;X_pca&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">&quot;X_pca_umap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">&quot;X_umap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Remove batch effect with Harmony</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#!pip install harmonypy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#sc.external.pp.harmony_integrate(adata, key = &quot;sample&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">n_pcs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">use_rep</span><span class="o">=</span><span class="s2">&quot;X_pca_harmony&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">tl</span><span class="o">.</span><span class="n">umap</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">&quot;X_harmony_pca_umap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">&quot;X_umap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;pca_umap&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;PCA - UMAP&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;harmony_pca_umap&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Harmony - PCA - UMAP&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;aucell_umap&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;celltype&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;RegDiffusion - AUCell - UMAP&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/umap_comparison.png" /></p>
+<p>The RegDiffusion-AUCell-based UMAP plot provides a high degree of clarity, allowing the major cell types to be easily distinguished. Compared with standard PCA-based UMAPs, whether or not batch effects are corrected with harmonypy, the AUCell plot produces fewer, more distinctly separated clusters. This clear separation remains interpretable even in the absence of cell labels, which suggests its capacity for identifying novel cell subtypes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;pca_umap&#39;</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PCA - UMAP&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;harmony_pca_umap&#39;</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Harmony - PCA - UMAP&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;aucell_umap&#39;</span><span class="p">,</span> 
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RegDiffusion - AUCell - UMAP&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/cellnames.png" /></p>
+<p>If we color the UMAPs by sample IDs, we can see Harmony seems to suffer the least from batch effect. In RegDiffusion-AUCell UMAP, the batch effect in most cells are minimized. This consists with previous literature (Aibar, 2017; Malagola, 2024) and shows that AUCell scores capture high-level interaction features. However, we also noticed that there are still clear batch separations in Monocytes and Neutrophil and the reason is unknown.</p>
+</section>
+<section id="expression-levels-of-bio-markers">
+<h2>Expression levels of Bio-markers<a class="headerlink" href="#expression-levels-of-bio-markers" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">markers</span><span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ptprc&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;Mmp9&#39;</span><span class="p">,</span> <span class="c1"># Neutrophil</span>
+          <span class="s1">&#39;Cd14&#39;</span><span class="p">,</span> <span class="s1">&#39;Itgam&#39;</span><span class="p">,</span>  <span class="c1"># Monocyte</span>
+          <span class="s1">&#39;Marco&#39;</span><span class="p">,</span>  <span class="c1"># Macrophage</span>
+          <span class="s1">&#39;Clec9a&#39;</span><span class="p">,</span>  <span class="c1"># DC</span>
+          <span class="s1">&#39;Ms4a1&#39;</span><span class="p">,</span> <span class="c1"># B</span>
+          <span class="s1">&#39;Cd3d&#39;</span><span class="p">,</span> <span class="c1"># T</span>
+          <span class="s1">&#39;Klrc1&#39;</span><span class="p">,</span>  <span class="c1"># NK</span>
+          <span class="s1">&#39;Cd200r3&#39;</span><span class="p">,</span>  <span class="c1"># Basophil</span>
+          <span class="s1">&#39;Il2ra&#39;</span><span class="p">,</span> <span class="c1"># ILC</span>
+          <span class="s1">&#39;Itga2b&#39;</span><span class="p">,</span> <span class="c1"># Platelets</span>
+          <span class="s1">&#39;Cdh5&#39;</span><span class="p">,</span> <span class="c1"># Endothelial</span>
+          <span class="s1">&#39;Epcam&#39;</span><span class="p">,</span> <span class="c1"># Epithelial </span>
+          <span class="s1">&#39;Msln&#39;</span><span class="p">,</span> <span class="c1"># Mesothelial</span>
+          <span class="s1">&#39;Col1a2&#39;</span> <span class="c1"># Mesenchymal cells</span>
+<span class="p">]</span>
+
+<span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span>
+    <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;aucell_umap&#39;</span><span class="p">,</span> 
+    <span class="n">color</span><span class="o">=</span><span class="n">markers</span><span class="p">,</span>
+    <span class="n">ncols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/biomarkers.png" /></p>
 </section>
 <section id="regulon-specificity-scores-by-cell-types">
 <h2>Regulon specificity scores by cell types<a class="headerlink" href="#regulon-specificity-scores-by-cell-types" title="Link to this heading">#</a></h2>
@@ -585,6 +709,57 @@ Edited by: Hao</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regulon_scores.png" /></p>
+</section>
+<section id="heatmap">
+<h2>Heatmap<a class="headerlink" href="#heatmap" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Top 5 regulons for each cell type</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topreg</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cats</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topreg</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">list</span><span class="p">(</span><span class="n">rss</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topreg</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">topreg</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Normalized z scores</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc_mtx_Z</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span> <span class="n">index</span><span class="o">=</span><span class="n">auc_mtx</span><span class="o">.</span><span class="n">index</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">auc_mtx</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">auc_mtx_Z</span><span class="p">[</span> <span class="n">col</span> <span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">auc_mtx</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">auc_mtx</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">auc_mtx</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Heatmap</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">palplot</span><span class="p">(</span><span class="n">pal</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pal</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="n">cmap</span><span class="o">=</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pal</span><span class="p">)),</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mf">.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="o">-</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">colors</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">colors</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">colors</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.0</span><span class="o">+</span><span class="n">idx</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">f</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colors</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s1">&#39;bright&#39;</span><span class="p">,</span><span class="n">n_colors</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cats</span><span class="p">)</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colorsd</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span> <span class="n">cats</span><span class="p">,</span> <span class="n">colors</span> <span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colormap</span> <span class="o">=</span> <span class="p">[</span><span class="n">colorsd</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;celltype&#39;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">clustermap</span><span class="p">(</span><span class="n">auc_mtx_Z</span><span class="p">[</span><span class="n">topreg</span><span class="p">],</span> <span class="n">annot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">square</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">linecolor</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">yticklabels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">row_colors</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;YlGnBu&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">cax</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">ax_heatmap</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">ax_heatmap</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/heatmap.png" /></p>
+<ol class="arabic simple">
+<li><p>Aibar, S., et al. 2017. SCENIC: single-cell regulatory network inference and clustering. Nat Methods 14, 1083–1086. https://doi.org/10.1038/nmeth.4463</p></li>
+<li><p>Malagola, E., et al. 2024. Isthmus progenitor cells contribute to homeostatic cellular turnover and support regeneration following intestinal injury. Cell 187, 3056-3071.e17. https://doi.org/10.1016/j.cell.2024.05.004</p></li>
+</ol>
 </section>
 </section>
 
@@ -645,8 +820,10 @@ Edited by: Hao</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grn-inference">GRN Inference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-edges-from-grn">Extract edges from GRN</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prunning-and-aucell-calculation-in-pyscenic">Prunning and AUCell Calculation in PySCENIC</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-reduction">Dimension reduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-reduction-and-cell-type-identification">Dimension reduction and cell type identification.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expression-levels-of-bio-markers">Expression levels of Bio-markers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulon-specificity-scores-by-cell-types">Regulon specificity scores by cell types</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
 </ul>
   </nav></div>
 

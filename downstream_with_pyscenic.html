@@ -363,6 +363,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expression-levels-of-bio-markers">Expression levels of Bio-markers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulon-specificity-scores-by-cell-types">Regulon specificity scores by cell types</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
             </nav>
         </div>
@@ -406,9 +407,9 @@ document.write(`
 <h3>Data Sources<a class="headerlink" href="#data-sources" title="Link to this heading">#</a></h3>
 <section id="single-cell-transcriptomic-data">
 <h4>Single-cell transcriptomic data<a class="headerlink" href="#single-cell-transcriptomic-data" title="Link to this heading">#</a></h4>
-<p>For this tutorial, we use the mice lung dataset from GSE276682 (<a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682</a>). This data includes a control group (n=3) and an intervention group (n=3). In the intervention group, mices were administered with intraperitoneal injection of 30mg/ml lipopolysaccharide (LPS) in saline to induce acute lung injury.</p>
+<p>For this tutorial, we use the mice lung dataset from GSE276682 (<a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682</a>) (Wu, 2025). This data includes a control group (n=3) and an intervention group (n=3). In the intervention group, mices were administered with intraperitoneal injection of 30mg/ml lipopolysaccharide (LPS) in saline to induce acute lung injury.</p>
 <p>The raw FASTQ data was processed with cellranger to generate expression matrix. The count matrix was then processed following standard scanpy procedure and we focused on genes expressed in at least 5 cells. The input data has 55,129 cells and 3,701 genes.</p>
-<p>Most of this tutorial is to illustrate the process. If you need access to the processed data, please download it from this link.</p>
+<p>Most of this tutorial is to illustrate the process. If you need access to the processed data, please download it from <a class="reference external" href="https://zenodo.org/records/15096758">this link</a>.</p>
 </section>
 <section id="auxiliary-datasets-for-pyscenic">
 <h4>Auxiliary datasets for PySCENIC<a class="headerlink" href="#auxiliary-datasets-for-pyscenic" title="Link to this heading">#</a></h4>
@@ -621,24 +622,33 @@ document.write(`
 </div>
 <p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/umap_comparison.png" /></p>
 <p>The RegDiffusion-AUCell-based UMAP plot provides a high degree of clarity, allowing the major cell types to be easily distinguished. Compared with standard PCA-based UMAPs, whether or not batch effects are corrected with harmonypy, the AUCell plot produces fewer, more distinctly separated clusters. This clear separation remains interpretable even in the absence of cell labels, which suggests its capacity for identifying novel cell subtypes.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">label_dict</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;SRR30599518&quot;</span><span class="p">:</span> <span class="s2">&quot;CTL-1&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;SRR30599519&quot;</span><span class="p">:</span> <span class="s2">&quot;CTL-2&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;SRR30599520&quot;</span><span class="p">:</span> <span class="s2">&quot;CTL-3&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;SRR30599521&quot;</span><span class="p">:</span> <span class="s2">&quot;LPS-1&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;SRR30599522&quot;</span><span class="p">:</span> <span class="s2">&quot;LPS-2&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;SRR30599523&quot;</span><span class="p">:</span> <span class="s2">&quot;LPS-3&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">label_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;pca_umap&#39;</span><span class="p">,</span> 
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PCA - UMAP&#39;</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;harmony_pca_umap&#39;</span><span class="p">,</span> 
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Harmony - PCA - UMAP&#39;</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pl</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span> <span class="n">adata</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="s1">&#39;aucell_umap&#39;</span><span class="p">,</span> 
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">title</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RegDiffusion - AUCell - UMAP&#39;</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;Set1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
@@ -756,9 +766,13 @@ document.write(`
 </pre></div>
 </div>
 <p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/heatmap.png" /></p>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Aibar, S., et al. 2017. SCENIC: single-cell regulatory network inference and clustering. Nat Methods 14, 1083–1086. https://doi.org/10.1038/nmeth.4463</p></li>
 <li><p>Malagola, E., et al. 2024. Isthmus progenitor cells contribute to homeostatic cellular turnover and support regeneration following intestinal injury. Cell 187, 3056-3071.e17. https://doi.org/10.1016/j.cell.2024.05.004</p></li>
+<li><p>Wu, M., Wang, S., Chen, X., Shen, L., Ding, J., Jiang, H., 2025. Single-cell transcriptome analysis reveals cellular reprogramming and changes of immune cell subsets following tetramethylpyrazine treatment in LPS-induced acute lung injury. PeerJ 13, e18772. https://doi.org/10.7717/peerj.18772</p></li>
 </ol>
 </section>
 </section>
@@ -824,6 +838,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expression-levels-of-bio-markers">Expression levels of Bio-markers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regulon-specificity-scores-by-cell-types">Regulon specificity scores by cell types</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 

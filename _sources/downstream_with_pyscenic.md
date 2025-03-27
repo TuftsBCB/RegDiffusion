@@ -13,7 +13,7 @@ SCENIC (Aibar 2017) is a widely used pipeline for inferring and analyzing GRNs i
 - **Cell Scoring**: Quantifies TF activity in individual cells via AUCell, a score measuring the activity of regulons.
 - **Clustering and Visualization**: The AUCell scores could be used as features to do dimension reduction and cell type identification. 
 
-One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive. Today, As the sizes of single-cell datasets continue to grow, running the SCENIC pipeline with default settings is becoming increasingly challenging. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM), which can seamlessly replace the output from GRNBoost2/GENIE3. 
+One limitation with the default SCENIC pipeline is that the matrix calculation step with GRNBoost2 and GENIE3 is computationally intensive. Today, As the sizes of single-cell datasets continue to grow, running the SCENIC pipeline with default settings is becoming increasingly challenging. RegDiffusion offers a fast alternative with a deep-learning based denoising diffusion structural equation model (SEM). It can seamlessly replace the output from GRNBoost2/GENIE3 and reduce the computing time from hours to minutes or even seconds. 
 
 ## Prerequisites and Data Preparation
 
@@ -26,7 +26,7 @@ One limitation with the default SCENIC pipeline is that the matrix calculation s
 >>> conda deactivate
 ```
 
-You also need to install pyscenic to your working environment. We recommand the github version as it fixed many bugs. 
+You also need to install pyscenic to your working environment. We recommand the github version. 
 
 ```
 >>> pip install git+https://github.com/aertslab/pySCENIC
@@ -105,7 +105,7 @@ The input of `regdiffusion` is log transformed raw counts data. The `.X` in the 
 >>> x = np.log(x+1.0)
 ```
 
-Now run `RegDiffusionTrainer`. 
+Now run `RegDiffusionTrainer`. On NVIDIA A30 (24G), it took 19s. On A2000 (6G), it took 51s. 
 
 ```python
 >>> rd_trainer = rd.RegDiffusionTrainer(x)
@@ -302,7 +302,7 @@ The RegDiffusion-AUCell-based UMAP plot provides a high degree of clarity, allow
 
 ![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/cellnames.png)
 
-If we color the UMAPs by sample IDs, we can see Harmony seems to suffer the least from batch effect. In RegDiffusion-AUCell UMAP, the batch effect in most cells are minimized. This consists with previous literature (Aibar, 2017; Malagola, 2024) and shows that AUCell scores capture high-level interaction features. However, we also noticed that there are still clear batch separations in Monocytes and Neutrophil and the reason is unknown. 
+To assess the impact of batch effects, we colored the UMAP plots using sample labels. As shown in the figure above, Harmony effectively reduced sample differences across many cell types. Similarly, in the RegDiffusion-AUCell UMAP, batch effects were also minimized, resulting in a near-uniform distribution of data points. This consists with previous literature (Aibar, 2017; Malagola, 2024) and shows that AUCell scores effectively capture high-level interaction features. Interestingly, as the batch effect was diminished, the biological effects were revealed more intuitively. For example, we can see clear separations in Neutrophils from samples in the LPS group and in the control group, which is consistent with previous studies demonstrating that emergency granulopoiesis leads to different clusters of neutrophils during sepsis. In contrast, these patterns appear to be lost when the data is processed with Harmony. 
 
 ## Expression levels of Bio-markers
 

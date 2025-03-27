@@ -36,11 +36,11 @@ You also need to install pyscenic to your working environment. We recommand the 
 
 #### Single-cell transcriptomic data
 
-For this tutorial, we use the mice lung dataset from GSE276682 ([https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682)). This data includes a control group (n=3) and an intervention group (n=3). In the intervention group, mices were administered with intraperitoneal injection of 30mg/ml lipopolysaccharide (LPS) in saline to induce acute lung injury.
+For this tutorial, we use the mice lung dataset from GSE276682 ([https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE276682)) (Wu, 2025). This data includes a control group (n=3) and an intervention group (n=3). In the intervention group, mices were administered with intraperitoneal injection of 30mg/ml lipopolysaccharide (LPS) in saline to induce acute lung injury.
 
 The raw FASTQ data was processed with cellranger to generate expression matrix. The count matrix was then processed following standard scanpy procedure and we focused on genes expressed in at least 5 cells. The input data has 55,129 cells and 3,701 genes. 
 
-Most of this tutorial is to illustrate the process. If you need access to the processed data, please download it from this link. 
+Most of this tutorial is to illustrate the process. If you need access to the processed data, please download it from [this link](https://zenodo.org/records/15096758). 
 
 #### Auxiliary datasets for PySCENIC
 
@@ -273,24 +273,33 @@ We can compare the results with standard PCA-based UMAPs.
 The RegDiffusion-AUCell-based UMAP plot provides a high degree of clarity, allowing the major cell types to be easily distinguished. Compared with standard PCA-based UMAPs, whether or not batch effects are corrected with harmonypy, the AUCell plot produces fewer, more distinctly separated clusters. This clear separation remains interpretable even in the absence of cell labels, which suggests its capacity for identifying novel cell subtypes.
 
 ```python
->>> fig, axs = plt.subplots(1, 3, figsize=(18, 5))
+>>> label_dict = {
+>>>     "SRR30599518": "CTL-1",
+>>>     "SRR30599519": "CTL-2",
+>>>     "SRR30599520": "CTL-3",
+>>>     "SRR30599521": "LPS-1",
+>>>     "SRR30599522": "LPS-2",
+>>>     "SRR30599523": "LPS-3"
+>>> }
+>>> adata.obs['label'] = [label_dict[x] for x in adata.obs['sample']]
+>>> fig, axs = plt.subplots(1, 3, figsize=(13, 4))
 >>> 
 >>> sc.pl.scatter( adata, basis='pca_umap', 
->>>     color=['sample'],
+>>>     color=['label'],
 >>>     title=['PCA - UMAP'],
->>>     alpha=0.8, ax=axs[0], show=False, palette='Set1'
+>>>     alpha=0.9, ax=axs[0], show=False, palette='RdYlBu'
 >>>     )
 >>> 
 >>> sc.pl.scatter( adata, basis='harmony_pca_umap', 
->>>     color=['sample'],
+>>>     color=['label'],
 >>>     title=['Harmony - PCA - UMAP'],
->>>     alpha=0.8, ax=axs[1], show=False, palette='Set1'
+>>>     alpha=0.9, ax=axs[1], show=False, palette='RdYlBu'
 >>>     )
 >>> 
 >>> sc.pl.scatter( adata, basis='aucell_umap', 
->>>     color=['sample'],
+>>>     color=['label'],
 >>>     title=['RegDiffusion - AUCell - UMAP'],
->>>     alpha=0.8, ax=axs[2], show=False, palette='Set1'
+>>>     alpha=0.9, ax=axs[2], show=False, palette='RdYlBu'
 >>>     )
 >>> 
 >>> axs[0].get_legend().remove()
@@ -414,7 +423,9 @@ sc.pl.embedding(
 
 ![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/heatmap.png)
 
+## References
 
 1. Aibar, S., et al. 2017. SCENIC: single-cell regulatory network inference and clustering. Nat Methods 14, 1083–1086. https://doi.org/10.1038/nmeth.4463
 2. Malagola, E., et al. 2024. Isthmus progenitor cells contribute to homeostatic cellular turnover and support regeneration following intestinal injury. Cell 187, 3056-3071.e17. https://doi.org/10.1016/j.cell.2024.05.004
+3. Wu, M., Wang, S., Chen, X., Shen, L., Ding, J., Jiang, H., 2025. Single-cell transcriptome analysis reveals cellular reprogramming and changes of immune cell subsets following tetramethylpyrazine treatment in LPS-induced acute lung injury. PeerJ 13, e18772. https://doi.org/10.7717/peerj.18772
 

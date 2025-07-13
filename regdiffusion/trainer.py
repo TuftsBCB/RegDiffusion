@@ -145,6 +145,8 @@ class RegDiffusionTrainer:
                 "which often causes trouble in inference. Please consider "
                 "removing these columns before continuing. "
             )
+        if (exp_array.sum(1) == 0).sum() > 0:
+            exp_array = exp_array[exp_array.sum(1) != 0, :]
         if (exp_array.shape[0] < batch_size):
             warnings.warn(
                 "Batch size needs to be smaller than the number of cells. "

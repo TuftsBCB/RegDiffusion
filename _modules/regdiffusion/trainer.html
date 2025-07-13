@@ -450,6 +450,8 @@ document.write(`
                 <span class="s2">&quot;which often causes trouble in inference. Please consider &quot;</span>
                 <span class="s2">&quot;removing these columns before continuing. &quot;</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">exp_array</span> <span class="o">=</span> <span class="n">exp_array</span><span class="p">[</span><span class="n">exp_array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">batch_size</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;Batch size needs to be smaller than the number of cells. &quot;</span>

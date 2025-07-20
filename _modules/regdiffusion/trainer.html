@@ -399,6 +399,9 @@ document.write(`
 <span class="sd">            The only situation when you need to provide this is when you want </span>
 <span class="sd">            to save logs from different trainers into the same logger. Default </span>
 <span class="sd">            is None. </span>
+<span class="sd">        gradient_accumulation (boolean): Whether to train with gradient </span>
+<span class="sd">            accumulation. This is useful when number of genes are extremely </span>
+<span class="sd">            large. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -411,7 +414,8 @@ document.write(`
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> 
         <span class="n">train_split</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> 
         <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-        <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">gradient_accumulation</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
         <span class="n">hp</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;exp_array&#39;</span><span class="p">]</span>
@@ -444,14 +448,6 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">std_schedule</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">alpha_bars</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     
         <span class="c1"># Prepare Data ---------------------------------------------------------</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Some columns in the exp_array contains all zero values, &quot;</span>
-                <span class="s2">&quot;which often causes trouble in inference. Please consider &quot;</span>
-                <span class="s2">&quot;removing these columns before continuing. &quot;</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">exp_array</span> <span class="o">=</span> <span class="n">exp_array</span><span class="p">[</span><span class="n">exp_array</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">batch_size</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;Batch size needs to be smaller than the number of cells. &quot;</span>
@@ -468,8 +464,18 @@ document.write(`
         <span class="c1">## Normalize data</span>
         <span class="n">cell_min</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">cell_max</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_array</span> <span class="o">-</span> <span class="n">cell_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">cell_max</span> <span class="o">-</span> <span class="n">cell_min</span><span class="p">)</span>
-        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X</span> <span class="o">-</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">/</span><span class="n">normalized_X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cell_range</span> <span class="o">=</span> <span class="n">cell_max</span> <span class="o">-</span> <span class="n">cell_min</span>
+        <span class="n">n_zero_cells</span> <span class="o">=</span> <span class="p">(</span><span class="n">cell_range</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_zero_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no genes are expressed.&#39;</span><span class="p">)</span>
+        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_array</span> <span class="o">-</span> <span class="n">cell_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">cell_range</span>
+        <span class="n">normalized_X_std</span> <span class="o">=</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">n_zero_genes</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X_std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_zero_genes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these genes from your data.&#39;</span><span class="p">)</span>
+        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X</span> <span class="o">-</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">/</span><span class="n">normalized_X_std</span>
     
         <span class="c1">## Train/validation split</span>
         <span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">train_split_seed</span><span class="p">)</span>
@@ -568,9 +574,14 @@ document.write(`
         <span class="k">return</span> <span class="n">x_t</span><span class="p">,</span> <span class="n">noise</span></div>
 
 
-<div class="viewcode-block" id="RegDiffusionTrainer.train">
-<a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.train">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;gradient_accumulation&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_with_gradient_accumulation</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_normal</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_train_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train the initialized model for a number of steps. </span>
 
@@ -648,8 +659,123 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">losses_on_gene</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span>
             <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="kc">None</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_train_with_gradient_accumulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train the initialized model using gradient accumulation. For each batch,</span>
+<span class="sd">        the gradient is computed for each sample individually and accumulated</span>
+<span class="sd">        before the optimizer step. This reduces memory but increases training time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_steps (int): Number of steps to train. If not provided, it will </span>
+<span class="sd">                train the model by the n_steps specified in class </span>
+<span class="sd">                initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">n_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;n_steps&#39;</span><span class="p">]</span>
+        
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span>
+        <span class="n">sampled_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
+        
+        <span class="c1"># This will hold the per-gene losses from the final step</span>
+        <span class="n">final_losses_on_gene</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+                <span class="c1"># Fetch a single batch for the current step</span>
+                <span class="n">x_0_batch</span><span class="p">,</span> <span class="n">ct_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">))</span>
+                <span class="n">x_0_batch</span> <span class="o">=</span> <span class="n">x_0_batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">ct_batch</span> <span class="o">=</span> <span class="n">ct_batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                
+                <span class="c1"># Zero gradients before starting the accumulation for the batch</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                
+                <span class="n">batch_mse_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">accumulated_loss_on_gene</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+                <span class="c1"># Loop over each sample in the batch to accumulate gradients</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+                    <span class="n">x_0</span> <span class="o">=</span> <span class="n">x_0_batch</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">ct</span> <span class="o">=</span> <span class="n">ct_batch</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    
+                    <span class="c1"># Generate timestep for the single sample</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+
+                    <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                    <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
+                    
+                    <span class="c1"># Calculate MSE loss, get per-gene loss with reduction=&#39;none&#39;</span>
+                    <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+                    
+                    <span class="c1"># Accumulate per-gene loss values for the last step</span>
+                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                        <span class="n">accumulated_loss_on_gene</span> <span class="o">+=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+                    <span class="c1"># Calculate mean loss for the sample</span>
+                    <span class="n">loss_sample</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+                    <span class="n">batch_mse_loss</span> <span class="o">+=</span> <span class="n">loss_sample</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+                    <span class="c1"># Scale loss for gradient accumulation</span>
+                    <span class="n">scaled_loss</span> <span class="o">=</span> <span class="n">loss_sample</span> <span class="o">/</span> <span class="n">batch_size</span>
+                    <span class="n">scaled_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+                <span class="c1"># Handle sparse loss once per effective batch</span>
+                <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
+                <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                
+                <span class="k">if</span> <span class="n">step_idx</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="n">loss_sparse</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+                <span class="c1"># Perform the optimizer step after accumulating all gradients</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                
+                <span class="c1"># Logging and evaluation logic</span>
+                <span class="n">train_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">batch_mse_loss</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">step_idx</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss_sparse</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                    
+                <span class="n">sampled_adj_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
+                <span class="n">adj_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">sampled_adj_new</span> <span class="o">-</span> <span class="n">sampled_adj</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">sampled_adj</span> <span class="o">=</span> <span class="n">sampled_adj_new</span>
+
+                <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Training loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, Change on Adj: </span><span class="si">{</span><span class="n">adj_diff</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                
+                <span class="n">epoch_log</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train_loss&#39;</span><span class="p">:</span> <span class="n">train_loss</span><span class="p">,</span> <span class="s1">&#39;adj_change&#39;</span><span class="p">:</span> <span class="n">adj_diff</span><span class="p">}</span>
+                
+                <span class="k">if</span> <span class="n">step_idx</span> <span class="o">%</span> <span class="n">eval_steps</span> <span class="o">==</span> <span class="n">eval_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">eval_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">())</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">eval_result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">epoch_log</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;train_split&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                            <span class="n">val_epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">):</span>
+                                <span class="n">x_0</span><span class="p">,</span> <span class="n">ct</span> <span class="o">=</span> <span class="n">batch</span>
+                                <span class="n">x_0</span> <span class="o">=</span> <span class="n">x_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                                <span class="n">ct</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                                <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
+                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> 
+                                    <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+        
+                                <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                                <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
+                                <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                                <span class="n">val_epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_val_loss</span><span class="p">)</span>
+                            <span class="n">epoch_log</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epoch_log</span><span class="p">)</span>
+                <span class="n">final_losses_on_gene</span> <span class="o">=</span> <span class="n">accumulated_loss_on_gene</span> <span class="c1"># Save from the last step</span>
+
+        <span class="c1"># Set the final per-gene losses, averaged over the batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses_on_gene</span> <span class="o">=</span> <span class="p">(</span><span class="n">final_losses_on_gene</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">((</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="RegDiffusionTrainer.training_curves">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.training_curves">[docs]</a>

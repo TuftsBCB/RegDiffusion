@@ -94,6 +94,9 @@ class RegDiffusionTrainer:
             The only situation when you need to provide this is when you want 
             to save logs from different trainers into the same logger. Default 
             is None. 
+        gradient_accumulation (boolean): Whether to train with gradient 
+            accumulation. This is useful when number of genes are extremely 
+            large. 
     """
     def __init__(
         self, exp_array, cell_types=None, 
@@ -106,7 +109,8 @@ class RegDiffusionTrainer:
         batch_size=128, n_steps=1000, 
         train_split=1.0, train_split_seed=123, 
         device='cuda', compile=False, 
-        evaluator=None, eval_on_n_steps=100, logger=None
+        evaluator=None, eval_on_n_steps=100, logger=None,
+        gradient_accumulation=False
     ):
         hp = locals()
         del hp['exp_array']
@@ -139,14 +143,6 @@ class RegDiffusionTrainer:
         self.std_schedule = torch.sqrt(1. - alpha_bars).to(device)
     
         # Prepare Data ---------------------------------------------------------
-        if (exp_array.sum(0) == 0).sum() > 0:
-            warnings.warn(
-                "Some columns in the exp_array contains all zero values, "
-                "which often causes trouble in inference. Please consider "
-                "removing these columns before continuing. "
-            )
-        if (exp_array.sum(1) == 0).sum() > 0:
-            exp_array = exp_array[exp_array.sum(1) != 0, :]
         if (exp_array.shape[0] < batch_size):
             warnings.warn(
                 "Batch size needs to be smaller than the number of cells. "
@@ -163,8 +159,18 @@ class RegDiffusionTrainer:
         ## Normalize data
         cell_min = exp_array.min(axis=1, keepdims=True)
         cell_max = exp_array.max(axis=1, keepdims=True)
-        normalized_X = (exp_array - cell_min) / (cell_max - cell_min)
-        normalized_X = (normalized_X - normalized_X.mean(0))/normalized_X.std(0)
+        cell_range = cell_max - cell_min
+        n_zero_cells = (cell_range == 0).sum()
+        if n_zero_cells > 0:
+            warnings.warn(
+                f'{n_zero_cells} cells are removed from analysis where no genes are expressed.')
+        normalized_X = (exp_array - cell_min) / cell_range
+        normalized_X_std = normalized_X.std(0)
+        n_zero_genes = (normalized_X_std == 0).sum()
+        if n_zero_genes > 0:
+            raise ValueError(
+                f'{n_zero_genes} genes have 0 variance. Please remove these genes from your data.')
+        normalized_X = (normalized_X - normalized_X.mean(0))/normalized_X_std
     
         ## Train/validation split
         random_state = np.random.RandomState(train_split_seed)
@@ -261,6 +267,13 @@ class RegDiffusionTrainer:
         return x_t, noise
 
     def train(self, n_steps=None):
+        if self.hp['gradient_accumulation']:
+            self._train_with_gradient_accumulation(n_steps=None)
+        else:
+            self._train_normal(n_steps=None)
+        
+        
+    def _train_normal(self, n_steps=None):
         """
         Train the initialized model for a number of steps. 
 
@@ -338,6 +351,122 @@ class RegDiffusionTrainer:
         self.losses_on_gene = loss_.detach().mean(0).cpu().numpy()
         self.total_time_cost += int(
             (datetime.now() - start_time).total_seconds())
+        return None
+
+    def _train_with_gradient_accumulation(self, n_steps=None):
+        """
+        Train the initialized model using gradient accumulation. For each batch,
+        the gradient is computed for each sample individually and accumulated
+        before the optimizer step. This reduces memory but increases training time.
+
+        Args:
+            n_steps (int): Number of steps to train. If not provided, it will 
+                train the model by the n_steps specified in class 
+                initialization.
+        """
+        start_time = datetime.now()
+        eval_steps = self.hp['eval_on_n_steps']
+        if n_steps is None:
+            n_steps = self.hp['n_steps']
+        
+        batch_size = self.hp['batch_size']
+        sampled_adj = self.model.get_sampled_adj_()
+        
+        # This will hold the per-gene losses from the final step
+        final_losses_on_gene = torch.zeros(self.n_gene, device=self.device)
+
+        with tqdm(range(n_steps)) as pbar:
+            for step_idx in pbar:
+                # Fetch a single batch for the current step
+                x_0_batch, ct_batch = next(iter(self.train_dataloader))
+                x_0_batch = x_0_batch.to(self.device)
+                ct_batch = ct_batch.to(self.device)
+                
+                # Zero gradients before starting the accumulation for the batch
+                self.opt.zero_grad()
+                
+                batch_mse_loss = 0.0
+                accumulated_loss_on_gene = torch.zeros(self.n_gene, device=self.device)
+
+                # Loop over each sample in the batch to accumulate gradients
+                for i in range(batch_size):
+                    x_0 = x_0_batch[i:i+1]
+                    ct = ct_batch[i:i+1]
+                    
+                    # Generate timestep for the single sample
+                    t = torch.randint(0, self.hp['T'], (1,), device=self.device).long()
+
+                    x_noisy, noise = self.forward_pass(x_0, t)
+                    z = self.model(x_noisy, t, ct)
+                    
+                    # Calculate MSE loss, get per-gene loss with reduction='none'
+                    loss_ = F.mse_loss(noise, z, reduction='none')
+                    
+                    # Accumulate per-gene loss values for the last step
+                    with torch.no_grad():
+                        accumulated_loss_on_gene += loss_.squeeze()
+
+                    # Calculate mean loss for the sample
+                    loss_sample = loss_.mean()
+                    batch_mse_loss += loss_sample.item()
+
+                    # Scale loss for gradient accumulation
+                    scaled_loss = loss_sample / batch_size
+                    scaled_loss.backward()
+
+                # Handle sparse loss once per effective batch
+                adj_m = self.model.get_adj_()
+                loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
+                
+                if step_idx > 10:
+                    loss_sparse.backward()
+
+                # Perform the optimizer step after accumulating all gradients
+                self.opt.step()
+                
+                # Logging and evaluation logic
+                train_loss = (batch_mse_loss / batch_size)
+                if step_idx > 10:
+                    train_loss += loss_sparse.item()
+                    
+                sampled_adj_new = self.model.get_sampled_adj_()
+                adj_diff = (sampled_adj_new - sampled_adj).mean().item() * (self.n_gene - 1)
+                sampled_adj = sampled_adj_new
+
+                pbar.set_description(
+                    f'Training loss: {train_loss:.3f}, Change on Adj: {adj_diff:.3f}')
+                
+                epoch_log = {'train_loss': train_loss, 'adj_change': adj_diff}
+                
+                if step_idx % eval_steps == eval_steps - 1:
+                    if self.evaluator is not None:
+                        eval_result = self.evaluator.evaluate(self.model.get_adj())
+                        for k in eval_result.keys():
+                            epoch_log[k] = eval_result[k]
+                    
+                    if self.hp['train_split'] < 1:
+                        with torch.no_grad():
+                            val_epoch_loss = []
+                            for step, batch in enumerate(self.val_dataloader):
+                                x_0, ct = batch
+                                x_0 = x_0.to(self.device)
+                                ct = ct.to(self.device)
+                                t = torch.randint(
+                                    0, self.hp['T'], (x_0.shape[0],), 
+                                    device=self.device).long()
+        
+                                x_noisy, noise = self.forward_pass(x_0, t)
+                                z = self.model(x_noisy, t, ct)
+                                step_val_loss = F.mse_loss(noise, z, reduction='mean').item()
+                                val_epoch_loss.append(step_val_loss)
+                            epoch_log['val_loss'] = np.mean(val_epoch_loss)
+                
+                self.logger.log(epoch_log)
+                final_losses_on_gene = accumulated_loss_on_gene # Save from the last step
+
+        # Set the final per-gene losses, averaged over the batch
+        self.losses_on_gene = (final_losses_on_gene / batch_size).detach().cpu().numpy()
+        self.total_time_cost += int((datetime.now() - start_time).total_seconds())
         return None
 
     def training_curves(self):

@@ -448,6 +448,196 @@ class GRN:
     def __str__(self):
         return self.__repr__()
 
+    def compute_network_statistics(self) -> Dict:
+        """
+        Compute comprehensive network statistics.
+        """
+        adj = np.abs(self.adj_matrix)
+        
+        # Basic statistics
+        n_edges = np.sum(adj > self.cutoff_threshold)
+        density = n_edges / (self.n_tfs * self.n_genes)
+        
+        # Degree statistics
+        in_degrees = adj.sum(axis=0)
+        out_degrees = adj.sum(axis=1)
+        
+        stats = {
+            'n_tfs': self.n_tfs,
+            'n_genes': self.n_genes,
+            'n_edges': int(n_edges),
+            'density': float(density),
+            'mean_in_degree': float(in_degrees.mean()),
+            'std_in_degree': float(in_degrees.std()),
+            'max_in_degree': float(in_degrees.max()),
+            'mean_out_degree': float(out_degrees.mean()),
+            'std_out_degree': float(out_degrees.std()),
+            'max_out_degree': float(out_degrees.max()),
+            'mean_edge_weight': float(adj[adj > 0].mean()) if n_edges > 0 else 0,
+        }
+        
+        return stats
+    
+    def find_hub_genes(self, top_k: int = 10, direction: str = 'out') -> pd.DataFrame:
+        """
+        Find hub genes based on degree centrality.
+        
+        Args:
+            top_k: Number of top hub genes to return
+            direction: 'in' (most regulated), 'out' (most regulating), or 'both'
+        """
+        adj = np.abs(self.adj_matrix)
+        results = []
+        
+        if direction in ['out', 'both']:
+            out_degrees = adj.sum(axis=1)
+            top_out_idx = np.argsort(out_degrees)[-top_k:][::-1]
+            for idx in top_out_idx:
+                results.append({
+                    'gene': self.tf_names[idx],
+                    'out_degree': out_degrees[idx],
+                    'type': 'regulator'
+                })
+        
+        if direction in ['in', 'both']:
+            in_degrees = adj.sum(axis=0)
+            top_in_idx = np.argsort(in_degrees)[-top_k:][::-1]
+            for idx in top_in_idx:
+                results.append({
+                    'gene': self.gene_names[idx],
+                    'in_degree': in_degrees[idx],
+                    'type': 'target'
+                })
+        
+        return pd.DataFrame(results)
+    
+    def find_regulatory_paths(
+        self, source: str, target: str, max_hops: int = 3, top_k_per_hop: int = 10
+    ) -> List[List[str]]:
+        """
+        Find regulatory paths between two genes using BFS.
+        """
+        from collections import deque
+        
+        if source not in self.tf_indices or target not in self.gene_indices:
+            return []
+        
+        paths = []
+        queue = deque([[source]])
+        visited = {source}
+        
+        while queue and len(paths) < 100:  # Limit search
+            path = queue.popleft()
+            if len(path) > max_hops + 1:
+                break
+            
+            current = path[-1]
+            if current == target and len(path) > 1:
+                paths.append(path)
+                continue
+            
+            # Get top-k neighbors
+            if current in self.tf_indices:
+                targets = self.extract_node_targets_as_indices(current, top_k_per_hop)
+                for idx in targets['gene_indices']:
+                    neighbor = self.gene_names[idx]
+                    if neighbor not in visited or neighbor == target:
+                        visited.add(neighbor)
+                        queue.append(path + [neighbor])
+        
+        return paths
+    
+    def to_networkx(self, threshold: float = None) -> 'nx.DiGraph':
+        """
+        Convert GRN to NetworkX DiGraph for advanced graph analysis.
+        """
+        import networkx as nx
+        
+        G = nx.DiGraph()
+        G.add_nodes_from(self.gene_names)
+        
+        adj = self.adj_matrix
+        threshold = threshold or self.cutoff_threshold
+        
+        for i in range(self.n_tfs):
+            for j in range(self.n_genes):
+                if abs(adj[i, j]) > threshold:
+                    G.add_edge(
+                        self.tf_names[i], 
+                        self.gene_names[j], 
+                        weight=float(adj[i, j])
+                    )
+        
+        return G
+    
+    def compute_centrality(self, method: str = 'pagerank') -> pd.DataFrame:
+        """
+        Compute centrality measures for all genes.
+        
+        Args:
+            method: 'pagerank', 'betweenness', 'eigenvector', or 'all'
+        """
+        import networkx as nx
+        G = self.to_networkx()
+        
+        results = {'gene': list(G.nodes())}
+        
+        if method in ['pagerank', 'all']:
+            pr = nx.pagerank(G, weight='weight')
+            results['pagerank'] = [pr.get(g, 0) for g in results['gene']]
+        
+        if method in ['betweenness', 'all']:
+            bc = nx.betweenness_centrality(G, weight='weight')
+            results['betweenness'] = [bc.get(g, 0) for g in results['gene']]
+        
+        if method in ['eigenvector', 'all']:
+            try:
+                ec = nx.eigenvector_centrality(G, weight='weight', max_iter=1000)
+                results['eigenvector'] = [ec.get(g, 0) for g in results['gene']]
+            except nx.PowerIterationFailedConvergence:
+                results['eigenvector'] = [0] * len(results['gene'])
+        
+        return pd.DataFrame(results).sort_values(
+            by=list(results.keys())[1], ascending=False
+        )
+
+    def to_csv(self, file_path: str, k: int = -1, workers: int = 4):
+        """Export edgelist to CSV."""
+        edgelist = self.extract_edgelist(k=k, workers=workers)
+        edgelist.to_csv(file_path, index=False)
+    
+    def to_gml(self, file_path: str, threshold: float = None):
+        """Export to GML format for Cytoscape/Gephi."""
+        import networkx as nx
+        G = self.to_networkx(threshold)
+        nx.write_gml(G, file_path)
+    
+    def to_graphml(self, file_path: str, threshold: float = None):
+        """Export to GraphML format."""
+        import networkx as nx
+        G = self.to_networkx(threshold)
+        nx.write_graphml(G, file_path)
+    
+    def to_cytoscape_json(self, file_path: str, k: int = 100):
+        """Export to Cytoscape JSON format."""
+        import json
+        
+        edgelist = self.extract_edgelist(k=k)
+        nodes = set(edgelist['source']) | set(edgelist['target'])
+        
+        cytoscape_data = {
+            "elements": {
+                "nodes": [{"data": {"id": n, "label": n}} for n in nodes],
+                "edges": [
+                    {"data": {"source": row['source'], "target": row['target'], "weight": row['weight']}}
+                    for _, row in edgelist.iterrows()
+                ]
+            }
+        }
+        
+        with open(file_path, 'w') as f:
+            json.dump(cytoscape_data, f, indent=2)
+
 def read_hdf5(file_path: str):
     """
     Read HDF5 file as a GRN object. See the documentation for GRN for details.

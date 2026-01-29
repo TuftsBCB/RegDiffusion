@@ -393,10 +393,20 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">calculated_neighbors</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">remove_weak_edges</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">threshold</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span><span class="p">:</span>
+<div class="viewcode-block" id="GRN.remove_weak_edges">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.remove_weak_edges">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_weak_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove edges with absolute weight below the threshold.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            threshold (float): Edges with absolute weight below this value </span>
+<span class="sd">                will be set to zero.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">threshold</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span> <span class="o">=</span> <span class="n">threshold</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+
         
 <div class="viewcode-block" id="GRN.extract_edgelist">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.extract_edgelist">[docs]</a>
@@ -429,7 +439,9 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deprecated API. Use extract_edgelist instead. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">workers</span><span class="p">)</span></div>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;get_edgelist is deprecated, use extract_edgelist instead&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">workers</span><span class="p">)</span></div>
 
                 
 

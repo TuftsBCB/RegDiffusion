@@ -357,6 +357,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.get_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.get_edgelist()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.remove_weak_edges"><code class="docutils literal notranslate"><span class="pre">GRN.remove_weak_edges()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
 </ul>
@@ -546,6 +547,18 @@ selected gene. It is slightly faster than the dataframe version.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.remove_weak_edges">
+<span class="sig-name descname"><span class="pre">remove_weak_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.remove_weak_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.remove_weak_edges" title="Link to this definition">#</a></dt>
+<dd><p>Remove edges with absolute weight below the threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>threshold</strong> (<em>float</em>) – Edges with absolute weight below this value
+will be set to zero.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.to_hdf5">
 <span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_sparse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_hdf5" title="Link to this definition">#</a></dt>
 <dd><p>Save GRN into a HDF5 file. You have the option to save as a sparse
@@ -642,6 +655,7 @@ adjacency matrix are zeros.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.get_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.get_edgelist()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.remove_weak_edges"><code class="docutils literal notranslate"><span class="pre">GRN.remove_weak_edges()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
 </ul>

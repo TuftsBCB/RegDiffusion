@@ -133,6 +133,8 @@ class RegDiffusionTrainer:
         # Logger ---------------------------------------------------------------
         if logger is None:
             self.logger = LightLogger()
+        else:
+            self.logger = logger
         self.note_id = self.logger.start()
         
         # Define diffusion schedule

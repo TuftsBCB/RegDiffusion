@@ -87,6 +87,8 @@ class RegDiffusion(nn.Module):
         self.gene_dim = hidden_dims[0]
         self.adj_dropout=adj_dropout
         self.gene_reg_norm = 1/(n_gene-1)
+        self.celltype_dim = celltype_dim
+        self.n_celltype = n_celltype
         
         adj_A = torch.ones(n_gene, n_gene) * self.gene_reg_norm * init_coef
         self.adj_A = nn.Parameter(adj_A, requires_grad =True, )
@@ -132,7 +134,7 @@ class RegDiffusion(nn.Module):
         
     def I_minus_A(self):
         mask = self.mask_nonparam
-        if self.train:
+        if self.training:
             A_dropout = (torch.rand_like(self.adj_A)>self.adj_dropout).float()
             A_dropout /= (1-self.adj_dropout)
             mask = mask * A_dropout
@@ -159,7 +161,13 @@ class RegDiffusion(nn.Module):
     
     def forward(self, x, t, ct):
         h_time = self.time_mlp(t)
-        h_celltype = self.celltype_emb(ct)
+        if self.n_celltype is not None:
+            h_celltype = self.celltype_emb(ct)
+        else:
+            # Create zero tensor for cell type embedding when not using cell types
+            h_celltype = torch.zeros(
+                x.shape[0], self.celltype_dim, device=x.device, dtype=x.dtype
+            )
         original = x.unsqueeze(-1)
         h_x = self.gene_emb(x)
         for i, block in enumerate(self.blocks):

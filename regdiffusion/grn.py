@@ -88,10 +88,17 @@ class GRN:
 
         self.calculated_neighbors = {}
 
-    def remove_weak_edges(threshold=None):
-        if threshold > self.cutoff_threshold:
+    def remove_weak_edges(self, threshold=None):
+        """
+        Remove edges with absolute weight below the threshold.
+        
+        Args:
+            threshold (float): Edges with absolute weight below this value 
+                will be set to zero.
+        """
+        if threshold is not None and threshold > self.cutoff_threshold:
             self.cutoff_threshold = threshold
-        self.adj_matrix[np.abs(self.adj_matrix) < threshold] = 0
+            self.adj_matrix[np.abs(self.adj_matrix) < threshold] = 0
         
     def extract_edgelist(self, k: int = 20, workers: int = 2) -> pd.DataFrame:
         """
@@ -119,7 +126,9 @@ class GRN:
         """
         Deprecated API. Use extract_edgelist instead. 
         """
-        return self.extract_edgelist(self, k, workers)
+        import warnings
+        warnings.warn("get_edgelist is deprecated, use extract_edgelist instead", DeprecationWarning)
+        return self.extract_edgelist(k, workers)
                 
 
     def extract_node_sources_as_indices(self, gene: str, k: int = 20) -> Dict:

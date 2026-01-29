@@ -348,6 +348,8 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.compute_centrality"><code class="docutils literal notranslate"><span class="pre">GRN.compute_centrality()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.compute_network_statistics"><code class="docutils literal notranslate"><span class="pre">GRN.compute_network_statistics()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.extract_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_local_neighborhood()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
@@ -356,9 +358,16 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.find_hub_genes"><code class="docutils literal notranslate"><span class="pre">GRN.find_hub_genes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.find_regulatory_paths"><code class="docutils literal notranslate"><span class="pre">GRN.find_regulatory_paths()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.get_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.get_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.remove_weak_edges"><code class="docutils literal notranslate"><span class="pre">GRN.remove_weak_edges()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_csv"><code class="docutils literal notranslate"><span class="pre">GRN.to_csv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_cytoscape_json"><code class="docutils literal notranslate"><span class="pre">GRN.to_cytoscape_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_gml"><code class="docutils literal notranslate"><span class="pre">GRN.to_gml()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_graphml"><code class="docutils literal notranslate"><span class="pre">GRN.to_graphml()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_networkx"><code class="docutils literal notranslate"><span class="pre">GRN.to_networkx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
 </ul>
 </li>
@@ -412,6 +421,23 @@ and <cite>.visualize_local_neighborhood</cite>.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.compute_centrality">
+<span class="sig-name descname"><span class="pre">compute_centrality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pagerank'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.compute_centrality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.compute_centrality" title="Link to this definition">#</a></dt>
+<dd><p>Compute centrality measures for all genes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>method</strong> – ‘pagerank’, ‘betweenness’, ‘eigenvector’, or ‘all’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.compute_network_statistics">
+<span class="sig-name descname"><span class="pre">compute_network_statistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.compute_network_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.compute_network_statistics" title="Link to this definition">#</a></dt>
+<dd><p>Compute comprehensive network statistics.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.extract_edgelist">
 <span class="sig-name descname"><span class="pre">extract_edgelist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.extract_edgelist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.extract_edgelist" title="Link to this definition">#</a></dt>
@@ -541,6 +567,26 @@ selected gene. It is slightly faster than the dataframe version.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.find_hub_genes">
+<span class="sig-name descname"><span class="pre">find_hub_genes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'out'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.find_hub_genes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.find_hub_genes" title="Link to this definition">#</a></dt>
+<dd><p>Find hub genes based on degree centrality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>top_k</strong> – Number of top hub genes to return</p></li>
+<li><p><strong>direction</strong> – ‘in’ (most regulated), ‘out’ (most regulating), or ‘both’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.find_regulatory_paths">
+<span class="sig-name descname"><span class="pre">find_regulatory_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_hops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_per_hop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.find_regulatory_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.find_regulatory_paths" title="Link to this definition">#</a></dt>
+<dd><p>Find regulatory paths between two genes using BFS.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.get_edgelist">
 <span class="sig-name descname"><span class="pre">get_edgelist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.get_edgelist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.get_edgelist" title="Link to this definition">#</a></dt>
 <dd><p>Deprecated API. Use extract_edgelist instead.</p>
@@ -559,6 +605,30 @@ will be set to zero.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.to_csv">
+<span class="sig-name descname"><span class="pre">to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_csv" title="Link to this definition">#</a></dt>
+<dd><p>Export edgelist to CSV.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.to_cytoscape_json">
+<span class="sig-name descname"><span class="pre">to_cytoscape_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_cytoscape_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_cytoscape_json" title="Link to this definition">#</a></dt>
+<dd><p>Export to Cytoscape JSON format.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.to_gml">
+<span class="sig-name descname"><span class="pre">to_gml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_gml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_gml" title="Link to this definition">#</a></dt>
+<dd><p>Export to GML format for Cytoscape/Gephi.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.to_graphml">
+<span class="sig-name descname"><span class="pre">to_graphml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_graphml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_graphml" title="Link to this definition">#</a></dt>
+<dd><p>Export to GraphML format.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="regdiffusion.GRN.to_hdf5">
 <span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_sparse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_hdf5" title="Link to this definition">#</a></dt>
 <dd><p>Save GRN into a HDF5 file. You have the option to save as a sparse
@@ -572,6 +642,12 @@ adjacency matrix are zeros.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regdiffusion.GRN.to_networkx">
+<span class="sig-name descname"><span class="pre">to_networkx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">nx.DiGraph</span></span></span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN.to_networkx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN.to_networkx" title="Link to this definition">#</a></dt>
+<dd><p>Convert GRN to NetworkX DiGraph for advanced graph analysis.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -646,6 +722,8 @@ adjacency matrix are zeros.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN"><code class="docutils literal notranslate"><span class="pre">GRN</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.compute_centrality"><code class="docutils literal notranslate"><span class="pre">GRN.compute_centrality()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.compute_network_statistics"><code class="docutils literal notranslate"><span class="pre">GRN.compute_network_statistics()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.extract_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.extract_local_neighborhood()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_neighbors"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_neighbors()</span></code></a></li>
@@ -654,9 +732,16 @@ adjacency matrix are zeros.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_sources_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_sources_as_indices()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.extract_node_targets_as_indices"><code class="docutils literal notranslate"><span class="pre">GRN.extract_node_targets_as_indices()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.find_hub_genes"><code class="docutils literal notranslate"><span class="pre">GRN.find_hub_genes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.find_regulatory_paths"><code class="docutils literal notranslate"><span class="pre">GRN.find_regulatory_paths()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.get_edgelist"><code class="docutils literal notranslate"><span class="pre">GRN.get_edgelist()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.remove_weak_edges"><code class="docutils literal notranslate"><span class="pre">GRN.remove_weak_edges()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_csv"><code class="docutils literal notranslate"><span class="pre">GRN.to_csv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_cytoscape_json"><code class="docutils literal notranslate"><span class="pre">GRN.to_cytoscape_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_gml"><code class="docutils literal notranslate"><span class="pre">GRN.to_gml()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_graphml"><code class="docutils literal notranslate"><span class="pre">GRN.to_graphml()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_hdf5"><code class="docutils literal notranslate"><span class="pre">GRN.to_hdf5()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.to_networkx"><code class="docutils literal notranslate"><span class="pre">GRN.to_networkx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regdiffusion.GRN.visualize_local_neighborhood"><code class="docutils literal notranslate"><span class="pre">GRN.visualize_local_neighborhood()</span></code></a></li>
 </ul>
 </li>

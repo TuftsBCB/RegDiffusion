@@ -787,7 +787,224 @@ document.write(`
         <span class="k">return</span> <span class="n">message</span>
         
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GRN.compute_network_statistics">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.compute_network_statistics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_network_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute comprehensive network statistics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">adj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">)</span>
+        
+        <span class="c1"># Basic statistics</span>
+        <span class="n">n_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">adj</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span><span class="p">)</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="n">n_edges</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">)</span>
+        
+        <span class="c1"># Degree statistics</span>
+        <span class="n">in_degrees</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">out_degrees</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;n_tfs&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">,</span>
+            <span class="s1">&#39;n_genes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">,</span>
+            <span class="s1">&#39;n_edges&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_edges</span><span class="p">),</span>
+            <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">density</span><span class="p">),</span>
+            <span class="s1">&#39;mean_in_degree&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">in_degrees</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s1">&#39;std_in_degree&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">in_degrees</span><span class="o">.</span><span class="n">std</span><span class="p">()),</span>
+            <span class="s1">&#39;max_in_degree&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">in_degrees</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+            <span class="s1">&#39;mean_out_degree&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">out_degrees</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s1">&#39;std_out_degree&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">out_degrees</span><span class="o">.</span><span class="n">std</span><span class="p">()),</span>
+            <span class="s1">&#39;max_out_degree&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">out_degrees</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+            <span class="s1">&#39;mean_edge_weight&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">adj</span><span class="p">[</span><span class="n">adj</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="k">if</span> <span class="n">n_edges</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+    
+<div class="viewcode-block" id="GRN.find_hub_genes">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.find_hub_genes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_hub_genes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;out&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find hub genes based on degree centrality.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            top_k: Number of top hub genes to return</span>
+<span class="sd">            direction: &#39;in&#39; (most regulated), &#39;out&#39; (most regulating), or &#39;both&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">adj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">]:</span>
+            <span class="n">out_degrees</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">top_out_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">out_degrees</span><span class="p">)[</span><span class="o">-</span><span class="n">top_k</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">top_out_idx</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;gene&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_names</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                    <span class="s1">&#39;out_degree&#39;</span><span class="p">:</span> <span class="n">out_degrees</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;regulator&#39;</span>
+                <span class="p">})</span>
+        
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">]:</span>
+            <span class="n">in_degrees</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">top_in_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">in_degrees</span><span class="p">)[</span><span class="o">-</span><span class="n">top_k</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">top_in_idx</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;gene&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                    <span class="s1">&#39;in_degree&#39;</span><span class="p">:</span> <span class="n">in_degrees</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;target&#39;</span>
+                <span class="p">})</span>
+        
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GRN.find_regulatory_paths">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.find_regulatory_paths">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_regulatory_paths</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_hops</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">top_k_per_hop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find regulatory paths between two genes using BFS.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+        
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_indices</span> <span class="ow">or</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([[</span><span class="n">source</span><span class="p">]])</span>
+        <span class="n">visited</span> <span class="o">=</span> <span class="p">{</span><span class="n">source</span><span class="p">}</span>
+        
+        <span class="k">while</span> <span class="n">queue</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>  <span class="c1"># Limit search</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_hops</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+            
+            <span class="n">current</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">target</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># Get top-k neighbors</span>
+            <span class="k">if</span> <span class="n">current</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_indices</span><span class="p">:</span>
+                <span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_targets_as_indices</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">top_k_per_hop</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">[</span><span class="s1">&#39;gene_indices&#39;</span><span class="p">]:</span>
+                    <span class="n">neighbor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span> <span class="ow">or</span> <span class="n">neighbor</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+                        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+                        <span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">neighbor</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">paths</span></div>
+
+    
+<div class="viewcode-block" id="GRN.to_networkx">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.to_networkx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_networkx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;nx.DiGraph&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert GRN to NetworkX DiGraph for advanced graph analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+        
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">)</span>
+        
+        <span class="n">adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_matrix</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+                    <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tf_names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> 
+                        <span class="bp">self</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> 
+                        <span class="n">weight</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                    <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">G</span></div>
+
+    
+<div class="viewcode-block" id="GRN.compute_centrality">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.compute_centrality">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_centrality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pagerank&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute centrality measures for all genes.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            method: &#39;pagerank&#39;, &#39;betweenness&#39;, &#39;eigenvector&#39;, or &#39;all&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">()</span>
+        
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gene&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">())}</span>
+        
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pagerank&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]:</span>
+            <span class="n">pr</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;pagerank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">]]</span>
+        
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;betweenness&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]:</span>
+            <span class="n">bc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">betweenness_centrality</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="s1">&#39;betweenness&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">bc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">]]</span>
+        
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;eigenvector&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ec</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="s1">&#39;eigenvector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">]]</span>
+            <span class="k">except</span> <span class="n">nx</span><span class="o">.</span><span class="n">PowerIterationFailedConvergence</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s1">&#39;eigenvector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+            <span class="n">by</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GRN.to_csv">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.to_csv">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export edgelist to CSV.&quot;&quot;&quot;</span>
+        <span class="n">edgelist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="n">workers</span><span class="p">)</span>
+        <span class="n">edgelist</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GRN.to_gml">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.to_gml">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_gml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export to GML format for Cytoscape/Gephi.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">write_gml</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GRN.to_graphml">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.to_graphml">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_graphml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export to GraphML format.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_networkx</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">write_graphml</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GRN.to_cytoscape_json">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN.to_cytoscape_json">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_cytoscape_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Export to Cytoscape JSON format.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+        
+        <span class="n">edgelist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">edgelist</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">])</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">edgelist</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
+        
+        <span class="n">cytoscape_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;elements&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">n</span><span class="p">}}</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">],</span>
+                <span class="s2">&quot;edges&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">],</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]}}</span>
+                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">edgelist</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cytoscape_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+</div>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">read_hdf5</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>

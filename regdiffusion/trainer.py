@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import TensorDataset
-from .models import RegDiffusion
+from .models import RegDiffusion, RegDiffusionME
 from tqdm import tqdm
 from .logger import LightLogger
 from datetime import datetime
@@ -94,23 +94,34 @@ class RegDiffusionTrainer:
             The only situation when you need to provide this is when you want 
             to save logs from different trainers into the same logger. Default 
             is None. 
-        gradient_accumulation (boolean): Whether to train with gradient 
-            accumulation. This is useful when number of genes are extremely 
-            large. 
+        gradient_accumulation (boolean): Whether to train with gradient
+            accumulation. This is useful when number of genes are extremely
+            large.
+        use_amp (bool): Whether to use automatic mixed precision (bfloat16)
+            during training. This reduces memory usage by storing activations
+            in half precision while keeping model parameters in float32.
+            Requires a GPU with bfloat16 support (Ampere or newer).
+            Default: False.
+        memory_efficient (bool): Whether to use the memory-efficient model
+            variant (RegDiffusionME). This uses a custom autograd function
+            for soft thresholding (saves boolean masks instead of float32
+            tensors) and sampled sparse loss (avoids materializing full
+            n_gene x n_gene matrix for L1 regularization). Default: False.
     """
     def __init__(
-        self, exp_array, cell_types=None, 
+        self, exp_array, cell_types=None,
         T=5000, start_noise=0.0001, end_noise=0.02,
         time_dim=64, celltype_dim=4, hidden_dims=[16, 16, 16],
-        init_coef = 5, 
-        lr_nn=1e-3, lr_adj=None, 
+        init_coef = 5,
+        lr_nn=1e-3, lr_adj=None,
         weight_decay_nn=0.1, weight_decay_adj = 0.01,
         sparse_loss_coef=0.25, adj_dropout=0.30,
-        batch_size=128, n_steps=1000, 
-        train_split=1.0, train_split_seed=123, 
-        device='cuda', compile=False, 
+        batch_size=128, n_steps=1000,
+        train_split=1.0, train_split_seed=123,
+        device='cuda', compile=False,
         evaluator=None, eval_on_n_steps=100, logger=None,
-        gradient_accumulation=False
+        gradient_accumulation=False, use_amp=False,
+        memory_efficient=False
     ):
         hp = locals()
         del hp['exp_array']
@@ -212,9 +223,10 @@ class RegDiffusionTrainer:
     
         # Setup Model ----------------------------------------------------------
         gene_reg_norm = 1/(n_gene-1)
-        self.model = RegDiffusion(
-            n_gene=n_gene, 
-            time_dim=time_dim, 
+        ModelClass = RegDiffusionME if memory_efficient else RegDiffusion
+        self.model = ModelClass(
+            n_gene=n_gene,
+            time_dim=time_dim,
             n_celltype=self.n_celltype,
             celltype_dim = celltype_dim,
             hidden_dims=hidden_dims,
@@ -249,7 +261,11 @@ class RegDiffusionTrainer:
             self.model = torch.compile(self.model)
         self.total_time_cost=0
         self.losses_on_gene=None
-        self.model_name='RegDiffusion'
+        self.model_name='RegDiffusionME' if memory_efficient else 'RegDiffusion'
+
+        # AMP setup
+        self.use_amp = use_amp
+        self.amp_device_type = 'cuda' if device.startswith('cuda') else 'cpu'
 
 
     @torch.no_grad()
@@ -304,13 +320,21 @@ class RegDiffusionTrainer:
                     ).long()
         
                     x_noisy, noise = self.forward_pass(x_0, t)
-                    z = self.model(x_noisy, t, ct)
-                    loss_ = F.mse_loss(noise, z, reduction='none')
-                    loss = loss_.mean()
-        
-                    adj_m = self.model.get_adj_()
-                    loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
-                            
+                    with torch.autocast(
+                        device_type=self.amp_device_type,
+                        dtype=torch.bfloat16,
+                        enabled=self.use_amp
+                    ):
+                        z = self.model(x_noisy, t, ct)
+                        loss_ = F.mse_loss(noise, z, reduction='none')
+                        loss = loss_.mean()
+
+                        if hasattr(self.model, 'get_sampled_sparse_loss'):
+                            loss_sparse = self.model.get_sampled_sparse_loss() * self.hp['sparse_loss_coef']
+                        else:
+                            adj_m = self.model.get_adj_()
+                            loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
+
                     if epoch > 10:
                         loss = loss + loss_sparse
                     loss.backward()
@@ -340,13 +364,18 @@ class RegDiffusionTrainer:
                                 x_0 = x_0.to(self.device)
                                 ct = ct.to(self.device)
                                 t = torch.randint(
-                                    0, self.hp['T'], (x_0.shape[0],), 
+                                    0, self.hp['T'], (x_0.shape[0],),
                                     device=self.device).long()
-        
+
                                 x_noisy, noise = self.forward_pass(x_0, t)
-                                z = self.model(x_noisy, t, ct)
-                                step_val_loss = F.mse_loss(
-                                    noise, z, reduction='mean').item()
+                                with torch.autocast(
+                                    device_type=self.amp_device_type,
+                                    dtype=torch.bfloat16,
+                                    enabled=self.use_amp
+                                ):
+                                    z = self.model(x_noisy, t, ct)
+                                    step_val_loss = F.mse_loss(
+                                        noise, z, reduction='mean').item()
                                 val_epoch_loss.append(step_val_loss)
                             epoch_log['val_loss'] = np.mean(val_epoch_loss)
                 self.logger.log(epoch_log)
@@ -399,14 +428,19 @@ class RegDiffusionTrainer:
                     t = torch.randint(0, self.hp['T'], (1,), device=self.device).long()
 
                     x_noisy, noise = self.forward_pass(x_0, t)
-                    z = self.model(x_noisy, t, ct)
-                    
-                    # Calculate MSE loss, get per-gene loss with reduction='none'
-                    loss_ = F.mse_loss(noise, z, reduction='none')
-                    
+                    with torch.autocast(
+                        device_type=self.amp_device_type,
+                        dtype=torch.bfloat16,
+                        enabled=self.use_amp
+                    ):
+                        z = self.model(x_noisy, t, ct)
+
+                        # Calculate MSE loss, get per-gene loss with reduction='none'
+                        loss_ = F.mse_loss(noise, z, reduction='none')
+
                     # Accumulate per-gene loss values for the last step
                     with torch.no_grad():
-                        accumulated_loss_on_gene += loss_.squeeze()
+                        accumulated_loss_on_gene += loss_.float().squeeze()
 
                     # Calculate mean loss for the sample
                     loss_sample = loss_.mean()
@@ -417,9 +451,17 @@ class RegDiffusionTrainer:
                     scaled_loss.backward()
 
                 # Handle sparse loss once per effective batch
-                adj_m = self.model.get_adj_()
-                loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
-                
+                with torch.autocast(
+                    device_type=self.amp_device_type,
+                    dtype=torch.bfloat16,
+                    enabled=self.use_amp
+                ):
+                    if hasattr(self.model, 'get_sampled_sparse_loss'):
+                        loss_sparse = self.model.get_sampled_sparse_loss() * self.hp['sparse_loss_coef']
+                    else:
+                        adj_m = self.model.get_adj_()
+                        loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
+
                 if step_idx > 10:
                     loss_sparse.backward()
 
@@ -454,15 +496,21 @@ class RegDiffusionTrainer:
                                 x_0 = x_0.to(self.device)
                                 ct = ct.to(self.device)
                                 t = torch.randint(
-                                    0, self.hp['T'], (x_0.shape[0],), 
+                                    0, self.hp['T'], (x_0.shape[0],),
                                     device=self.device).long()
-        
+
                                 x_noisy, noise = self.forward_pass(x_0, t)
-                                z = self.model(x_noisy, t, ct)
-                                step_val_loss = F.mse_loss(noise, z, reduction='mean').item()
+                                with torch.autocast(
+                                    device_type=self.amp_device_type,
+                                    dtype=torch.bfloat16,
+                                    enabled=self.use_amp
+                                ):
+                                    z = self.model(x_noisy, t, ct)
+                                    step_val_loss = F.mse_loss(
+                                        noise, z, reduction='mean').item()
                                 val_epoch_loss.append(step_val_loss)
                             epoch_log['val_loss'] = np.mean(val_epoch_loss)
-                
+
                 self.logger.log(epoch_log)
                 final_losses_on_gene = accumulated_loss_on_gene # Save from the last step
 

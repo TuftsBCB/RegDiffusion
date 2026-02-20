@@ -159,6 +159,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../quick_tour.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
@@ -307,7 +308,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegDiffusion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegDiffusion</span><span class="p">,</span> <span class="n">RegDiffusionME</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightLogger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
@@ -399,23 +400,34 @@ document.write(`
 <span class="sd">            The only situation when you need to provide this is when you want </span>
 <span class="sd">            to save logs from different trainers into the same logger. Default </span>
 <span class="sd">            is None. </span>
-<span class="sd">        gradient_accumulation (boolean): Whether to train with gradient </span>
-<span class="sd">            accumulation. This is useful when number of genes are extremely </span>
-<span class="sd">            large. </span>
+<span class="sd">        gradient_accumulation (boolean): Whether to train with gradient</span>
+<span class="sd">            accumulation. This is useful when number of genes are extremely</span>
+<span class="sd">            large.</span>
+<span class="sd">        use_amp (bool): Whether to use automatic mixed precision (bfloat16)</span>
+<span class="sd">            during training. This reduces memory usage by storing activations</span>
+<span class="sd">            in half precision while keeping model parameters in float32.</span>
+<span class="sd">            Requires a GPU with bfloat16 support (Ampere or newer).</span>
+<span class="sd">            Default: False.</span>
+<span class="sd">        memory_efficient (bool): Whether to use the memory-efficient model</span>
+<span class="sd">            variant (RegDiffusionME). This uses a custom autograd function</span>
+<span class="sd">            for soft thresholding (saves boolean masks instead of float32</span>
+<span class="sd">            tensors) and sampled sparse loss (avoids materializing full</span>
+<span class="sd">            n_gene x n_gene matrix for L1 regularization). Default: False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">T</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">start_noise</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">end_noise</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
         <span class="n">time_dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">celltype_dim</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">hidden_dims</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
-        <span class="n">init_coef</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> 
-        <span class="n">lr_nn</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">lr_adj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+        <span class="n">init_coef</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">lr_nn</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">lr_adj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">weight_decay_nn</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">weight_decay_adj</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">sparse_loss_coef</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">adj_dropout</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> 
-        <span class="n">train_split</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> 
-        <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">train_split</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">gradient_accumulation</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">gradient_accumulation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_amp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">memory_efficient</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
         <span class="n">hp</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;exp_array&#39;</span><span class="p">]</span>
@@ -517,9 +529,10 @@ document.write(`
     
         <span class="c1"># Setup Model ----------------------------------------------------------</span>
         <span class="n">gene_reg_norm</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">n_gene</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">RegDiffusion</span><span class="p">(</span>
-            <span class="n">n_gene</span><span class="o">=</span><span class="n">n_gene</span><span class="p">,</span> 
-            <span class="n">time_dim</span><span class="o">=</span><span class="n">time_dim</span><span class="p">,</span> 
+        <span class="n">ModelClass</span> <span class="o">=</span> <span class="n">RegDiffusionME</span> <span class="k">if</span> <span class="n">memory_efficient</span> <span class="k">else</span> <span class="n">RegDiffusion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelClass</span><span class="p">(</span>
+            <span class="n">n_gene</span><span class="o">=</span><span class="n">n_gene</span><span class="p">,</span>
+            <span class="n">time_dim</span><span class="o">=</span><span class="n">time_dim</span><span class="p">,</span>
             <span class="n">n_celltype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_celltype</span><span class="p">,</span>
             <span class="n">celltype_dim</span> <span class="o">=</span> <span class="n">celltype_dim</span><span class="p">,</span>
             <span class="n">hidden_dims</span><span class="o">=</span><span class="n">hidden_dims</span><span class="p">,</span>
@@ -554,7 +567,11 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span><span class="o">=</span><span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">losses_on_gene</span><span class="o">=</span><span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;RegDiffusion&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;RegDiffusionME&#39;</span> <span class="k">if</span> <span class="n">memory_efficient</span> <span class="k">else</span> <span class="s1">&#39;RegDiffusion&#39;</span>
+
+        <span class="c1"># AMP setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="n">use_amp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
 
 
 <div class="viewcode-block" id="RegDiffusionTrainer.forward_pass">
@@ -612,13 +629,21 @@ document.write(`
                     <span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
         
                     <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-                    <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
-                    <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-                    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        
-                    <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
-                    <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
-                            
+                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+                        <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
+                    <span class="p">):</span>
+                        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
+                        <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+                        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+                        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;get_sampled_sparse_loss&#39;</span><span class="p">):</span>
+                            <span class="n">loss_sparse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_sparse_loss</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
+                            <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+
                     <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
                         <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_sparse</span>
                     <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
@@ -648,13 +673,18 @@ document.write(`
                                 <span class="n">x_0</span> <span class="o">=</span> <span class="n">x_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">ct</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
-                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> 
+                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
                                     <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
-        
+
                                 <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-                                <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
-                                <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
-                                    <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
+                                    <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+                                    <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
+                                <span class="p">):</span>
+                                    <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
+                                    <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
+                                        <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                                 <span class="n">val_epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_val_loss</span><span class="p">)</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epoch_log</span><span class="p">)</span>
@@ -707,14 +737,19 @@ document.write(`
                     <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
 
                     <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-                    <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
-                    
-                    <span class="c1"># Calculate MSE loss, get per-gene loss with reduction=&#39;none&#39;</span>
-                    <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-                    
+                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+                        <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
+                    <span class="p">):</span>
+                        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
+
+                        <span class="c1"># Calculate MSE loss, get per-gene loss with reduction=&#39;none&#39;</span>
+                        <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
                     <span class="c1"># Accumulate per-gene loss values for the last step</span>
                     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                        <span class="n">accumulated_loss_on_gene</span> <span class="o">+=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+                        <span class="n">accumulated_loss_on_gene</span> <span class="o">+=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
                     <span class="c1"># Calculate mean loss for the sample</span>
                     <span class="n">loss_sample</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -725,9 +760,17 @@ document.write(`
                     <span class="n">scaled_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
                 <span class="c1"># Handle sparse loss once per effective batch</span>
-                <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
-                <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
-                
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
+                    <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+                    <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;get_sampled_sparse_loss&#39;</span><span class="p">):</span>
+                        <span class="n">loss_sparse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_sparse_loss</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
+                        <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+
                 <span class="k">if</span> <span class="n">step_idx</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
                     <span class="n">loss_sparse</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
@@ -762,15 +805,21 @@ document.write(`
                                 <span class="n">x_0</span> <span class="o">=</span> <span class="n">x_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">ct</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
-                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> 
+                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
                                     <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
-        
+
                                 <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-                                <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
-                                <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
+                                    <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+                                    <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
+                                <span class="p">):</span>
+                                    <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
+                                    <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
+                                        <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                                 <span class="n">val_epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_val_loss</span><span class="p">)</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
-                
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epoch_log</span><span class="p">)</span>
                 <span class="n">final_losses_on_gene</span> <span class="o">=</span> <span class="n">accumulated_loss_on_gene</span> <span class="c1"># Save from the last step</span>
 

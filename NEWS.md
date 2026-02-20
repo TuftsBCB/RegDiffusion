@@ -1,6 +1,6 @@
 # RegDiffusion News / Changelog
 
-## [Unreleased]
+## 0.2.0
 
 ### Memory Optimization
 - Removed three `(n_gene, n_gene)` helper matrices (`zeros_nonparam`, `eye_nonparam`, `mask_nonparam`) from `RegDiffusion`, replacing them with inline computations. Saves ~4.8 GB persistent GPU memory for 20K genes with no impact on model accuracy.

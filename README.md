@@ -4,7 +4,7 @@
 [![Downloads](https://static.pepy.tech/badge/regdiffusion/month)](https://pepy.tech/project/regdiffusion)
 ![PyPI - Version](https://img.shields.io/pypi/v/regdiffusion)
 
-RegDiffusion is a very fast unsupervised regulatory network inference algorithm (just like GENIE3 and GRNBoost2), based on probabilistic diffusion model. It works well on genes and is capable to rapidly (<5min) predict biologically verifiable links from large single cell RNA-seq data with 14,000+ genes.
+RegDiffusion is a very fast unsupervised regulatory network inference algorithm (just like GENIE3 and GRNBoost2), based on probabilistic diffusion model. It works well on genes and is capable to rapidly (<5min) predict biologically verifiable links from large single cell RNA-seq data with 40,000+ genes.
 
 ```
 Zhu H, Slonim D. From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks. J Comput Biol. 2024 Nov;31(11):1087-1103. doi: 10.1089/cmb.2024.0607. Epub 2024 Oct 10. PMID: 39387266; PMCID: PMC11698671.
@@ -23,8 +23,6 @@ Check out [this tutorial](https://tuftsbcb.github.io/RegDiffusion/quick_tour.htm
 ## New in v0.2
 - **Memory-efficient mode**: Set `memory_efficient=True` in `RegDiffusionTrainer` to reduce peak GPU memory by ~45%, making it easier to work with large gene sets on consumer GPUs (You can now fit 20k genes on a 16GB GPU).
 - **Sparse matrix support**: `RegDiffusionTrainer` now accepts scipy sparse matrices directly (e.g., `adata.X`), enabling training on datasets with 1M+ cells without excessive memory usage.
-
-![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regdiffusion_structure.png)
 
 ## Inferred Networks from RegDiffusion
 Here are two examples of inferred networks from regdiffusion. The networks are coherent with existing literature and across datasets. 

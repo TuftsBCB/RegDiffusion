@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.dataset import TensorDataset
 from .models import RegDiffusion, RegDiffusionME
 from tqdm import tqdm
@@ -28,6 +29,40 @@ def power_beta_schedule(timesteps, start_noise, end_noise, power=2):
     beta_end = scale * end_noise
     return beta_start + (beta_end - beta_start) * poweredspace
 
+class _SparseExpressionDataset(Dataset):
+    """Dataset that stores sparse expression data and normalizes on-the-fly.
+
+    Instead of materializing the full dense normalized matrix (which can be
+    100+ GB for 1M cells), this dataset keeps the original sparse matrix in
+    memory and converts only the requested rows to dense during __getitem__.
+
+    Normalization applied per sample:
+        1. Min-max per cell:  (x - cell_min) / cell_range
+        2. Z-score per gene:  (x - gene_mean) / gene_std
+    """
+
+    def __init__(self, sparse_X, cell_types, cell_min, cell_range,
+                 gene_mean, gene_std, indices):
+        self.X = sparse_X            # scipy CSR matrix (shared, read-only)
+        self.cell_types = cell_types  # int array (full, not subset)
+        self.cell_min = cell_min      # (n_cell,) float32
+        self.cell_range = cell_range  # (n_cell,) float32
+        self.gene_mean = gene_mean    # (n_gene,) float32
+        self.gene_std = gene_std      # (n_gene,) float32
+        self.indices = indices         # row indices for this split
+
+    def __len__(self):
+        return len(self.indices)
+
+    def __getitem__(self, idx):
+        real_idx = self.indices[idx]
+        row = self.X[real_idx].toarray().ravel().astype(np.float32)
+        row = (row - self.cell_min[real_idx]) / self.cell_range[real_idx]
+        row = (row - self.gene_mean) / self.gene_std
+        ct = int(self.cell_types[real_idx])
+        return torch.from_numpy(row), torch.tensor(ct, dtype=torch.long)
+
+
 class RegDiffusionTrainer:
     """
     Initialize and Train a RegDiffusion model.
@@ -39,9 +74,12 @@ class RegDiffusionTrainer:
     You can access the model through `RegDiffusionTrainer.model`. 
     
     Args:
-        exp_array (np.ndarray): 2D numpy array. If used on single-cell RNAseq, 
-            the rows are cells and the columns are genes. Data should be log 
-            transformed. You may also want to remove all non expressed genes.
+        exp_array (np.ndarray or scipy.sparse matrix): 2D expression matrix.
+            If used on single-cell RNAseq, the rows are cells and the columns
+            are genes. Data should be log transformed. You may also want to
+            remove all non expressed genes. Sparse matrices (e.g. from
+            ``adata.X``) are supported and handled memory-efficiently — the
+            full dense normalized matrix is never materialized.
         cell_types (np.ndarray): (Optional) 1D integer array for cell type. If 
             you have labels in your cell type, you need to convert them to 
             interge. Default is None. 
@@ -168,58 +206,15 @@ class RegDiffusionTrainer:
         self.n_gene = n_gene
 
         self.evaluator = evaluator
-        
-        ## Normalize data
-        cell_min = exp_array.min(axis=1, keepdims=True)
-        cell_max = exp_array.max(axis=1, keepdims=True)
-        cell_range = cell_max - cell_min
-        n_zero_cells = (cell_range == 0).sum()
-        if n_zero_cells > 0:
-            warnings.warn(
-                f'{n_zero_cells} cells are removed from analysis where no genes are expressed.')
-        normalized_X = (exp_array - cell_min) / cell_range
-        normalized_X_std = normalized_X.std(0)
-        n_zero_genes = (normalized_X_std == 0).sum()
-        if n_zero_genes > 0:
-            raise ValueError(
-                f'{n_zero_genes} genes have 0 variance. Please remove these genes from your data.')
-        normalized_X = (normalized_X - normalized_X.mean(0))/normalized_X_std
-    
-        ## Train/validation split
-        random_state = np.random.RandomState(train_split_seed)
-        train_val_split = random_state.rand(normalized_X.shape[0])
-        train_index = train_val_split <= train_split
-        val_index = train_val_split > train_split
-    
-        x_tensor_train = torch.tensor(
-            normalized_X[train_index, ], dtype=torch.float32)
-        celltype_tensor_train = torch.tensor(
-            cell_types[train_index], dtype=int)
-        x_tensor_val = torch.tensor(
-            normalized_X[val_index, ], dtype=torch.float32)
-        celltype_tensor_val = torch.tensor(cell_types[val_index],dtype=int)
-    
-        ## Setup dataset and dataloader
-        self.train_dataset = torch.utils.data.TensorDataset(
-            x_tensor_train, celltype_tensor_train
-        )
-        # Implement bootstrap for train sampler
-        train_sampler = torch.utils.data.RandomSampler(
-            self.train_dataset, replacement=True, num_samples=batch_size)
-        self.train_dataloader = torch.utils.data.DataLoader(
-            self.train_dataset, 
-            sampler=train_sampler,
-            batch_size = batch_size, 
-            drop_last=True)
-        
-        self.val_dataset = torch.utils.data.TensorDataset(
-            x_tensor_val, celltype_tensor_val
-        )
-        self.val_dataloader = torch.utils.data.DataLoader(
-            self.val_dataset, 
-            shuffle=False,
-            batch_size = batch_size, 
-            drop_last=False)
+
+        if sp.issparse(exp_array):
+            self._prepare_sparse_data(
+                exp_array, cell_types, batch_size,
+                train_split, train_split_seed)
+        else:
+            self._prepare_dense_data(
+                exp_array, cell_types, batch_size,
+                train_split, train_split_seed)
     
         # Setup Model ----------------------------------------------------------
         gene_reg_norm = 1/(n_gene-1)
@@ -267,6 +262,149 @@ class RegDiffusionTrainer:
         self.use_amp = use_amp
         self.amp_device_type = 'cuda' if device.startswith('cuda') else 'cpu'
 
+
+    def _prepare_dense_data(self, exp_array, cell_types, batch_size,
+                            train_split, train_split_seed):
+        """Normalize dense numpy array and build TensorDataset (original path)."""
+        cell_min = exp_array.min(axis=1, keepdims=True)
+        cell_max = exp_array.max(axis=1, keepdims=True)
+        cell_range = cell_max - cell_min
+        n_zero_cells = (cell_range == 0).sum()
+        if n_zero_cells > 0:
+            warnings.warn(
+                f'{n_zero_cells} cells are removed from analysis where no genes are expressed.')
+        normalized_X = (exp_array - cell_min) / cell_range
+        normalized_X_std = normalized_X.std(0)
+        n_zero_genes = (normalized_X_std == 0).sum()
+        if n_zero_genes > 0:
+            raise ValueError(
+                f'{n_zero_genes} genes have 0 variance. Please remove these genes from your data.')
+        normalized_X = (normalized_X - normalized_X.mean(0)) / normalized_X_std
+
+        random_state = np.random.RandomState(train_split_seed)
+        train_val_split = random_state.rand(normalized_X.shape[0])
+        train_index = train_val_split <= train_split
+        val_index = train_val_split > train_split
+
+        x_tensor_train = torch.tensor(
+            normalized_X[train_index, ], dtype=torch.float32)
+        celltype_tensor_train = torch.tensor(
+            cell_types[train_index], dtype=int)
+        x_tensor_val = torch.tensor(
+            normalized_X[val_index, ], dtype=torch.float32)
+        celltype_tensor_val = torch.tensor(cell_types[val_index], dtype=int)
+
+        self.train_dataset = TensorDataset(
+            x_tensor_train, celltype_tensor_train)
+        train_sampler = torch.utils.data.RandomSampler(
+            self.train_dataset, replacement=True, num_samples=batch_size)
+        self.train_dataloader = DataLoader(
+            self.train_dataset,
+            sampler=train_sampler,
+            batch_size=batch_size,
+            drop_last=True)
+
+        self.val_dataset = TensorDataset(
+            x_tensor_val, celltype_tensor_val)
+        self.val_dataloader = DataLoader(
+            self.val_dataset,
+            shuffle=False,
+            batch_size=batch_size,
+            drop_last=False)
+
+    def _prepare_sparse_data(self, exp_array, cell_types, batch_size,
+                             train_split, train_split_seed):
+        """Compute normalization stats from sparse matrix in chunks, then build
+        a _SparseExpressionDataset that normalizes on-the-fly per sample.
+
+        This never materializes the full dense normalized matrix, so memory
+        usage stays proportional to (sparse matrix size + one batch of dense
+        rows) rather than (n_cell * n_gene * 4 bytes).
+        """
+        n_cell, n_gene = exp_array.shape
+        exp_array = sp.csr_matrix(exp_array)  # ensure CSR for fast row slicing
+
+        # --- Per-cell min/max in chunks ---
+        chunk_size = min(10000, n_cell)
+        cell_min = np.empty(n_cell, dtype=np.float64)
+        cell_max = np.empty(n_cell, dtype=np.float64)
+        for start in range(0, n_cell, chunk_size):
+            end = min(start + chunk_size, n_cell)
+            chunk = exp_array[start:end]
+            cell_min[start:end] = np.asarray(
+                chunk.min(axis=1).todense()).ravel()
+            cell_max[start:end] = np.asarray(
+                chunk.max(axis=1).todense()).ravel()
+
+        cell_range = cell_max - cell_min
+        valid_mask = cell_range > 0
+        n_zero_cells = (~valid_mask).sum()
+        if n_zero_cells > 0:
+            warnings.warn(
+                f'{n_zero_cells} cells are removed from analysis where no '
+                'genes are expressed.')
+
+        # --- Per-gene mean/std of min-max-normalized data (chunked) ---
+        n_valid = valid_mask.sum()
+        gene_sum = np.zeros(n_gene, dtype=np.float64)
+        gene_sum_sq = np.zeros(n_gene, dtype=np.float64)
+
+        for start in range(0, n_cell, chunk_size):
+            end = min(start + chunk_size, n_cell)
+            chunk_valid = valid_mask[start:end]
+            if not chunk_valid.any():
+                continue
+            # Only materialize valid rows in this chunk
+            chunk_dense = exp_array[start:end][chunk_valid].toarray().astype(
+                np.float64)
+            c_min = cell_min[start:end][chunk_valid][:, None]
+            c_range = cell_range[start:end][chunk_valid][:, None]
+            chunk_norm = (chunk_dense - c_min) / c_range
+            gene_sum += chunk_norm.sum(axis=0)
+            gene_sum_sq += (chunk_norm ** 2).sum(axis=0)
+
+        gene_mean = (gene_sum / n_valid).astype(np.float32)
+        gene_var = (gene_sum_sq / n_valid) - gene_mean.astype(np.float64) ** 2
+        gene_std = np.sqrt(np.maximum(gene_var, 0)).astype(np.float32)
+
+        n_zero_genes = (gene_std == 0).sum()
+        if n_zero_genes > 0:
+            raise ValueError(
+                f'{n_zero_genes} genes have 0 variance. Please remove these '
+                'genes from your data.')
+
+        # --- Train/validation split (only among valid cells) ---
+        valid_indices = np.where(valid_mask)[0]
+        random_state = np.random.RandomState(train_split_seed)
+        split_vals = random_state.rand(len(valid_indices))
+        train_indices = valid_indices[split_vals <= train_split]
+        val_indices = valid_indices[split_vals > train_split]
+
+        cell_min_f32 = cell_min.astype(np.float32)
+        cell_range_f32 = cell_range.astype(np.float32)
+
+        # --- Build datasets ---
+        self.train_dataset = _SparseExpressionDataset(
+            exp_array, cell_types,
+            cell_min_f32, cell_range_f32, gene_mean, gene_std,
+            train_indices)
+        train_sampler = torch.utils.data.RandomSampler(
+            self.train_dataset, replacement=True, num_samples=batch_size)
+        self.train_dataloader = DataLoader(
+            self.train_dataset,
+            sampler=train_sampler,
+            batch_size=batch_size,
+            drop_last=True)
+
+        self.val_dataset = _SparseExpressionDataset(
+            exp_array, cell_types,
+            cell_min_f32, cell_range_f32, gene_mean, gene_std,
+            val_indices)
+        self.val_dataloader = DataLoader(
+            self.val_dataset,
+            shuffle=False,
+            batch_size=batch_size,
+            drop_last=False)
 
     @torch.no_grad()
     def forward_pass(self, x_0, t):

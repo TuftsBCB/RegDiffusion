@@ -1,6 +1,7 @@
 import argparse
 import os
 import numpy as np
+import scipy.sparse as sp
 import scanpy as sc
 from .trainer import RegDiffusionTrainer
 
@@ -47,11 +48,21 @@ def main():
 
     print("Applying log transformation on the dataset...")
     x = adata.X
-    if (x < 0).sum() > 0:
-        raise ValueError("Negative values spotted in the data. Please only provide count data in this CLI tool. ")
-    if (x - x.astype(int)).sum() > 1:
-        raise ValueError("Data might have been log transformed. Please only provide count data in this CLI tool. ")
-    x = np.log(x + 1.0)
+    if sp.issparse(x):
+        if (x < 0).nnz > 0:
+            raise ValueError("Negative values spotted in the data. Please only provide count data in this CLI tool. ")
+        residual = x.copy()
+        residual.data = residual.data - residual.data.astype(int)
+        if abs(residual.sum()) > 1:
+            raise ValueError("Data might have been log transformed. Please only provide count data in this CLI tool. ")
+        x = x.copy()
+        x.data = np.log1p(x.data)  # log(0+1)=0 stays sparse
+    else:
+        if (x < 0).sum() > 0:
+            raise ValueError("Negative values spotted in the data. Please only provide count data in this CLI tool. ")
+        if (x - x.astype(int)).sum() > 1:
+            raise ValueError("Data might have been log transformed. Please only provide count data in this CLI tool. ")
+        x = np.log(x + 1.0)
 
     print("Initializing RegDiffusion trainer and starting training...")
     rd_trainer = RegDiffusionTrainer(x)

@@ -1,5 +1,12 @@
 # RegDiffusion News / Changelog
 
+## 0.2.1 [unreleased]
+
+### New Features
+- Added sparse matrix support for `RegDiffusionTrainer`. The `exp_array` argument now accepts scipy sparse matrices (e.g. `adata.X`) directly. Normalization statistics are computed in chunks and each sample is normalized on-the-fly during training, so the full dense matrix is never materialized. This enables training on datasets with 1M+ cells without excessive memory usage.
+- Updated CLI (`regdiffusion` command) to handle sparse `adata.X` from H5AD files, including sparse-safe data validation and log-transform via `log1p` on non-zero entries.
+
+
 ## 0.2.0
 
 ### Memory Optimization

@@ -10,8 +10,6 @@ RegDiffusion is a very fast unsupervised regulatory network inference algorithm 
 Zhu H, Slonim D. From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks. J Comput Biol. 2024 Nov;31(11):1087-1103. doi: 10.1089/cmb.2024.0607. Epub 2024 Oct 10. PMID: 39387266; PMCID: PMC11698671.
 ```
 
-![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regdiffusion_structure.png)
-
 ## Installation
 
 RegDiffusion is on pypi.
@@ -20,7 +18,13 @@ RegDiffusion is on pypi.
 pip install regdiffusion
 ```
 
-Check out the [this tutorial](https://tuftsbcb.github.io/RegDiffusion/quick_tour.html) for a quick tour of how to use RegDiffusion! If you would like to integrate results from RegDiffusion into the SCENIC pipeline, checkout [this tutorial](https://tuftsbcb.github.io/RegDiffusion/downstream_with_pyscenic.html). 
+Check out [this tutorial](https://tuftsbcb.github.io/RegDiffusion/quick_tour.html) for a quick tour of how to use RegDiffusion! If you would like to integrate results from RegDiffusion into the SCENIC pipeline, checkout [this tutorial](https://tuftsbcb.github.io/RegDiffusion/downstream_with_pyscenic.html).
+
+## New in v0.2
+- **Memory-efficient mode**: Set `memory_efficient=True` in `RegDiffusionTrainer` to reduce peak GPU memory by ~45%, making it easier to work with large gene sets on consumer GPUs (You can now fit 20k genes on a 16GB GPU).
+- **Sparse matrix support**: `RegDiffusionTrainer` now accepts scipy sparse matrices directly (e.g., `adata.X`), enabling training on datasets with 1M+ cells without excessive memory usage.
+
+![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/regdiffusion_structure.png)
 
 ## Inferred Networks from RegDiffusion
 Here are two examples of inferred networks from regdiffusion. The networks are coherent with existing literature and across datasets. 
@@ -56,7 +60,7 @@ options:
 
 ## Citation 
 
-If you find our package useful, consider cite our paper! =)
+If you find our package useful, consider citing our paper! =)
 
 ```
 @article{zhu2024noise,

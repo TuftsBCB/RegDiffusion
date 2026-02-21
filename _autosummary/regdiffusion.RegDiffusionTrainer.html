@@ -378,9 +378,12 @@ document.write(`
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>exp_array</strong> (<em>np.ndarray</em>) – 2D numpy array. If used on single-cell RNAseq,
-the rows are cells and the columns are genes. Data should be log
-transformed. You may also want to remove all non expressed genes.</p></li>
+<li><p><strong>exp_array</strong> (<em>np.ndarray</em><em> or </em><em>scipy.sparse matrix</em>) – 2D expression matrix.
+If used on single-cell RNAseq, the rows are cells and the columns
+are genes. Data should be log transformed. You may also want to
+remove all non expressed genes. Sparse matrices (e.g. from
+<code class="docutils literal notranslate"><span class="pre">adata.X</span></code>) are supported and handled memory-efficiently — the
+full dense normalized matrix is never materialized.</p></li>
 <li><p><strong>cell_types</strong> (<em>np.ndarray</em>) – (Optional) 1D integer array for cell type. If
 you have labels in your cell type, you need to convert them to
 interge. Default is None.</p></li>

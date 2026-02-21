@@ -304,9 +304,10 @@ document.write(`
   <h1>Source code for regdiffusion.trainer</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegDiffusion</span><span class="p">,</span> <span class="n">RegDiffusionME</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
@@ -332,6 +333,40 @@ document.write(`
     <span class="n">beta_end</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">end_noise</span>
     <span class="k">return</span> <span class="n">beta_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta_end</span> <span class="o">-</span> <span class="n">beta_start</span><span class="p">)</span> <span class="o">*</span> <span class="n">poweredspace</span>
 
+<span class="k">class</span><span class="w"> </span><span class="nc">_SparseExpressionDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset that stores sparse expression data and normalizes on-the-fly.</span>
+
+<span class="sd">    Instead of materializing the full dense normalized matrix (which can be</span>
+<span class="sd">    100+ GB for 1M cells), this dataset keeps the original sparse matrix in</span>
+<span class="sd">    memory and converts only the requested rows to dense during __getitem__.</span>
+
+<span class="sd">    Normalization applied per sample:</span>
+<span class="sd">        1. Min-max per cell:  (x - cell_min) / cell_range</span>
+<span class="sd">        2. Z-score per gene:  (x - gene_mean) / gene_std</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse_X</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">cell_min</span><span class="p">,</span> <span class="n">cell_range</span><span class="p">,</span>
+                 <span class="n">gene_mean</span><span class="p">,</span> <span class="n">gene_std</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">sparse_X</span>            <span class="c1"># scipy CSR matrix (shared, read-only)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_types</span> <span class="o">=</span> <span class="n">cell_types</span>  <span class="c1"># int array (full, not subset)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_min</span> <span class="o">=</span> <span class="n">cell_min</span>      <span class="c1"># (n_cell,) float32</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_range</span> <span class="o">=</span> <span class="n">cell_range</span>  <span class="c1"># (n_cell,) float32</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gene_mean</span> <span class="o">=</span> <span class="n">gene_mean</span>    <span class="c1"># (n_gene,) float32</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gene_std</span> <span class="o">=</span> <span class="n">gene_std</span>      <span class="c1"># (n_gene,) float32</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span>         <span class="c1"># row indices for this split</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">real_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">real_idx</span><span class="p">]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_min</span><span class="p">[</span><span class="n">real_idx</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_range</span><span class="p">[</span><span class="n">real_idx</span><span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_std</span>
+        <span class="n">ct</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_types</span><span class="p">[</span><span class="n">real_idx</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">ct</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="RegDiffusionTrainer">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RegDiffusionTrainer</span><span class="p">:</span>
@@ -345,9 +380,12 @@ document.write(`
 <span class="sd">    You can access the model through `RegDiffusionTrainer.model`. </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        exp_array (np.ndarray): 2D numpy array. If used on single-cell RNAseq, </span>
-<span class="sd">            the rows are cells and the columns are genes. Data should be log </span>
-<span class="sd">            transformed. You may also want to remove all non expressed genes.</span>
+<span class="sd">        exp_array (np.ndarray or scipy.sparse matrix): 2D expression matrix.</span>
+<span class="sd">            If used on single-cell RNAseq, the rows are cells and the columns</span>
+<span class="sd">            are genes. Data should be log transformed. You may also want to</span>
+<span class="sd">            remove all non expressed genes. Sparse matrices (e.g. from</span>
+<span class="sd">            ``adata.X``) are supported and handled memory-efficiently — the</span>
+<span class="sd">            full dense normalized matrix is never materialized.</span>
 <span class="sd">        cell_types (np.ndarray): (Optional) 1D integer array for cell type. If </span>
 <span class="sd">            you have labels in your cell type, you need to convert them to </span>
 <span class="sd">            interge. Default is None. </span>
@@ -474,58 +512,15 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span> <span class="o">=</span> <span class="n">n_gene</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">evaluator</span>
-        
-        <span class="c1">## Normalize data</span>
-        <span class="n">cell_min</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">cell_max</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">cell_range</span> <span class="o">=</span> <span class="n">cell_max</span> <span class="o">-</span> <span class="n">cell_min</span>
-        <span class="n">n_zero_cells</span> <span class="o">=</span> <span class="p">(</span><span class="n">cell_range</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">n_zero_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no genes are expressed.&#39;</span><span class="p">)</span>
-        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_array</span> <span class="o">-</span> <span class="n">cell_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">cell_range</span>
-        <span class="n">normalized_X_std</span> <span class="o">=</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">n_zero_genes</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X_std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">n_zero_genes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these genes from your data.&#39;</span><span class="p">)</span>
-        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X</span> <span class="o">-</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">/</span><span class="n">normalized_X_std</span>
-    
-        <span class="c1">## Train/validation split</span>
-        <span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">train_split_seed</span><span class="p">)</span>
-        <span class="n">train_val_split</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">normalized_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">train_index</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="o">&lt;=</span> <span class="n">train_split</span>
-        <span class="n">val_index</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="o">&gt;</span> <span class="n">train_split</span>
-    
-        <span class="n">x_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="n">normalized_X</span><span class="p">[</span><span class="n">train_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">celltype_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="n">cell_types</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">x_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="n">normalized_X</span><span class="p">[</span><span class="n">val_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">celltype_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cell_types</span><span class="p">[</span><span class="n">val_index</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-    
-        <span class="c1">## Setup dataset and dataloader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span>
-            <span class="n">x_tensor_train</span><span class="p">,</span> <span class="n">celltype_tensor_train</span>
-        <span class="p">)</span>
-        <span class="c1"># Implement bootstrap for train sampler</span>
-        <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> 
-            <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span>
-            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span><span class="p">,</span> 
-            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span>
-            <span class="n">x_tensor_val</span><span class="p">,</span> <span class="n">celltype_tensor_val</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span><span class="p">,</span> 
-            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span><span class="p">,</span> 
-            <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sp</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">exp_array</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_sparse_data</span><span class="p">(</span>
+                <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">train_split</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_dense_data</span><span class="p">(</span>
+                <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">train_split</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="p">)</span>
     
         <span class="c1"># Setup Model ----------------------------------------------------------</span>
         <span class="n">gene_reg_norm</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">n_gene</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -573,6 +568,149 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="n">use_amp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_dense_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
+                            <span class="n">train_split</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize dense numpy array and build TensorDataset (original path).&quot;&quot;&quot;</span>
+        <span class="n">cell_min</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cell_max</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cell_range</span> <span class="o">=</span> <span class="n">cell_max</span> <span class="o">-</span> <span class="n">cell_min</span>
+        <span class="n">n_zero_cells</span> <span class="o">=</span> <span class="p">(</span><span class="n">cell_range</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_zero_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no genes are expressed.&#39;</span><span class="p">)</span>
+        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_array</span> <span class="o">-</span> <span class="n">cell_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">cell_range</span>
+        <span class="n">normalized_X_std</span> <span class="o">=</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">n_zero_genes</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X_std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_zero_genes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these genes from your data.&#39;</span><span class="p">)</span>
+        <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X</span> <span class="o">-</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="n">normalized_X_std</span>
+
+        <span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">train_split_seed</span><span class="p">)</span>
+        <span class="n">train_val_split</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">normalized_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">train_index</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="o">&lt;=</span> <span class="n">train_split</span>
+        <span class="n">val_index</span> <span class="o">=</span> <span class="n">train_val_split</span> <span class="o">&gt;</span> <span class="n">train_split</span>
+
+        <span class="n">x_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="n">normalized_X</span><span class="p">[</span><span class="n">train_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">celltype_tensor_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="n">cell_types</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">x_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="n">normalized_X</span><span class="p">[</span><span class="n">val_index</span><span class="p">,</span> <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">celltype_tensor_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cell_types</span><span class="p">[</span><span class="n">val_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span>
+            <span class="n">x_tensor_train</span><span class="p">,</span> <span class="n">celltype_tensor_train</span><span class="p">)</span>
+        <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span>
+            <span class="n">x_tensor_val</span><span class="p">,</span> <span class="n">celltype_tensor_val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_sparse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
+                             <span class="n">train_split</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute normalization stats from sparse matrix in chunks, then build</span>
+<span class="sd">        a _SparseExpressionDataset that normalizes on-the-fly per sample.</span>
+
+<span class="sd">        This never materializes the full dense normalized matrix, so memory</span>
+<span class="sd">        usage stays proportional to (sparse matrix size + one batch of dense</span>
+<span class="sd">        rows) rather than (n_cell * n_gene * 4 bytes).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_cell</span><span class="p">,</span> <span class="n">n_gene</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">exp_array</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">exp_array</span><span class="p">)</span>  <span class="c1"># ensure CSR for fast row slicing</span>
+
+        <span class="c1"># --- Per-cell min/max in chunks ---</span>
+        <span class="n">chunk_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_cell</span><span class="p">)</span>
+        <span class="n">cell_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_cell</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">cell_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_cell</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_cell</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">n_cell</span><span class="p">)</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">exp_array</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+            <span class="n">cell_min</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">chunk</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="n">cell_max</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">chunk</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+        <span class="n">cell_range</span> <span class="o">=</span> <span class="n">cell_max</span> <span class="o">-</span> <span class="n">cell_min</span>
+        <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">cell_range</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">n_zero_cells</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="n">valid_mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_zero_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no &#39;</span>
+                <span class="s1">&#39;genes are expressed.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># --- Per-gene mean/std of min-max-normalized data (chunked) ---</span>
+        <span class="n">n_valid</span> <span class="o">=</span> <span class="n">valid_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">gene_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_gene</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">gene_sum_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_gene</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_cell</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="n">n_cell</span><span class="p">)</span>
+            <span class="n">chunk_valid</span> <span class="o">=</span> <span class="n">valid_mask</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk_valid</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="c1"># Only materialize valid rows in this chunk</span>
+            <span class="n">chunk_dense</span> <span class="o">=</span> <span class="n">exp_array</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">][</span><span class="n">chunk_valid</span><span class="p">]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">c_min</span> <span class="o">=</span> <span class="n">cell_min</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">][</span><span class="n">chunk_valid</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">c_range</span> <span class="o">=</span> <span class="n">cell_range</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">][</span><span class="n">chunk_valid</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">chunk_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">chunk_dense</span> <span class="o">-</span> <span class="n">c_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">c_range</span>
+            <span class="n">gene_sum</span> <span class="o">+=</span> <span class="n">chunk_norm</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">gene_sum_sq</span> <span class="o">+=</span> <span class="p">(</span><span class="n">chunk_norm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">gene_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">gene_sum</span> <span class="o">/</span> <span class="n">n_valid</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">gene_var</span> <span class="o">=</span> <span class="p">(</span><span class="n">gene_sum_sq</span> <span class="o">/</span> <span class="n">n_valid</span><span class="p">)</span> <span class="o">-</span> <span class="n">gene_mean</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">gene_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gene_var</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="n">n_zero_genes</span> <span class="o">=</span> <span class="p">(</span><span class="n">gene_std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">n_zero_genes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these &#39;</span>
+                <span class="s1">&#39;genes from your data.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># --- Train/validation split (only among valid cells) ---</span>
+        <span class="n">valid_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">train_split_seed</span><span class="p">)</span>
+        <span class="n">split_vals</span> <span class="o">=</span> <span class="n">random_state</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">valid_indices</span><span class="p">))</span>
+        <span class="n">train_indices</span> <span class="o">=</span> <span class="n">valid_indices</span><span class="p">[</span><span class="n">split_vals</span> <span class="o">&lt;=</span> <span class="n">train_split</span><span class="p">]</span>
+        <span class="n">val_indices</span> <span class="o">=</span> <span class="n">valid_indices</span><span class="p">[</span><span class="n">split_vals</span> <span class="o">&gt;</span> <span class="n">train_split</span><span class="p">]</span>
+
+        <span class="n">cell_min_f32</span> <span class="o">=</span> <span class="n">cell_min</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">cell_range_f32</span> <span class="o">=</span> <span class="n">cell_range</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="c1"># --- Build datasets ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">_SparseExpressionDataset</span><span class="p">(</span>
+            <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span>
+            <span class="n">cell_min_f32</span><span class="p">,</span> <span class="n">cell_range_f32</span><span class="p">,</span> <span class="n">gene_mean</span><span class="p">,</span> <span class="n">gene_std</span><span class="p">,</span>
+            <span class="n">train_indices</span><span class="p">)</span>
+        <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span> <span class="o">=</span> <span class="n">_SparseExpressionDataset</span><span class="p">(</span>
+            <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span>
+            <span class="n">cell_min_f32</span><span class="p">,</span> <span class="n">cell_range_f32</span><span class="p">,</span> <span class="n">gene_mean</span><span class="p">,</span> <span class="n">gene_std</span><span class="p">,</span>
+            <span class="n">val_indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_dataset</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RegDiffusionTrainer.forward_pass">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.forward_pass">[docs]</a>

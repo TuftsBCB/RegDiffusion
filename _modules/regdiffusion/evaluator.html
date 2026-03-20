@@ -364,7 +364,19 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">report_ep</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;EP&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">report_epr</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;EPR&#39;</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">)</span>
 
+<div class="viewcode-block" id="GRNEvaluator.evaluate">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.GRNEvaluator.html#regdiffusion.GRNEvaluator.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate a predicted adjacency matrix against the ground truth.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            A (np.ndarray): Predicted adjacency matrix of shape</span>
+<span class="sd">                (n_gene, n_gene) or (n_tf, n_gene).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Dictionary of evaluation metrics (e.g. AUROC, AUPR).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_mask</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_mask</span><span class="p">]</span>
@@ -389,6 +401,7 @@ document.write(`
             <span class="n">eval_results</span><span class="p">[</span><span class="s1">&#39;EPR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="n">eval_results</span><span class="p">[</span><span class="s1">&#39;EP&#39;</span><span class="p">]</span>
             <span class="n">eval_results</span><span class="p">[</span><span class="s1">&#39;EPR&#39;</span><span class="p">]</span> <span class="o">/=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_true_edges</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">eval_results</span></div>
+</div>
 
 
 </pre></div>

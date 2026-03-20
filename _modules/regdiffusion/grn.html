@@ -316,42 +316,41 @@ document.write(`
 <div class="viewcode-block" id="GRN">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.GRN.html#regdiffusion.GRN">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GRN</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    A Object to save and analyze gene regulatory network</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An object to save and analyze a gene regulatory network.</span>
 
-<span class="sd">    A GRN object includes the adjacency matrix between transcriptional factors </span>
-<span class="sd">    and target genes. In many cases, when TFs are not specified, we have a </span>
-<span class="sd">    square-shaped adjacency matrix. We expected the adjacency </span>
-<span class="sd">    matrix to hold predicted weights/probabilities for the edges (float). </span>
+<span class="sd">    A GRN object includes the adjacency matrix between transcriptional factors</span>
+<span class="sd">    and target genes. In many cases, when TFs are not specified, we have a</span>
+<span class="sd">    square-shaped adjacency matrix. We expect the adjacency</span>
+<span class="sd">    matrix to hold predicted weights/probabilities for the edges (float).</span>
 
 <span class="sd">    To create a GRN object, you need at least two things: the adjacency matrix</span>
 <span class="sd">    and the corresponding gene names. You can further specify the TF names if</span>
-<span class="sd">    your adjacency matrix is not a square matrix. </span>
+<span class="sd">    your adjacency matrix is not a square matrix.</span>
 
-<span class="sd">    You can save a GRN object to the HDF5 format using the `.to_hdf5` method in</span>
-<span class="sd">    the GRN class. You can load a saved GRN object using the `read_hdf5` </span>
-<span class="sd">    function in this package. </span>
+<span class="sd">    You can save a GRN object to the HDF5 format using the ``.to_hdf5`` method</span>
+<span class="sd">    in the GRN class. You can load a saved GRN object using the ``read_hdf5``</span>
+<span class="sd">    function in this package.</span>
 
 <span class="sd">    If your adjacency matrix is very large and space is a concern, you may</span>
-<span class="sd">    consider provide a value for `top_gene_percentile`. This value will </span>
-<span class="sd">    calculate the a cutoff point for the values in the adjacency matrix. </span>
-<span class="sd">    Every value whose absolute value is below this cutoff point will be set to </span>
-<span class="sd">    zero. Later on, we can save the data as a sparse matrix to reduce the </span>
-<span class="sd">    space requirement. </span>
-<span class="sd">    </span>
+<span class="sd">    consider providing a value for ``top_gene_percentile``. This will calculate</span>
+<span class="sd">    a cutoff point for the values in the adjacency matrix. Every value whose</span>
+<span class="sd">    absolute value is below this cutoff point will be set to zero. Later on, we</span>
+<span class="sd">    can save the data as a sparse matrix to reduce the space requirement.</span>
+
 <span class="sd">    The GRN object comes with many useful methods to analyze and visualize the</span>
-<span class="sd">    network. Top top-level interfaces includes `.extract_node_2hop_neighborhood`</span>
-<span class="sd">    and `.visualize_local_neighborhood`. </span>
+<span class="sd">    network. Top-level interfaces include ``.extract_local_neighborhood``</span>
+<span class="sd">    and ``.visualize_local_neighborhood``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        adj_matrix (np.ndarray): A 2D adjacency matrix to save.</span>
-<span class="sd">        gene_names (np.ndarray): A 1D numpy array with all the target gene </span>
-<span class="sd">        names.</span>
-<span class="sd">        tf_names (np.ndarray, optional): A 1D numpy array with all the TF gene </span>
-<span class="sd">        names.</span>
-<span class="sd">        top_gene_percentile (int): If this value is set, only the top k absolute</span>
-<span class="sd">        values in the adjacency matrix will be kept. All the other values</span>
-<span class="sd">        will be set to zero. </span>
+<span class="sd">        gene_names (np.ndarray): A 1D numpy array with all the target gene</span>
+<span class="sd">            names.</span>
+<span class="sd">        tf_names (np.ndarray, optional): A 1D numpy array with all the TF</span>
+<span class="sd">            gene names.</span>
+<span class="sd">        top_gene_percentile (int): If this value is set, only the top k</span>
+<span class="sd">            absolute values in the adjacency matrix will be kept. All the</span>
+<span class="sd">            other values will be set to zero.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adj_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
                  <span class="n">gene_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
@@ -371,8 +370,9 @@ document.write(`
             <span class="c1"># Here we are estimating the cutoff point for top a% predicted edges</span>
             <span class="c1"># To speed up the process, we calculate the 1-a% percentile within </span>
             <span class="c1"># 10,000 sampled edges instead of all edges. </span>
-            <span class="n">random_row_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
-            <span class="n">random_col_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">random_row_idx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tfs</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+            <span class="n">random_col_idx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_genes</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
             <span class="n">sampled_values</span> <span class="o">=</span> <span class="n">adj_matrix</span><span class="p">[</span><span class="n">random_row_idx</span><span class="p">,</span> <span class="n">random_col_idx</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sampled_values</span><span class="p">),</span> <span class="mi">100</span><span class="o">-</span><span class="n">top_gene_percentile</span>
@@ -454,7 +454,7 @@ document.write(`
 <span class="sd">        selected gene. It is slightly faster than the dataframe version. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
@@ -482,7 +482,7 @@ document.write(`
 <span class="sd">        The dataframe will have 3 columns: `source`, `target`, `weight`. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">source_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_sources_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
@@ -505,7 +505,7 @@ document.write(`
 <span class="sd">        selected gene. It is slightly faster than the dataframe version. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_indices</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
@@ -533,7 +533,7 @@ document.write(`
 <span class="sd">        The dataframe will have 3 columns: `source`, `target`, `weight`. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_targets_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
@@ -556,7 +556,7 @@ document.write(`
 <span class="sd">        It is slightly faster than the dataframe version. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gene_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gene_indices</span><span class="p">[</span><span class="n">gene</span><span class="p">]</span>
@@ -593,7 +593,7 @@ document.write(`
 <span class="sd">        The dataframe will have 3 columns: `source`, `target`, `weight`. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">neighbor_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_node_neighbors_as_indices</span><span class="p">(</span><span class="n">gene</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
@@ -629,10 +629,10 @@ document.write(`
 <span class="sd">        is defined in a similar way but smaller. </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all</span>
 <span class="sd">            hops (str): Number of hops to explore. We can either do a &quot;2.5&quot; or </span>
-<span class="sd">            &quot;1.5&quot; hop travesal around selected genes. Default is &quot;2.5&quot;. </span>
+<span class="sd">            &quot;1.5&quot; hop traversal around selected genes. Default is &quot;2.5&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">genes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">genes</span><span class="p">]</span>
@@ -702,7 +702,7 @@ document.write(`
 <span class="sd">        (2-hop) around selected gene(s). </span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            genes (str, List(str)): A single gene or a list of genes to inspect.</span>
+<span class="sd">            gene (str): A single gene to inspect.</span>
 <span class="sd">            k (int): Top-k edges to inspect on each node. If k=-1, export all.</span>
 <span class="sd">            hops (str): Number of hops of the neighborhood to explore. Default</span>
 <span class="sd">            is &quot;2.5&quot;. </span>

@@ -375,39 +375,25 @@ networks (<code class="docutils literal notranslate"><span class="pre">STRING</s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path</p></li>
-<li><p><strong>exist</strong> (<em>does not</em>)</p></li>
-<li><p><strong>a</strong> (<em>it will be created. Data will be saved in</em>)</p></li>
-<li><p><strong>path.</strong> (<em>subdirectory under the provided</em>)</p></li>
-<li><p><strong>benchmark_data</strong> (<em>str</em>) – Benchmark datasets. Choose among “hESC”, “hHep”,</p></li>
-<li><p><strong>&quot;mDC&quot;</strong></p></li>
-<li><p><strong>&quot;mESC&quot;</strong></p></li>
-<li><p><strong>&quot;mHSC&quot;</strong></p></li>
-<li><p><strong>&quot;mHSC-GM&quot;</strong></p></li>
-<li><p><strong>&quot;mHSC-L&quot;.</strong> (<em>and</em>)</p></li>
-<li><p><strong>benchmark_setting</strong> (<em>str</em>) – Benchmark settings. Choose among “500_STRING”,</p></li>
-<li><p><strong>&quot;1000_STRING&quot;</strong></p></li>
-<li><p><strong>&quot;500_Non-ChIP&quot;</strong></p></li>
-<li><p><strong>&quot;1000_Non-ChIP&quot;</strong></p></li>
-<li><p><strong>&quot;500_ChIP-seq&quot;</strong></p></li>
+<li><p><strong>data_dir</strong> (<em>str</em>) – Parent directory to save and load the data. If the path
+does not exist, it will be created. Data will be saved in a
+subdirectory under the provided path.</p></li>
+<li><p><strong>benchmark_data</strong> (<em>str</em>) – Benchmark datasets. Choose among “hESC”, “hHep”,
+“mDC”, “mESC”, “mHSC”, “mHSC-GM”, and “mHSC-L”.</p></li>
+<li><p><strong>benchmark_setting</strong> (<em>str</em>) – Benchmark settings. Choose among “500_STRING”,
+“1000_STRING”, “500_Non-ChIP”, “1000_Non-ChIP”, “500_ChIP-seq”,
+“1000_ChIP-seq”, “500_lofgof”, and “1000_lofgof”. If either of the
+“lofgof” settings is chosen, only “mESC” data is available.</p></li>
 </ul>
 </dd>
-</dl>
-<p>:param :
-:param “1000_ChIP-seq”:
-:param “500_lofgof”:
-:param and “1000_lofgof”. If either of the:
-:param “lofgof” settings is choosed:
-:param only “mESC” data is available.:</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A tuple containing two objects for a single BEELINE benchmark.
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing two objects for a single BEELINE benchmark.
 The first element is a scanpy AnnData with cells on rows and genes on
 columns. Second element is an numpy array for the adjacency list of
 the ground truth network.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>

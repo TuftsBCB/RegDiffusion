@@ -318,6 +318,17 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightLogger</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set random seeds for reproducibility across PyTorch, NumPy, and CUDA.&quot;&quot;&quot;</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">linear_beta_schedule</span><span class="p">(</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">start_noise</span><span class="p">,</span> <span class="n">end_noise</span><span class="p">):</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">/</span> <span class="n">timesteps</span>
@@ -388,7 +399,7 @@ document.write(`
 <span class="sd">            full dense normalized matrix is never materialized.</span>
 <span class="sd">        cell_types (np.ndarray): (Optional) 1D integer array for cell type. If </span>
 <span class="sd">            you have labels in your cell type, you need to convert them to </span>
-<span class="sd">            interge. Default is None. </span>
+<span class="sd">            integer. Default is None.</span>
 <span class="sd">        T (int): Total number of diffusion steps. Default: 5,000</span>
 <span class="sd">        start_noise (float): Minimal noise level (beta) to be added. Default: </span>
 <span class="sd">            0.0001</span>
@@ -397,7 +408,7 @@ document.write(`
 <span class="sd">        time_dim (int): Dimension size for the time embedding. Default: 64.</span>
 <span class="sd">        celltype_dim (int): Dimension size for the cell type embedding. </span>
 <span class="sd">            Default: 4.</span>
-<span class="sd">        hidden_dim (list): Dimension sizes for the feature learning layers. We </span>
+<span class="sd">        hidden_dims (list): Dimension sizes for the feature learning layers. We</span>
 <span class="sd">            use the size of the first layer as the dimension for gene embeddings</span>
 <span class="sd">            as well. Default: [16, 16, 16].</span>
 <span class="sd">        init_coef (int): A coefficent to control the value to initialize the </span>
@@ -425,9 +436,9 @@ document.write(`
 <span class="sd">            to run this model on Apple&#39;s MPS chips. Default is &quot;cuda&quot; but if </span>
 <span class="sd">            you only has CPU, it will switch back to CPU.</span>
 <span class="sd">        compile (boolean): Whether to compile the model before training. </span>
-<span class="sd">            Compile the model is a good idea on large dataset and ofter improves</span>
-<span class="sd">            inference speed when it works. For smaller dataset, eager execution </span>
-<span class="sd">            if often good enough. </span>
+<span class="sd">            Compile the model is a good idea on large dataset and often improves</span>
+<span class="sd">            inference speed when it works. For smaller dataset, eager execution</span>
+<span class="sd">            is often good enough.</span>
 <span class="sd">        evaluator (GRNEvaluator): (Optional) A defined GRNEvaluator if ground </span>
 <span class="sd">            truth data is available. Evaluation will be done every 100 steps by </span>
 <span class="sd">            default but you can change this setting through the eval_on_n_steps </span>
@@ -451,6 +462,8 @@ document.write(`
 <span class="sd">            for soft thresholding (saves boolean masks instead of float32</span>
 <span class="sd">            tensors) and sampled sparse loss (avoids materializing full</span>
 <span class="sd">            n_gene x n_gene matrix for L1 regularization). Default: False.</span>
+<span class="sd">        seed (int): Random seed for full reproducibility. When set, all</span>
+<span class="sd">            sources of randomness are seeded. Default: None (non-deterministic).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -465,14 +478,22 @@ document.write(`
         <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">gradient_accumulation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_amp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">memory_efficient</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">memory_efficient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">hp</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;exp_array&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;cell_types&#39;</span><span class="p">]</span>
         <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hp</span> <span class="o">=</span> <span class="n">hp</span>
-        
+
+        <span class="c1"># Seed for reproducibility</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_generator</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;mps&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;We noticed unreliable training behavior on&quot;</span><span class="p">,</span> 
                             <span class="s2">&quot;Apple&#39;s silicon. Consider using other devices.&quot;</span><span class="p">)</span>
@@ -603,7 +624,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span>
             <span class="n">x_tensor_train</span><span class="p">,</span> <span class="n">celltype_tensor_train</span><span class="p">)</span>
         <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">generator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_generator</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span>
             <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span>
@@ -695,7 +717,8 @@ document.write(`
             <span class="n">cell_min_f32</span><span class="p">,</span> <span class="n">cell_range_f32</span><span class="p">,</span> <span class="n">gene_mean</span><span class="p">,</span> <span class="n">gene_std</span><span class="p">,</span>
             <span class="n">train_indices</span><span class="p">)</span>
         <span class="n">train_sampler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">generator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_generator</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">,</span>
             <span class="n">sampler</span><span class="o">=</span><span class="n">train_sampler</span><span class="p">,</span>
@@ -717,12 +740,17 @@ document.write(`
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forward diffusion process</span>
-<span class="sd">        </span>
+<span class="sd">        Forward diffusion process. Adds noise to the input according to the</span>
+<span class="sd">        diffusion schedule at the given timesteps.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            x_0 (torch.FloatTensor): Torch tensor for expression data. Rows are </span>
-<span class="sd">            cells and columns are genes</span>
+<span class="sd">            x_0 (torch.FloatTensor): Torch tensor for expression data. Rows</span>
+<span class="sd">                are cells and columns are genes.</span>
 <span class="sd">            t (torch.LongTensor): Torch tensor for diffusion time steps.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (x_t, noise) where x_t is the noised input and noise is</span>
+<span class="sd">                the sampled Gaussian noise that was added.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span>
         <span class="n">mean_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_schedule</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
@@ -731,11 +759,22 @@ document.write(`
         <span class="k">return</span> <span class="n">x_t</span><span class="p">,</span> <span class="n">noise</span></div>
 
 
+<div class="viewcode-block" id="RegDiffusionTrainer.train">
+<a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.train">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train the model. Dispatches to gradient accumulation or normal</span>
+<span class="sd">        training based on the ``gradient_accumulation`` setting.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_steps (int): Number of steps to train. If not provided, uses</span>
+<span class="sd">                the n_steps specified during initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;gradient_accumulation&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_train_with_gradient_accumulation</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_train_normal</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_normal</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
         
         
     <span class="k">def</span><span class="w"> </span><span class="nf">_train_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -744,9 +783,9 @@ document.write(`
 
 <span class="sd">        Args:</span>
 <span class="sd">            n_steps (int): Number of steps to train. If not provided, it will </span>
-<span class="sd">                train the model by the n_steps sepcified in class </span>
+<span class="sd">                train the model by the n_steps specified in class</span>
 <span class="sd">                initialization. Please read our paper to see how to identify</span>
-<span class="sd">                the converge point. </span>
+<span class="sd">                the convergence point.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span>
@@ -754,7 +793,9 @@ document.write(`
             <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;n_steps&#39;</span><span class="p">]</span>
         <span class="n">sampled_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span> 
+            <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
                 <span class="n">epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">):</span>
                     <span class="n">x_0</span><span class="p">,</span> <span class="n">ct</span> <span class="o">=</span> <span class="n">batch</span>
@@ -804,6 +845,8 @@ document.write(`
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">eval_result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;train_split&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
                         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
                             <span class="n">val_epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
                             <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">):</span>
@@ -855,6 +898,8 @@ document.write(`
 
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">step_idx</span><span class="p">)</span>
                 <span class="c1"># Fetch a single batch for the current step</span>
                 <span class="n">x_0_batch</span><span class="p">,</span> <span class="n">ct_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">))</span>
                 <span class="n">x_0_batch</span> <span class="o">=</span> <span class="n">x_0_batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -936,6 +981,8 @@ document.write(`
                             <span class="n">epoch_log</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                     
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;train_split&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="n">step_idx</span><span class="p">)</span>
                         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
                             <span class="n">val_epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
                             <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">):</span>
@@ -994,19 +1041,21 @@ document.write(`
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.get_grn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_grn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tf_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Obtain a GRN object. You need to provide the genes names. </span>
+<span class="sd">        Obtain a GRN object. You need to provide the gene names.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            gene_names (np.ndarray): An array of names of all genes. The order </span>
+<span class="sd">            gene_names (np.ndarray): An array of names of all genes. The order</span>
 <span class="sd">                of genes should be the same as the order used in your expression</span>
 <span class="sd">                table.</span>
-<span class="sd">            tf_names (np.ndarray):An array of names of all transcriptional </span>
-<span class="sd">                factors. The order of genes should be the same as the order </span>
-<span class="sd">                used in your expression table.</span>
-<span class="sd">            top_gene_percentile (int): If provided, we will set the value on </span>
-<span class="sd">                weak links to be zero. It is useful if you want to save the </span>
-<span class="sd">                regulatory relationship in a GRN object as a sparse matrix. </span>
+<span class="sd">            tf_names (np.ndarray): An array of names of all transcriptional</span>
+<span class="sd">                factors. The order should be the same as the order used in</span>
+<span class="sd">                your expression table.</span>
+<span class="sd">            top_gene_percentile (int): If provided, we will set the value on</span>
+<span class="sd">                weak links to be zero. It is useful if you want to save the</span>
+<span class="sd">                regulatory relationship in a GRN object as a sparse matrix.</span>
 
+<span class="sd">        Returns:</span>
+<span class="sd">            GRN: A GRN object containing the inferred regulatory network.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">GRN</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tf_names</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="p">)</span></div>
@@ -1016,9 +1065,12 @@ document.write(`
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.get_adj">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Obtain the adjacency matrix. The values in this adjacency matix has </span>
+<span class="sd">        Obtain the adjacency matrix. The values in this adjacency matrix have</span>
 <span class="sd">        been scaled using regulatory norm. You may expect strong links to go</span>
-<span class="sd">        beyond 5 or 10 in most cases. </span>
+<span class="sd">        beyond 5 or 10 in most cases.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: 2D adjacency matrix of shape (n_gene, n_gene).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span></div>
 </div>

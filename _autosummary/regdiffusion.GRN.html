@@ -388,37 +388,36 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="regdiffusion.GRN">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regdiffusion.</span></span><span class="sig-name descname"><span class="pre">GRN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tf_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_gene_percentile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regdiffusion/grn.html#GRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regdiffusion.GRN" title="Link to this definition">#</a></dt>
-<dd><p>A Object to save and analyze gene regulatory network</p>
+<dd><p>An object to save and analyze a gene regulatory network.</p>
 <p>A GRN object includes the adjacency matrix between transcriptional factors
 and target genes. In many cases, when TFs are not specified, we have a
-square-shaped adjacency matrix. We expected the adjacency
+square-shaped adjacency matrix. We expect the adjacency
 matrix to hold predicted weights/probabilities for the edges (float).</p>
 <p>To create a GRN object, you need at least two things: the adjacency matrix
 and the corresponding gene names. You can further specify the TF names if
 your adjacency matrix is not a square matrix.</p>
-<p>You can save a GRN object to the HDF5 format using the <cite>.to_hdf5</cite> method in
-the GRN class. You can load a saved GRN object using the <cite>read_hdf5</cite>
+<p>You can save a GRN object to the HDF5 format using the <code class="docutils literal notranslate"><span class="pre">.to_hdf5</span></code> method
+in the GRN class. You can load a saved GRN object using the <code class="docutils literal notranslate"><span class="pre">read_hdf5</span></code>
 function in this package.</p>
 <p>If your adjacency matrix is very large and space is a concern, you may
-consider provide a value for <cite>top_gene_percentile</cite>. This value will
-calculate the a cutoff point for the values in the adjacency matrix.
-Every value whose absolute value is below this cutoff point will be set to
-zero. Later on, we can save the data as a sparse matrix to reduce the
-space requirement.</p>
+consider providing a value for <code class="docutils literal notranslate"><span class="pre">top_gene_percentile</span></code>. This will calculate
+a cutoff point for the values in the adjacency matrix. Every value whose
+absolute value is below this cutoff point will be set to zero. Later on, we
+can save the data as a sparse matrix to reduce the space requirement.</p>
 <p>The GRN object comes with many useful methods to analyze and visualize the
-network. Top top-level interfaces includes <cite>.extract_node_2hop_neighborhood</cite>
-and <cite>.visualize_local_neighborhood</cite>.</p>
+network. Top-level interfaces include <code class="docutils literal notranslate"><span class="pre">.extract_local_neighborhood</span></code>
+and <code class="docutils literal notranslate"><span class="pre">.visualize_local_neighborhood</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>adj_matrix</strong> (<em>np.ndarray</em>) – A 2D adjacency matrix to save.</p></li>
-<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – A 1D numpy array with all the target gene</p></li>
-<li><p><strong>names.</strong></p></li>
-<li><p><strong>tf_names</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – A 1D numpy array with all the TF gene</p></li>
-<li><p><strong>names.</strong></p></li>
-<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If this value is set, only the top k absolute</p></li>
-<li><p><strong>values</strong> (<em>values in the adjacency matrix will be kept. All the other</em>)</p></li>
-<li><p><strong>zero.</strong> (<em>will be set to</em>)</p></li>
+<li><p><strong>gene_names</strong> (<em>np.ndarray</em>) – A 1D numpy array with all the target gene
+names.</p></li>
+<li><p><strong>tf_names</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – A 1D numpy array with all the TF
+gene names.</p></li>
+<li><p><strong>top_gene_percentile</strong> (<em>int</em>) – If this value is set, only the top k
+absolute values in the adjacency matrix will be kept. All the
+other values will be set to zero.</p></li>
 </ul>
 </dd>
 </dl>
@@ -465,10 +464,10 @@ is defined in a similar way but smaller.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 <li><p><strong>hops</strong> (<em>str</em>) – Number of hops to explore. We can either do a “2.5” or</p></li>
-<li><p><strong>&quot;2.5&quot;.</strong> (<em>&quot;1.5&quot; hop travesal around selected genes. Default is</em>)</p></li>
+<li><p><strong>&quot;2.5&quot;.</strong> (<em>&quot;1.5&quot; hop traversal around selected genes. Default is</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -483,7 +482,7 @@ gene. The dataframe will be sorted by the absolute weight of edges.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
@@ -498,7 +497,7 @@ It is slightly faster than the dataframe version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
@@ -514,7 +513,7 @@ selected gene.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
@@ -529,7 +528,7 @@ selected gene. It is slightly faster than the dataframe version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
@@ -545,7 +544,7 @@ selected gene.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
@@ -560,7 +559,7 @@ selected gene. It is slightly faster than the dataframe version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all</p></li>
 </ul>
 </dd>
@@ -659,7 +658,7 @@ adjacency matrix are zeros.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>genes</strong> (<em>str</em><em>, </em><em>List</em><em>(</em><em>str</em><em>)</em>) – A single gene or a list of genes to inspect.</p></li>
+<li><p><strong>gene</strong> (<em>str</em>) – A single gene to inspect.</p></li>
 <li><p><strong>k</strong> (<em>int</em>) – Top-k edges to inspect on each node. If k=-1, export all.</p></li>
 <li><p><strong>hops</strong> (<em>str</em>) – Number of hops of the neighborhood to explore. Default</p></li>
 <li><p><strong>&quot;2.5&quot;.</strong> (<em>is</em>)</p></li>

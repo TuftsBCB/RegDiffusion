@@ -422,19 +422,19 @@ document.write(`
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n_genes</strong> (<em>int</em>) – Number of Genes</p></li>
-<li><p><strong>time_dim</strong> (<em>int</em>) – Dimension of time step embedding</p></li>
-<li><p><strong>n_celltype</strong> (<em>int</em>) – Number of expected cell types. If it is not provided,</p></li>
-<li><p><strong>None.</strong> (<em>there would be no celltype embedding. Default is</em>)</p></li>
-<li><p><strong>celltype_dim</strong> (<em>int</em>) – Dimension of cell types</p></li>
-<li><p><strong>hidden_dims</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of integer for the dimensions of the</p></li>
-<li><p><strong>size</strong> (<em>hidden layers. The first hidden dimension will be used as the</em>)</p></li>
-<li><p><strong>embedding.</strong> (<em>for gene</em>)</p></li>
-<li><p><strong>adj_dropout</strong> (<em>float</em>) – A single number between 0 and 1 specifying the</p></li>
-<li><p><strong>dropped</strong> (<em>percentage</em><em> of </em><em>values in the adjacency matrix that are</em>)</p></li>
-<li><p><strong>training.</strong> (<em>during</em>)</p></li>
-<li><p><strong>init_coef</strong> (<em>int</em>) – Coefficient to multiply with gene regulation norm</p></li>
-<li><p><strong>(</strong><strong>1/</strong> (<em>n_gene - 1</em><em>)</em>)</p></li>
+<li><p><strong>n_gene</strong> (<em>int</em>) – Number of genes.</p></li>
+<li><p><strong>time_dim</strong> (<em>int</em>) – Dimension of time step embedding.</p></li>
+<li><p><strong>n_celltype</strong> (<em>int</em>) – Number of expected cell types. If it is not provided,
+there would be no celltype embedding. Default is None.</p></li>
+<li><p><strong>celltype_dim</strong> (<em>int</em>) – Dimension of cell type embedding. Default: 4.</p></li>
+<li><p><strong>hidden_dims</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of integers for the dimensions of the
+hidden layers. The first hidden dimension will be used as the size
+for gene embedding. Default: [16, 16, 16].</p></li>
+<li><p><strong>adj_dropout</strong> (<em>float</em>) – A single number between 0 and 1 specifying the
+percentage of values in the adjacency matrix that are dropped
+during training. Default: 0.3.</p></li>
+<li><p><strong>init_coef</strong> (<em>int</em>) – Coefficient to multiply with gene regulation norm
+(1/(n_gene - 1)) to initialize the adjacency matrix. Default: 5.</p></li>
 </ul>
 </dd>
 </dl>

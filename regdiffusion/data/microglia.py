@@ -26,8 +26,8 @@ def load_atlas_microglia(data_dir='data') -> sc.AnnData:
 
     Args:
         data_dir (str): Parent directory to save and load the data. If the path
-        does not exist, it will be created. Data will be saved in a 
-        subdirectory under the provided path. 
+            does not exist, it will be created. Data will be saved in a
+            subdirectory under the provided path.
     """
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
@@ -73,9 +73,8 @@ def load_hammond_microglia(data_dir='data'):
 
     Args:
         data_dir (str): Parent directory to save and load the data. If the path
-        does not exist, it will be created. Data will be saved in a
-        subdirectory under the provided path. 
-    
+            does not exist, it will be created. Data will be saved in a
+            subdirectory under the provided path.
     """
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)

@@ -10,42 +10,41 @@ import concurrent.futures
 from .plot import plot_pyvis
 
 class GRN:
-    """ 
-    A Object to save and analyze gene regulatory network
+    """
+    An object to save and analyze a gene regulatory network.
 
-    A GRN object includes the adjacency matrix between transcriptional factors 
-    and target genes. In many cases, when TFs are not specified, we have a 
-    square-shaped adjacency matrix. We expected the adjacency 
-    matrix to hold predicted weights/probabilities for the edges (float). 
+    A GRN object includes the adjacency matrix between transcriptional factors
+    and target genes. In many cases, when TFs are not specified, we have a
+    square-shaped adjacency matrix. We expect the adjacency
+    matrix to hold predicted weights/probabilities for the edges (float).
 
     To create a GRN object, you need at least two things: the adjacency matrix
     and the corresponding gene names. You can further specify the TF names if
-    your adjacency matrix is not a square matrix. 
+    your adjacency matrix is not a square matrix.
 
-    You can save a GRN object to the HDF5 format using the `.to_hdf5` method in
-    the GRN class. You can load a saved GRN object using the `read_hdf5` 
-    function in this package. 
+    You can save a GRN object to the HDF5 format using the ``.to_hdf5`` method
+    in the GRN class. You can load a saved GRN object using the ``read_hdf5``
+    function in this package.
 
     If your adjacency matrix is very large and space is a concern, you may
-    consider provide a value for `top_gene_percentile`. This value will 
-    calculate the a cutoff point for the values in the adjacency matrix. 
-    Every value whose absolute value is below this cutoff point will be set to 
-    zero. Later on, we can save the data as a sparse matrix to reduce the 
-    space requirement. 
-    
+    consider providing a value for ``top_gene_percentile``. This will calculate
+    a cutoff point for the values in the adjacency matrix. Every value whose
+    absolute value is below this cutoff point will be set to zero. Later on, we
+    can save the data as a sparse matrix to reduce the space requirement.
+
     The GRN object comes with many useful methods to analyze and visualize the
-    network. Top top-level interfaces includes `.extract_node_2hop_neighborhood`
-    and `.visualize_local_neighborhood`. 
+    network. Top-level interfaces include ``.extract_local_neighborhood``
+    and ``.visualize_local_neighborhood``.
 
     Args:
         adj_matrix (np.ndarray): A 2D adjacency matrix to save.
-        gene_names (np.ndarray): A 1D numpy array with all the target gene 
-        names.
-        tf_names (np.ndarray, optional): A 1D numpy array with all the TF gene 
-        names.
-        top_gene_percentile (int): If this value is set, only the top k absolute
-        values in the adjacency matrix will be kept. All the other values
-        will be set to zero. 
+        gene_names (np.ndarray): A 1D numpy array with all the target gene
+            names.
+        tf_names (np.ndarray, optional): A 1D numpy array with all the TF
+            gene names.
+        top_gene_percentile (int): If this value is set, only the top k
+            absolute values in the adjacency matrix will be kept. All the
+            other values will be set to zero.
     """
     def __init__(self, adj_matrix: np.ndarray, 
                  gene_names: np.ndarray, 
@@ -65,8 +64,9 @@ class GRN:
             # Here we are estimating the cutoff point for top a% predicted edges
             # To speed up the process, we calculate the 1-a% percentile within 
             # 10,000 sampled edges instead of all edges. 
-            random_row_idx = np.random.randint(0, self.n_tfs, 10000)
-            random_col_idx = np.random.randint(0, self.n_genes, 10000)
+            rng = np.random.RandomState(0)
+            random_row_idx = rng.randint(0, self.n_tfs, 10000)
+            random_col_idx = rng.randint(0, self.n_genes, 10000)
             sampled_values = adj_matrix[random_row_idx, random_col_idx]
             self.cutoff_threshold = np.percentile(
                 np.abs(sampled_values), 100-top_gene_percentile
@@ -137,7 +137,7 @@ class GRN:
         selected gene. It is slightly faster than the dataframe version. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
         """
         gene_idx = self.gene_indices[gene]
@@ -162,7 +162,7 @@ class GRN:
         The dataframe will have 3 columns: `source`, `target`, `weight`. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
         """
         source_indices = self.extract_node_sources_as_indices(gene, k)
@@ -182,7 +182,7 @@ class GRN:
         selected gene. It is slightly faster than the dataframe version. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
         """
         gene_idx = self.tf_indices[gene]
@@ -207,7 +207,7 @@ class GRN:
         The dataframe will have 3 columns: `source`, `target`, `weight`. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
         """
         target_indices = self.extract_node_targets_as_indices(gene, k)
@@ -227,7 +227,7 @@ class GRN:
         It is slightly faster than the dataframe version. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
         """
         gene_idx = self.gene_indices[gene]
@@ -261,7 +261,7 @@ class GRN:
         The dataframe will have 3 columns: `source`, `target`, `weight`. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
         """
         neighbor_indices = self.extract_node_neighbors_as_indices(gene, k)
@@ -294,10 +294,10 @@ class GRN:
         is defined in a similar way but smaller. 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all
             hops (str): Number of hops to explore. We can either do a "2.5" or 
-            "1.5" hop travesal around selected genes. Default is "2.5". 
+            "1.5" hop traversal around selected genes. Default is "2.5".
         """
         if isinstance(genes, str):
             genes = [genes]
@@ -364,7 +364,7 @@ class GRN:
         (2-hop) around selected gene(s). 
 
         Args:
-            genes (str, List(str)): A single gene or a list of genes to inspect.
+            gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all.
             hops (str): Number of hops of the neighborhood to explore. Default
             is "2.5". 

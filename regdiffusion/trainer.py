@@ -14,6 +14,17 @@ from .evaluator import GRNEvaluator
 from .logger import LightLogger
 import matplotlib.pyplot as plt
 import warnings
+import random
+
+def set_seed(seed):
+    """Set random seeds for reproducibility across PyTorch, NumPy, and CUDA."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def linear_beta_schedule(timesteps, start_noise, end_noise):
     scale = 1000 / timesteps
@@ -82,7 +93,7 @@ class RegDiffusionTrainer:
             full dense normalized matrix is never materialized.
         cell_types (np.ndarray): (Optional) 1D integer array for cell type. If 
             you have labels in your cell type, you need to convert them to 
-            interge. Default is None. 
+            integer. Default is None.
         T (int): Total number of diffusion steps. Default: 5,000
         start_noise (float): Minimal noise level (beta) to be added. Default: 
             0.0001
@@ -91,7 +102,7 @@ class RegDiffusionTrainer:
         time_dim (int): Dimension size for the time embedding. Default: 64.
         celltype_dim (int): Dimension size for the cell type embedding. 
             Default: 4.
-        hidden_dim (list): Dimension sizes for the feature learning layers. We 
+        hidden_dims (list): Dimension sizes for the feature learning layers. We
             use the size of the first layer as the dimension for gene embeddings
             as well. Default: [16, 16, 16].
         init_coef (int): A coefficent to control the value to initialize the 
@@ -119,9 +130,9 @@ class RegDiffusionTrainer:
             to run this model on Apple's MPS chips. Default is "cuda" but if 
             you only has CPU, it will switch back to CPU.
         compile (boolean): Whether to compile the model before training. 
-            Compile the model is a good idea on large dataset and ofter improves
-            inference speed when it works. For smaller dataset, eager execution 
-            if often good enough. 
+            Compile the model is a good idea on large dataset and often improves
+            inference speed when it works. For smaller dataset, eager execution
+            is often good enough.
         evaluator (GRNEvaluator): (Optional) A defined GRNEvaluator if ground 
             truth data is available. Evaluation will be done every 100 steps by 
             default but you can change this setting through the eval_on_n_steps 
@@ -145,6 +156,8 @@ class RegDiffusionTrainer:
             for soft thresholding (saves boolean masks instead of float32
             tensors) and sampled sparse loss (avoids materializing full
             n_gene x n_gene matrix for L1 regularization). Default: False.
+        seed (int): Random seed for full reproducibility. When set, all
+            sources of randomness are seeded. Default: None (non-deterministic).
     """
     def __init__(
         self, exp_array, cell_types=None,
@@ -159,14 +172,22 @@ class RegDiffusionTrainer:
         device='cuda', compile=False,
         evaluator=None, eval_on_n_steps=100, logger=None,
         gradient_accumulation=False, use_amp=False,
-        memory_efficient=False
+        memory_efficient=False,
+        seed=None
     ):
         hp = locals()
         del hp['exp_array']
         del hp['cell_types']
         del hp['logger']
         self.hp = hp
-        
+
+        # Seed for reproducibility
+        if seed is not None:
+            set_seed(seed)
+        self._sampler_generator = torch.Generator()
+        if seed is not None:
+            self._sampler_generator.manual_seed(seed)
+
         if device == 'mps':
             raise Exception("We noticed unreliable training behavior on", 
                             "Apple's silicon. Consider using other devices.")
@@ -297,7 +318,8 @@ class RegDiffusionTrainer:
         self.train_dataset = TensorDataset(
             x_tensor_train, celltype_tensor_train)
         train_sampler = torch.utils.data.RandomSampler(
-            self.train_dataset, replacement=True, num_samples=batch_size)
+            self.train_dataset, replacement=True, num_samples=batch_size,
+            generator=self._sampler_generator)
         self.train_dataloader = DataLoader(
             self.train_dataset,
             sampler=train_sampler,
@@ -389,7 +411,8 @@ class RegDiffusionTrainer:
             cell_min_f32, cell_range_f32, gene_mean, gene_std,
             train_indices)
         train_sampler = torch.utils.data.RandomSampler(
-            self.train_dataset, replacement=True, num_samples=batch_size)
+            self.train_dataset, replacement=True, num_samples=batch_size,
+            generator=self._sampler_generator)
         self.train_dataloader = DataLoader(
             self.train_dataset,
             sampler=train_sampler,
@@ -409,12 +432,17 @@ class RegDiffusionTrainer:
     @torch.no_grad()
     def forward_pass(self, x_0, t):
         """
-        Forward diffusion process
-        
+        Forward diffusion process. Adds noise to the input according to the
+        diffusion schedule at the given timesteps.
+
         Args:
-            x_0 (torch.FloatTensor): Torch tensor for expression data. Rows are 
-            cells and columns are genes
+            x_0 (torch.FloatTensor): Torch tensor for expression data. Rows
+                are cells and columns are genes.
             t (torch.LongTensor): Torch tensor for diffusion time steps.
+
+        Returns:
+            tuple: (x_t, noise) where x_t is the noised input and noise is
+                the sampled Gaussian noise that was added.
         """
         noise = torch.randn_like(x_0)
         mean_coef = self.mean_schedule.gather(dim=-1, index=t)
@@ -423,6 +451,14 @@ class RegDiffusionTrainer:
         return x_t, noise
 
     def train(self, n_steps=None):
+        """
+        Train the model. Dispatches to gradient accumulation or normal
+        training based on the ``gradient_accumulation`` setting.
+
+        Args:
+            n_steps (int): Number of steps to train. If not provided, uses
+                the n_steps specified during initialization.
+        """
         if self.hp['gradient_accumulation']:
             self._train_with_gradient_accumulation(n_steps=None)
         else:
@@ -435,9 +471,9 @@ class RegDiffusionTrainer:
 
         Args:
             n_steps (int): Number of steps to train. If not provided, it will 
-                train the model by the n_steps sepcified in class 
+                train the model by the n_steps specified in class
                 initialization. Please read our paper to see how to identify
-                the converge point. 
+                the convergence point.
         """
         start_time = datetime.now()
         eval_steps = self.hp['eval_on_n_steps']
@@ -445,7 +481,9 @@ class RegDiffusionTrainer:
             n_steps = self.hp['n_steps']
         sampled_adj = self.model.get_sampled_adj_()
         with tqdm(range(n_steps)) as pbar:
-            for epoch in pbar: 
+            for epoch in pbar:
+                if self.hp['seed'] is not None:
+                    torch.manual_seed(self.hp['seed'] + epoch)
                 epoch_loss = []
                 for step, batch in enumerate(self.train_dataloader):
                     x_0, ct = batch
@@ -495,6 +533,8 @@ class RegDiffusionTrainer:
                         for k in eval_result.keys():
                             epoch_log[k] = eval_result[k]
                     if self.hp['train_split'] < 1:
+                        if self.hp['seed'] is not None:
+                            torch.manual_seed(self.hp['seed'] + n_steps + epoch)
                         with torch.no_grad():
                             val_epoch_loss = []
                             for step, batch in enumerate(self.val_dataloader):
@@ -546,6 +586,8 @@ class RegDiffusionTrainer:
 
         with tqdm(range(n_steps)) as pbar:
             for step_idx in pbar:
+                if self.hp['seed'] is not None:
+                    torch.manual_seed(self.hp['seed'] + step_idx)
                 # Fetch a single batch for the current step
                 x_0_batch, ct_batch = next(iter(self.train_dataloader))
                 x_0_batch = x_0_batch.to(self.device)
@@ -627,6 +669,8 @@ class RegDiffusionTrainer:
                             epoch_log[k] = eval_result[k]
                     
                     if self.hp['train_split'] < 1:
+                        if self.hp['seed'] is not None:
+                            torch.manual_seed(self.hp['seed'] + n_steps + step_idx)
                         with torch.no_grad():
                             val_epoch_loss = []
                             for step, batch in enumerate(self.val_dataloader):
@@ -680,28 +724,33 @@ class RegDiffusionTrainer:
 
     def get_grn(self, gene_names, tf_names=None, top_gene_percentile=None):
         """
-        Obtain a GRN object. You need to provide the genes names. 
+        Obtain a GRN object. You need to provide the gene names.
 
         Args:
-            gene_names (np.ndarray): An array of names of all genes. The order 
+            gene_names (np.ndarray): An array of names of all genes. The order
                 of genes should be the same as the order used in your expression
                 table.
-            tf_names (np.ndarray):An array of names of all transcriptional 
-                factors. The order of genes should be the same as the order 
-                used in your expression table.
-            top_gene_percentile (int): If provided, we will set the value on 
-                weak links to be zero. It is useful if you want to save the 
-                regulatory relationship in a GRN object as a sparse matrix. 
+            tf_names (np.ndarray): An array of names of all transcriptional
+                factors. The order should be the same as the order used in
+                your expression table.
+            top_gene_percentile (int): If provided, we will set the value on
+                weak links to be zero. It is useful if you want to save the
+                regulatory relationship in a GRN object as a sparse matrix.
 
+        Returns:
+            GRN: A GRN object containing the inferred regulatory network.
         """
         adj = self.model.get_adj()
         return GRN(adj, gene_names, tf_names, top_gene_percentile)
 
     def get_adj(self):
         """
-        Obtain the adjacency matrix. The values in this adjacency matix has 
+        Obtain the adjacency matrix. The values in this adjacency matrix have
         been scaled using regulatory norm. You may expect strong links to go
-        beyond 5 or 10 in most cases. 
+        beyond 5 or 10 in most cases.
+
+        Returns:
+            np.ndarray: 2D adjacency matrix of shape (n_gene, n_gene).
         """
         return self.model.get_adj()
         

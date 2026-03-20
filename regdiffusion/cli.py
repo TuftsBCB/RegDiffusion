@@ -36,6 +36,12 @@ def main():
         default=4,
         help="Number of workers to use for edgelist extraction. Default: 4"
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for reproducible results. Default: None"
+    )
 
     args = parser.parse_args()
 
@@ -65,7 +71,7 @@ def main():
         x = np.log(x + 1.0)
 
     print("Initializing RegDiffusion trainer and starting training...")
-    rd_trainer = RegDiffusionTrainer(x)
+    rd_trainer = RegDiffusionTrainer(x, seed=args.seed)
     rd_trainer.train()
 
     grn = rd_trainer.get_grn(

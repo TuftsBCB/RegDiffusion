@@ -47,14 +47,14 @@ def load_beeline(data_dir='data', benchmark_data='hESC',
     
     Args:
         data_dir (str): Parent directory to save and load the data. If the path
-        does not exist, it will be created. Data will be saved in a
-        subdirectory under the provided path. 
-        benchmark_data (str): Benchmark datasets. Choose among "hESC", "hHep", 
-        "mDC", "mESC", "mHSC", "mHSC-GM", and "mHSC-L".
-        benchmark_setting (str): Benchmark settings. Choose among "500_STRING", 
-        "1000_STRING", "500_Non-ChIP", "1000_Non-ChIP", "500_ChIP-seq", 
-        "1000_ChIP-seq", "500_lofgof", and "1000_lofgof". If either of the 
-        "lofgof" settings is choosed, only "mESC" data is available.  
+            does not exist, it will be created. Data will be saved in a
+            subdirectory under the provided path.
+        benchmark_data (str): Benchmark datasets. Choose among "hESC", "hHep",
+            "mDC", "mESC", "mHSC", "mHSC-GM", and "mHSC-L".
+        benchmark_setting (str): Benchmark settings. Choose among "500_STRING",
+            "1000_STRING", "500_Non-ChIP", "1000_Non-ChIP", "500_ChIP-seq",
+            "1000_ChIP-seq", "500_lofgof", and "1000_lofgof". If either of the
+            "lofgof" settings is chosen, only "mESC" data is available.
 
     Returns:
         tuple: A tuple containing two objects for a single BEELINE benchmark. 

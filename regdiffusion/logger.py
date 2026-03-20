@@ -82,6 +82,19 @@ class LightLogger:
             self.logging_vars.add(k)
 
     def check_early_stopping(self, item: str, k: int = 10):
+        """
+        Check if training should stop early based on a monitored metric.
+
+        Returns True if the minimum value in the last ``k`` steps is greater
+        than the historical minimum, indicating no improvement.
+
+        Args:
+            item (str): The metric name to monitor (e.g. 'val_loss').
+            k (int): Window size to check for improvement. Default: 10.
+
+        Returns:
+            bool: True if early stopping criteria is met.
+        """
         end_idx = self.mem[self.current_log]['current_step']
         window = []
         start_idx = max(end_idx-k, 0)

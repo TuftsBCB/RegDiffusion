@@ -59,6 +59,16 @@ class GRNEvaluator:
         self.report_epr = ('EPR' in metrics)
 
     def evaluate(self, A):
+        """
+        Evaluate a predicted adjacency matrix against the ground truth.
+
+        Args:
+            A (np.ndarray): Predicted adjacency matrix of shape
+                (n_gene, n_gene) or (n_tf, n_gene).
+
+        Returns:
+            dict: Dictionary of evaluation metrics (e.g. AUROC, AUPR).
+        """
         if A.shape[0] == A.shape[1]:
             A = A[self.tf_mask, :]
         A = A[:, self.gene_mask]

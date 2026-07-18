@@ -1,4 +1,5 @@
 .claude/
+.venv/
 dist/
 /data/
 results/

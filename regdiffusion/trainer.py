@@ -260,8 +260,7 @@ class RegDiffusionTrainer:
             if name.endswith('adj_A'):
                 adj_params.append(param)
             else:
-                if not name.endswith('_nonparam'):
-                    non_adj_params.append(param)
+                non_adj_params.append(param)
         self.opt = torch.optim.Adam(
             [{'params': non_adj_params}, {'params': adj_params}], 
             lr=lr_nn, 
@@ -460,9 +459,9 @@ class RegDiffusionTrainer:
                 the n_steps specified during initialization.
         """
         if self.hp['gradient_accumulation']:
-            self._train_with_gradient_accumulation(n_steps=None)
+            self._train_with_gradient_accumulation(n_steps=n_steps)
         else:
-            self._train_normal(n_steps=None)
+            self._train_normal(n_steps=n_steps)
         
         
     def _train_normal(self, n_steps=None):
@@ -505,11 +504,13 @@ class RegDiffusionTrainer:
                         loss_ = F.mse_loss(noise, z, reduction='none')
                         loss = loss_.mean()
 
-                        if hasattr(self.model, 'get_sampled_sparse_loss'):
-                            loss_sparse = self.model.get_sampled_sparse_loss() * self.hp['sparse_loss_coef']
-                        else:
-                            adj_m = self.model.get_adj_()
-                            loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
+                        # Only computed past the warmup window, where it is
+                        # actually applied.
+                        if epoch > 10:
+                            loss_sparse = (
+                                self.model.get_sparse_loss()
+                                * self.hp['sparse_loss_coef']
+                            )
 
                     if epoch > 10:
                         loss = loss + loss_sparse
@@ -630,19 +631,19 @@ class RegDiffusionTrainer:
                     scaled_loss = loss_sample / batch_size
                     scaled_loss.backward()
 
-                # Handle sparse loss once per effective batch
-                with torch.autocast(
-                    device_type=self.amp_device_type,
-                    dtype=torch.bfloat16,
-                    enabled=self.use_amp
-                ):
-                    if hasattr(self.model, 'get_sampled_sparse_loss'):
-                        loss_sparse = self.model.get_sampled_sparse_loss() * self.hp['sparse_loss_coef']
-                    else:
-                        adj_m = self.model.get_adj_()
-                        loss_sparse = adj_m.mean() * self.hp['sparse_loss_coef']
-
+                # Handle sparse loss once per effective batch. Only computed
+                # past the warmup window, where it is actually applied.
                 if step_idx > 10:
+                    with torch.autocast(
+                        device_type=self.amp_device_type,
+                        dtype=torch.bfloat16,
+                        enabled=self.use_amp
+                    ):
+                        loss_sparse = (
+                            self.model.get_sparse_loss()
+                            * self.hp['sparse_loss_coef']
+                        )
+
                     loss_sparse.backward()
 
                 # Perform the optimizer step after accumulating all gradients

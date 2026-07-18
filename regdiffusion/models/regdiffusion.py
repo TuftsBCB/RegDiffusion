@@ -92,12 +92,16 @@ class RegDiffusion(nn.Module):
         
         adj_A = torch.ones(n_gene, n_gene) * self.gene_reg_norm * init_coef
         self.adj_A = nn.Parameter(adj_A, requires_grad =True, )
-        self.sampled_adj_row_nonparam = nn.Parameter(
-            torch.randint(0, n_gene, size=(10000,)), 
-            requires_grad=False)
-        self.sampled_adj_col_nonparam = nn.Parameter(
-            torch.randint(0, n_gene, size=(10000,)),
-            requires_grad=False)
+        # Integer index tensors, not learnable weights. Registered as buffers
+        # so they stay out of `parameters()` while keeping their state_dict
+        # keys (the `_nonparam` suffix is vestigial, kept for checkpoint
+        # compatibility).
+        self.register_buffer(
+            'sampled_adj_row_nonparam',
+            torch.randint(0, n_gene, size=(10000,)))
+        self.register_buffer(
+            'sampled_adj_col_nonparam',
+            torch.randint(0, n_gene, size=(10000,)))
 
         self.time_mlp = nn.Sequential(
             SinusoidalPositionEmbeddings(time_dim),
@@ -143,6 +147,26 @@ class RegDiffusion(nn.Module):
     def get_adj(self):
         adj = self.get_adj_().detach().cpu().numpy() / self.gene_reg_norm
         return adj.astype(np.float16)
+
+    def get_sparse_loss(self):
+        """L1 sparsity penalty: mean absolute value of the off-diagonal,
+        soft-thresholded adjacency entries.
+
+        ``abs`` is required. Soft thresholding preserves sign, so a plain mean
+        of signed values would be *reduced* by making inhibitory (negative)
+        edges more negative -- the opposite of a sparsity penalty. In practice
+        negative entries do not survive thresholding (they land in the
+        ``|x| < tau`` dead zone, where the output and its gradient are both
+        zero), so this matches the previous signed mean on real runs; it is
+        corrected here so the penalty is right by construction rather than by
+        accident.
+
+        The mean is taken over the n*(n-1) off-diagonal entries, since
+        ``get_adj_`` masks the diagonal to zero, so this agrees with
+        ``RegDiffusionME.get_sparse_loss``, its sampled approximation.
+        """
+        n = self.n_gene
+        return self.get_adj_().abs().sum() / (n * (n - 1))
 
     @torch.no_grad()
     def get_sampled_adj_(self):

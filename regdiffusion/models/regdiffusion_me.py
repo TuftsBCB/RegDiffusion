@@ -75,12 +75,16 @@ class RegDiffusionME(nn.Module):
 
         adj_A = torch.ones(n_gene, n_gene) * self.gene_reg_norm * init_coef
         self.adj_A = nn.Parameter(adj_A, requires_grad =True, )
-        self.sampled_adj_row_nonparam = nn.Parameter(
-            torch.randint(0, n_gene, size=(10000,)),
-            requires_grad=False)
-        self.sampled_adj_col_nonparam = nn.Parameter(
-            torch.randint(0, n_gene, size=(10000,)),
-            requires_grad=False)
+        # Integer index tensors, not learnable weights. Registered as buffers
+        # so they stay out of `parameters()` while keeping their state_dict
+        # keys (the `_nonparam` suffix is vestigial, kept for checkpoint
+        # compatibility).
+        self.register_buffer(
+            'sampled_adj_row_nonparam',
+            torch.randint(0, n_gene, size=(10000,)))
+        self.register_buffer(
+            'sampled_adj_col_nonparam',
+            torch.randint(0, n_gene, size=(10000,)))
 
         self.time_mlp = nn.Sequential(
             SinusoidalPositionEmbeddings(time_dim),
@@ -127,19 +131,34 @@ class RegDiffusionME(nn.Module):
         adj = self.get_adj_().detach().cpu().numpy() / self.gene_reg_norm
         return adj.astype(np.float16)
 
-    def get_sampled_sparse_loss(self):
+    def get_sparse_loss(self):
         """Compute mean absolute value of sampled adj entries for sparse loss.
 
+        Memory-efficient approximation of ``RegDiffusion.get_sparse_loss``.
         Instead of materializing the full (n_gene, n_gene) get_adj_() matrix,
         this samples 10,000 random entries, applies soft thresholding, and
         returns the mean. This avoids creating 3 additional (n,n) tensors
         that the full get_adj_() would require.
+
+        Diagonal (self-loop) samples are excluded so this matches the base
+        model, whose ``get_adj_`` masks the diagonal to zero.
         """
-        sampled_vals = self.adj_A[
-            self.sampled_adj_row_nonparam, self.sampled_adj_col_nonparam
-        ]
+        rows = self.sampled_adj_row_nonparam
+        cols = self.sampled_adj_col_nonparam
+        sampled_vals = self.adj_A[rows, cols]
         sampled_clean = self.soft_thresholding(sampled_vals, self.gene_reg_norm/2)
-        return sampled_clean.abs().mean()
+        off_diag = (rows != cols).to(sampled_clean.dtype)
+        return (sampled_clean.abs() * off_diag).sum() / off_diag.sum()
+
+    def get_sampled_sparse_loss(self):
+        """
+        Deprecated API. Use get_sparse_loss instead.
+        """
+        import warnings
+        warnings.warn(
+            "get_sampled_sparse_loss is deprecated, use get_sparse_loss instead",
+            DeprecationWarning)
+        return self.get_sparse_loss()
 
     @torch.no_grad()
     def get_sampled_adj_(self):

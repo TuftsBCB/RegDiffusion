@@ -1,10 +1,9 @@
 # RegDiffusion News / Changelog
 
-## 0.2.1 [unreleased]
+## 0.2.3 [unreleased]
 
 ### New Features
-- Added sparse matrix support for `RegDiffusionTrainer`. The `exp_array` argument now accepts scipy sparse matrices (e.g. `adata.X`) directly. Normalization statistics are computed in chunks and each sample is normalized on-the-fly during training, so the full dense matrix is never materialized. This enables training on datasets with 1M+ cells without excessive memory usage.
-- Updated CLI (`regdiffusion` command) to handle sparse `adata.X` from H5AD files, including sparse-safe data validation and log-transform via `log1p` on non-zero entries.
+- Added a `seed` argument to `RegDiffusionTrainer` for fully reproducible runs. When set, Python, NumPy, and PyTorch RNGs are seeded and cuDNN is put in deterministic mode. Two runs with the same seed now produce bit-identical adjacency matrices, verified across separate processes and under AMP, `torch.compile`, gradient accumulation, and `train_split < 1.0`. Without a seed (the default), runs remain non-deterministic.
 
 ### Bug Fixes
 - Fixed `RegDiffusionTrainer.train(n_steps=...)` silently ignoring its argument. Both the normal and gradient-accumulation branches hardcoded `n_steps=None`, so training always ran for the `n_steps` given at initialization.
@@ -12,6 +11,19 @@
 - `RegDiffusionME.get_sampled_sparse_loss()` is renamed to `get_sparse_loss()` and now excludes diagonal samples, matching the base model, whose `get_adj_()` masks the diagonal.
 - Registered the sampled adjacency index tensors (`sampled_adj_row/col_nonparam`) as buffers instead of `nn.Parameter`. These are integer indices, not learnable weights, and they no longer appear in `model.parameters()`. `state_dict` keys are unchanged, so existing checkpoints still load.
 - The sparse loss is no longer computed during the warmup window, where it is discarded.
+- Extended the `tqdm.auto` progress-bar fix from 0.2.2 (which covered `trainer.py`) to the remaining progress bars in `grn.py` and the `data` module, so dataset downloads and edgelist extraction also render properly in notebooks.
+
+
+## 0.2.2
+
+- Avoid large progress printing in terminal
+
+
+## 0.2.1
+
+### New Features
+- Added sparse matrix support for `RegDiffusionTrainer`. The `exp_array` argument now accepts scipy sparse matrices (e.g. `adata.X`) directly. Normalization statistics are computed in chunks and each sample is normalized on-the-fly during training, so the full dense matrix is never materialized. This enables training on datasets with 1M+ cells without excessive memory usage.
+- Updated CLI (`regdiffusion` command) to handle sparse `adata.X` from H5AD files, including sparse-safe data validation and log-transform via `log1p` on non-zero entries.
 
 
 ## 0.2.0

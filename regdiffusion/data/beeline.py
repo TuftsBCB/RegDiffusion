@@ -1,7 +1,7 @@
 import numpy as np
 import scanpy as sc
 import pandas as pd
-from tqdm import tqdm
+from tqdm.auto import tqdm
 import zipfile
 import os
 from .utils import download_file

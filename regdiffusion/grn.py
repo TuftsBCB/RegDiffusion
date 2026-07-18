@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from datetime import datetime
 from collections import deque, Counter
 from scipy.sparse import csr_matrix

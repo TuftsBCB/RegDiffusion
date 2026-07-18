@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.dataset import TensorDataset
 from .models import RegDiffusion, RegDiffusionME
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from .logger import LightLogger
 from datetime import datetime
 from .grn import GRN
@@ -147,8 +147,8 @@ class RegDiffusionTrainer:
             accumulation. This is useful when number of genes are extremely
             large.
         use_amp (bool): Whether to use automatic mixed precision (bfloat16)
-            during training. This reduces memory usage by storing activations
-            in half precision while keeping model parameters in float32.
+            during training at the cost of 2x training time. This is usually
+            not recommended unless the last slice of memory is a bottleneck.
             Requires a GPU with bfloat16 support (Ampere or newer).
             Default: False.
         memory_efficient (bool): Whether to use the memory-efficient model

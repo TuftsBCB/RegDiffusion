@@ -1,5 +1,5 @@
 import urllib
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 # Modified from https://gist.github.com/yanqd0/c13ed29e29432e3cf3e7c38467f42f51
 def download_file(url, file_path, chunk_size=1024):

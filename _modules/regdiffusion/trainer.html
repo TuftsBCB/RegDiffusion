@@ -310,7 +310,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegDiffusion</span><span class="p">,</span> <span class="n">RegDiffusionME</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightLogger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GRN</span>
@@ -453,8 +453,8 @@ document.write(`
 <span class="sd">            accumulation. This is useful when number of genes are extremely</span>
 <span class="sd">            large.</span>
 <span class="sd">        use_amp (bool): Whether to use automatic mixed precision (bfloat16)</span>
-<span class="sd">            during training. This reduces memory usage by storing activations</span>
-<span class="sd">            in half precision while keeping model parameters in float32.</span>
+<span class="sd">            during training at the cost of 2x training time. This is usually</span>
+<span class="sd">            not recommended unless the last slice of memory is a bottleneck.</span>
 <span class="sd">            Requires a GPU with bfloat16 support (Ampere or newer).</span>
 <span class="sd">            Default: False.</span>
 <span class="sd">        memory_efficient (bool): Whether to use the memory-efficient model</span>

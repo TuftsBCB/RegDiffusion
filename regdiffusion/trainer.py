@@ -159,6 +159,12 @@ class RegDiffusionTrainer:
         seed (int): Random seed for full reproducibility. When set, all
             sources of randomness are seeded. Default: None (non-deterministic).
     """
+
+    #: Model class used for each ``memory_efficient`` setting. Subclasses can
+    #: override this to train a different model variant without duplicating
+    #: ``__init__`` (see ``RegDiffusionEMATrainer``).
+    MODEL_CLASSES = {False: RegDiffusion, True: RegDiffusionME}
+
     def __init__(
         self, exp_array, cell_types=None,
         T=5000, start_noise=0.0001, end_noise=0.02,
@@ -239,7 +245,7 @@ class RegDiffusionTrainer:
     
         # Setup Model ----------------------------------------------------------
         gene_reg_norm = 1/(n_gene-1)
-        ModelClass = RegDiffusionME if memory_efficient else RegDiffusion
+        ModelClass = self.MODEL_CLASSES[bool(memory_efficient)]
         self.model = ModelClass(
             n_gene=n_gene,
             time_dim=time_dim,

@@ -566,8 +566,7 @@ document.write(`
             <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;adj_A&#39;</span><span class="p">):</span>
                 <span class="n">adj_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_nonparam&#39;</span><span class="p">):</span>
-                    <span class="n">non_adj_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+                <span class="n">non_adj_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
             <span class="p">[{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">non_adj_params</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">adj_params</span><span class="p">}],</span> 
             <span class="n">lr</span><span class="o">=</span><span class="n">lr_nn</span><span class="p">,</span> 
@@ -771,9 +770,9 @@ document.write(`
 <span class="sd">                the n_steps specified during initialization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;gradient_accumulation&#39;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_train_with_gradient_accumulation</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_with_gradient_accumulation</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="n">n_steps</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_train_normal</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_normal</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="n">n_steps</span><span class="p">)</span></div>
 
         
         
@@ -817,11 +816,13 @@ document.write(`
                         <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
                         <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-                        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;get_sampled_sparse_loss&#39;</span><span class="p">):</span>
-                            <span class="n">loss_sparse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_sparse_loss</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
-                            <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                        <span class="c1"># Only computed past the warmup window, where it is</span>
+                        <span class="c1"># actually applied.</span>
+                        <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                            <span class="n">loss_sparse</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sparse_loss</span><span class="p">()</span>
+                                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                            <span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
                         <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="n">loss_sparse</span>
@@ -942,19 +943,19 @@ document.write(`
                     <span class="n">scaled_loss</span> <span class="o">=</span> <span class="n">loss_sample</span> <span class="o">/</span> <span class="n">batch_size</span>
                     <span class="n">scaled_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
-                <span class="c1"># Handle sparse loss once per effective batch</span>
-                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
-                    <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
-                    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
-                    <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
-                <span class="p">):</span>
-                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;get_sampled_sparse_loss&#39;</span><span class="p">):</span>
-                        <span class="n">loss_sparse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_sparse_loss</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">adj_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span>
-                        <span class="n">loss_sparse</span> <span class="o">=</span> <span class="n">adj_m</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
-
+                <span class="c1"># Handle sparse loss once per effective batch. Only computed</span>
+                <span class="c1"># past the warmup window, where it is actually applied.</span>
                 <span class="k">if</span> <span class="n">step_idx</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
+                        <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span><span class="p">,</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+                        <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
+                    <span class="p">):</span>
+                        <span class="n">loss_sparse</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sparse_loss</span><span class="p">()</span>
+                            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                        <span class="p">)</span>
+
                     <span class="n">loss_sparse</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 
                 <span class="c1"># Perform the optimizer step after accumulating all gradients</span>

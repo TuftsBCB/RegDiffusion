@@ -115,19 +115,34 @@ There are many ways to discover target genes to study the local networks. For ex
 
 ### Step 2. Visualize the local network around the selected gene
 
-The `visualize_local_neighborhood` method of an `GRN` object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using `pyvis`/`vis.js`. The default `k` here is 20. However, in cases when the regulatory relationships are strong and bidirectional, `k=20` only gives a very simple network. You may increase the magnitude of `k` to find some meaningful results to you. Keep in mind that, if your `k` is too small, you won't be able to see some relatively strong links.  
+The `visualize_local_neighborhood` method of an `GRN` object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using [`lightgraph`](https://haozhu233.github.io/lightgraph/). The default `k` here is 20. However, in cases when the regulatory relationships are strong and bidirectional, `k=20` only gives a very simple network. You may increase the magnitude of `k` to find some meaningful results to you. Keep in mind that, if your `k` is too small, you won't be able to see some relatively strong links.  
 
 
 ```python
 >>> g = grn.visualize_local_neighborhood(['HIST1H1D', 'MCM3'], k=40)
->>> g.show('view.html')
+>>> g  # renders inline in a notebook
+>>> g.save('view.html')  # or write a standalone HTML file
 ```
+
+Edge width reflects the absolute regulatory strength of each link, and the two
+genes you asked about are drawn at double size. `lightgraph` renders on an HTML
+canvas, so the same call stays responsive when you widen `k` or move on to the
+whole-network views in [Visualizing Inferred GRN](visualizing_grn.md).
 
 ![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs.png)
 
 ### (Optional) Step 3. Node clustering
 
-Here we have a fairly obvious bipartisan graph. It also makes sense to use some clustering methods to automatically assign nodes into partitions. You can use any clustering methods that you like (and works). Here is an example of using `node2vec` for this task.
+Here we have a fairly obvious bipartisan graph. It also makes sense to use some clustering methods to automatically assign nodes into partitions.
+
+The quickest option is to let `lightgraph` detect communities for you by passing
+`node_group_dict='auto'`:
+
+```python
+>>> g = grn.visualize_local_neighborhood('HIST1H1D', k=40, node_group_dict='auto')
+```
+
+You can also bring your own clustering, using any method that you like (and works). Here is an example of using `node2vec` for this task.
 
 ```python
 >>> import networkx as nx
@@ -166,7 +181,7 @@ You can also apply the clustering information to your visual.
 >>> g = grn.visualize_local_neighborhood(
 >>>     'HIST1H1D', k=40, node_group_dict=gene_group_dict
 >>>     )
->>> g.show('view.html')
+>>> g.save('view.html')
 ```
 
 ![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs_cluster.png)

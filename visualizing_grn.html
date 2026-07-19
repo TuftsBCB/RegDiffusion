@@ -1,0 +1,1269 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Visualizing Inferred GRN &#8212; regdiffusion 0.0.9 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=4ea706d9"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'visualizing_grn';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Working with Large Gene Networks" href="large_networks.html" />
+    <link rel="prev" title="Get Started" href="quick_tour.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Visualizing Inferred GRN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large_networks.html">Working with Large Gene Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="main_api.html">main Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.RegDiffusionTrainer.html">RegDiffusionTrainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRN.html">GRN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.GRNEvaluator.html">GRNEvaluator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="models.html">models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.models.RegDiffusion.html">RegDiffusion</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="data_module.html"><cite>data</cite> module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_beeline.html">regdiffusion.data.load_beeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_atlas_microglia.html">regdiffusion.data.load_atlas_microglia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/regdiffusion.data.load_hammond_microglia.html">regdiffusion.data.load_hammond_microglia</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Paper Supplements</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="supplements.html">Additional local networks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/TuftsBCB/RegDiffusion" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/visualizing_grn.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Visualizing Inferred GRN</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-get-the-data">Step 1. Get the data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-infer-the-network">Step 2. Infer the network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-group-genes-by-function">Step 3. Group genes by function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#give-the-pathways-fixed-meaningful-colors">Give the pathways fixed, meaningful colors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-look-at-the-whole-network">Step 4. Look at the whole network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#does-the-picture-actually-mean-anything">Does the picture actually mean anything?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#should-you-filter-out-weak-edges">Should you filter out weak edges?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reduce-k-instead-of-thresholding">Reduce <code class="docutils literal notranslate"><span class="pre">k</span></code> instead of thresholding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-zoom-in-on-a-neighborhood">Step 5. Zoom in on a neighborhood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-a-different-cell-type-a-different-network">Step 6. A different cell type, a different network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-go-next">Where to go next</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="visualizing-inferred-grn">
+<h1>Visualizing Inferred GRN<a class="headerlink" href="#visualizing-inferred-grn" title="Link to this heading">#</a></h1>
+<p>RegDiffusion hands you back an adjacency matrix. On a 5,000-gene run that is
+25 million numbers, and no amount of squinting at a heatmap will tell you
+whether the network learned anything biological. The fastest way to build (or
+lose) confidence in an inferred network is to <em>look</em> at it and ask whether
+genes that belong together ended up together.</p>
+<p>This tutorial walks through that end to end on a real dataset: pull healthy
+human PBMCs from <a class="reference external" href="https://cellxgene.cziscience.com/">CELLxGENE</a>, infer a GRN
+over 5,000 genes, annotate the genes with
+<a class="reference external" href="https://reactome.org/">Reactome</a> pathways, and render the result with
+<a class="reference external" href="https://haozhu233.github.io/lightgraph/"><code class="docutils literal notranslate"><span class="pre">lightgraph</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Network plots in <code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> are drawn by <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code>, which renders on an
+HTML canvas with viewport culling. This matters more than it sounds: the older
+<code class="docutils literal notranslate"><span class="pre">pyvis</span></code>/<code class="docutils literal notranslate"><span class="pre">vis.js</span></code> backend stalls for the better part of a minute before the
+first frame at 5,000 nodes, which effectively ruled out looking at a whole
+network at once. <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> stays interactive at that size, so the
+whole-network view below is something you can actually pan around in.</p>
+</div>
+<section id="step-1-get-the-data">
+<h2>Step 1. Get the data<a class="headerlink" href="#step-1-get-the-data" title="Link to this heading">#</a></h2>
+<p>We use the NYGC multimodal PBMC dataset from
+<a class="reference external" href="https://doi.org/10.1016/j.cell.2021.04.048">Hao et al., <em>Cell</em> 2021</a> — the
+Seurat v4 CITE-seq reference, 161,764 healthy human PBMCs, deeply annotated,
+and a de facto reference for immune cell types. It is available through the
+<a class="reference external" href="https://cellxgene.cziscience.com/collections/b0cf0afa-ec40-4d65-b570-ed4ceacc6813">CELLxGENE Census</a>
+API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">cellxgene_census</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">scanpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">DATASET_ID</span> <span class="o">=</span> <span class="s2">&quot;ed5d841d-6346-47d4-ab2f-7119ad7e3a35&quot;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">open_soma</span><span class="p">(</span><span class="n">census_version</span><span class="o">=</span><span class="s2">&quot;2023-12-15&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">census</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span> <span class="o">=</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">get_anndata</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">census</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">organism</span><span class="o">=</span><span class="s2">&quot;Homo sapiens&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_value_filter</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;dataset_id == &#39;</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">&#39; and is_primary_data == True&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cell_type&quot;</span><span class="p">,</span> <span class="s2">&quot;assay&quot;</span><span class="p">,</span> <span class="s2">&quot;donor_id&quot;</span><span class="p">,</span> <span class="s2">&quot;disease&quot;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(161764, 60664)</span>
+</pre></div>
+</div>
+<p>Census ships raw counts indexed by Ensembl ID, so we switch to gene symbols
+(which is what pathway databases speak) and trim the gene families that soak up
+variance without carrying much regulatory signal:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;ensembl_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var_names_make_unique</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MT-&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">|</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;RPL&quot;</span><span class="p">,</span> <span class="s2">&quot;RPS&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">|</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^HB[ABDEGQZ]\d?$&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">adata</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">filter_genes</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">min_cells</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">adata</span><span class="o">.</span><span class="n">n_obs</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">normalize_total</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">target_sum</span><span class="o">=</span><span class="mf">1e4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">highly_variable_genes</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_top_genes</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">flavor</span><span class="o">=</span><span class="s2">&quot;seurat&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">adata</span><span class="p">[:,</span> <span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">highly_variable</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(161764, 5000)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-infer-the-network">
+<h2>Step 2. Infer the network<a class="headerlink" href="#step-2-infer-the-network" title="Link to this heading">#</a></h2>
+<p>Nothing special here — this is the standard RegDiffusion workflow. Passing
+<code class="docutils literal notranslate"><span class="pre">cell_types</span></code> lets the model condition on the 30 annotated cell types in this
+dataset.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">regdiffusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rd</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">codes</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;cell_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="n">codes</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">get_grn</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">&quot;pbmc_nygc_grn.hdf5&quot;</span><span class="p">,</span> <span class="n">as_sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>On an RTX PRO 6000 the 1,000 training steps take about 13 seconds; loading and
+densifying the expression matrix takes considerably longer than the training
+itself.</p>
+<p>A first sanity check before any plotting — who are the hub genes?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lightgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">degree</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">edges</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">edges</span><span class="p">[[</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">deg</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">kv</span><span class="p">:</span> <span class="o">-</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">12</span><span class="p">]</span>
+<span class="go">[(&#39;LTB&#39;, 306.0), (&#39;IL7R&#39;, 292.0), (&#39;ETS1&#39;, 203.0), (&#39;CD3D&#39;, 181.0),</span>
+<span class="go"> (&#39;NKG7&#39;, 149.0), (&#39;CD3E&#39;, 145.0), (&#39;LDHB&#39;, 144.0), (&#39;CD79A&#39;, 138.0),</span>
+<span class="go"> (&#39;EEF1B2&#39;, 138.0), (&#39;MS4A1&#39;, 131.0), (&#39;CST7&#39;, 129.0), (&#39;EEF1A1&#39;, 115.0)]</span>
+</pre></div>
+</div>
+<p>That is a reassuring list: T cell identity (<code class="docutils literal notranslate"><span class="pre">CD3D</span></code>, <code class="docutils literal notranslate"><span class="pre">CD3E</span></code>, <code class="docutils literal notranslate"><span class="pre">IL7R</span></code>, <code class="docutils literal notranslate"><span class="pre">LTB</span></code>), B
+cell identity (<code class="docutils literal notranslate"><span class="pre">CD79A</span></code>, <code class="docutils literal notranslate"><span class="pre">MS4A1</span></code>), cytotoxic effectors (<code class="docutils literal notranslate"><span class="pre">NKG7</span></code>, <code class="docutils literal notranslate"><span class="pre">CST7</span></code>), and the
+lymphoid transcription factor <code class="docutils literal notranslate"><span class="pre">ETS1</span></code>. The network put PBMC lineage markers at
+the center without being told anything about lineages.</p>
+</section>
+<section id="step-3-group-genes-by-function">
+<h2>Step 3. Group genes by function<a class="headerlink" href="#step-3-group-genes-by-function" title="Link to this heading">#</a></h2>
+<p>Topology is much easier to judge when nodes carry an independent functional
+label. We use Reactome’s pathway hierarchy: every gene is annotated to one or
+more pathways, and each pathway rolls up to one of ~30 top-level pathways like
+<em>Immune System</em> or <em>Cell Cycle</em>. Rolling annotations up to that top level gives
+a small, readable palette.</p>
+<p>Two files from Reactome are all we need — the gene sets and the parent/child
+relations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://reactome.org/download/current/ReactomePathways.gmt.zip
+wget<span class="w"> </span>https://reactome.org/download/current/ReactomePathwaysRelation.txt
+unzip<span class="w"> </span>ReactomePathways.gmt.zip
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Counter</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span><span class="p">,</span> <span class="n">gene2path</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;ReactomePathways.gmt&quot;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">f</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">name</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">gene2path</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parent</span><span class="p">,</span> <span class="n">children</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">),</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;ReactomePathwaysRelation.txt&quot;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">p</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;R-HSA&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;R-HSA&quot;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">parent</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">children</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">roots</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">children</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">[</span><span class="n">p</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">ancestors</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="p">{}):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">pid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">cache</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="p">({</span><span class="n">pid</span><span class="p">}</span> <span class="k">if</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">roots</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span>                      <span class="k">else</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">ancestors</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parent</span><span class="p">[</span><span class="n">pid</span><span class="p">])))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">pid</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>A gene often reaches several top-level pathways. We let the roots vote — the
+one covering most of the gene’s pathways wins — and break ties toward the
+<em>smaller</em> root, so genes do not all avalanche into <code class="docutils literal notranslate"><span class="pre">Metabolism</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Signal</span> <span class="pre">Transduction</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">root_size</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">pids</span> <span class="ow">in</span> <span class="n">gene2path</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">ancestors</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">root_size</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">assign</span><span class="p">(</span><span class="n">symbols</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">symbols</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">votes</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">gene2path</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">()):</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ancestors</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>                <span class="n">votes</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="k">if</span> <span class="n">votes</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">best</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">votes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">votes</span><span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="n">root_size</span><span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="n">r</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>            <span class="n">out</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">best</span><span class="p">,</span> <span class="n">best</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">return</span> <span class="n">out</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groups_all</span> <span class="o">=</span> <span class="n">assign</span><span class="p">(</span><span class="n">grn</span><span class="o">.</span><span class="n">gene_names</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">groups_all</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">grn</span><span class="o">.</span><span class="n">gene_names</span><span class="p">)</span>
+<span class="go">(2678, 5000)</span>
+</pre></div>
+</div>
+<p>Roughly <strong>54% of our genes get a Reactome annotation</strong>. That is normal and worth
+being upfront about: highly variable genes in single cell data are full of
+lncRNAs, immunoglobulin and TCR segments, and poorly characterized ORFs that no
+curated database covers. Keep the twelve largest groups and simply leave
+everything else out of the dictionary — genes missing from <code class="docutils literal notranslate"><span class="pre">node_group_dict</span></code>
+render in a neutral gray and stay out of the legend, which is much more honest
+than dumping half the network into a colored bucket called “Other”:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">top12</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">groups_all</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">12</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">groups_all</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">top12</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Counter</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span>
+<span class="go">[(&#39;Immune System&#39;, 403), (&#39;Signal Transduction&#39;, 366),</span>
+<span class="go"> (&#39;Gene expression (Transcription)&#39;, 338), (&#39;Metabolism&#39;, 335),</span>
+<span class="go"> (&#39;Metabolism of proteins&#39;, 179), (&#39;Disease&#39;, 154), (&#39;Cell Cycle&#39;, 142),</span>
+<span class="go"> (&#39;Metabolism of RNA&#39;, 125), (&#39;Vesicle-mediated transport&#39;, 76),</span>
+<span class="go"> (&#39;Transport of small molecules&#39;, 70), (&#39;DNA Repair&#39;, 66),</span>
+<span class="go"> (&#39;Developmental Biology&#39;, 64)]</span>
+</pre></div>
+</div>
+<section id="give-the-pathways-fixed-meaningful-colors">
+<h3>Give the pathways fixed, meaningful colors<a class="headerlink" href="#give-the-pathways-fixed-meaningful-colors" title="Link to this heading">#</a></h3>
+<p>This tutorial shows several views of the same network — the whole graph, a
+local neighborhood, and the same analysis rerun on a different cell type. By
+default <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> assigns palette colors in sorted-group order, so a group
+that is absent from one view shifts the colors of everything after it and the
+figures stop being comparable.</p>
+<p>Pin the colors instead. Assigning hues by <em>biological family</em> also means
+related pathways read as related — the two genome-maintenance groups are both
+violet, the three metabolism groups are all green, and so on:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PATHWAY_COLORS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># defense and pathology</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Immune System&#39;</span><span class="p">:</span>                   <span class="s1">&#39;#e34948&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Disease&#39;</span><span class="p">:</span>                         <span class="s1">&#39;#ff756f&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># stress / alert</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Cellular responses to stimuli&#39;</span><span class="p">:</span>   <span class="s1">&#39;#eda100&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># genome maintenance</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Cell Cycle&#39;</span><span class="p">:</span>                      <span class="s1">&#39;#4a3aa7&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;DNA Repair&#39;</span><span class="p">:</span>                      <span class="s1">&#39;#918bff&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># metabolism</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Metabolism&#39;</span><span class="p">:</span>                      <span class="s1">&#39;#008300&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Metabolism of proteins&#39;</span><span class="p">:</span>          <span class="s1">&#39;#36a231&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Metabolism of RNA&#39;</span><span class="p">:</span>               <span class="s1">&#39;#56bf50&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># information flow</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Gene expression (Transcription)&#39;</span><span class="p">:</span> <span class="s1">&#39;#2a78d6&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># signaling</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Signal Transduction&#39;</span><span class="p">:</span>             <span class="s1">&#39;#e87ba4&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># trafficking</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Vesicle-mediated transport&#39;</span><span class="p">:</span>      <span class="s1">&#39;#eb6834&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Transport of small molecules&#39;</span><span class="p">:</span>    <span class="s1">&#39;#ff8552&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># development</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Developmental Biology&#39;</span><span class="p">:</span>           <span class="s1">&#39;#1baf7a&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GROUP_ORDER</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">PATHWAY_COLORS</span><span class="p">)</span>   <span class="c1"># union across every figure below</span>
+</pre></div>
+</div>
+<p>Pass both to every figure. <code class="docutils literal notranslate"><span class="pre">group_order</span></code> reserves a palette slot for each
+group even when that group is missing from the current subset, so nothing
+shifts:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMON</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">group_colors</span><span class="o">=</span><span class="n">PATHWAY_COLORS</span><span class="p">,</span> <span class="n">group_order</span><span class="o">=</span><span class="n">GROUP_ORDER</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Thirteen categories is more than color alone can safely carry. Under
+red-green color vision deficiency some of these pairs are genuinely
+indistinguishable, and no palette fixes that — it is a limit of the channel,
+not of the color choices. The design leans on that deliberately: confusions
+are pushed <em>inside</em> a family, where they cost least (mistaking <code class="docutils literal notranslate"><span class="pre">Metabolism</span> <span class="pre">of</span> <span class="pre">RNA</span></code> for <code class="docutils literal notranslate"><span class="pre">Metabolism</span> <span class="pre">of</span> <span class="pre">proteins</span></code> is far less damaging than mistaking either
+for <code class="docutils literal notranslate"><span class="pre">Cell</span> <span class="pre">Cycle</span></code>). Identity is never carried by color alone in these figures —
+every group is named with its size in the legend, clicking a legend entry
+isolates that group, hovering a node names its group, and the search box finds
+genes directly.</p>
+</div>
+</section>
+</section>
+<section id="step-4-look-at-the-whole-network">
+<h2>Step 4. Look at the whole network<a class="headerlink" href="#step-4-look-at-the-whole-network" title="Link to this heading">#</a></h2>
+<p>Now we can put all 5,000 genes on screen at once. We keep the top 2 edges per
+gene (10,000 edges), color by Reactome group, and size each node by its
+centrality so the regulatory hubs are visible at a glance.</p>
+<p>PageRank is the natural centrality here — cheap to compute even at this size,
+and it agrees with the degree ranking on the top hubs. One catch: PageRank on
+this graph spans roughly 375× from the smallest gene to the largest, with a
+very long tail. <code class="docutils literal notranslate"><span class="pre">net_vis</span></code> min-max normalizes the metric linearly, so feeding
+the raw values would leave the median gene at 0.002 of the size range — i.e.
+everything minimum-size except a handful of hubs. Taking the log first spreads
+the middle of the distribution across the size channel:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lightgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">net_vis</span><span class="p">,</span> <span class="n">pagerank</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span> <span class="o">=</span> <span class="n">pagerank</span><span class="p">(</span><span class="n">edges</span><span class="p">[[</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centrality</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pr</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">net_vis</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_metric</span><span class="o">=</span><span class="n">centrality</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_map</span><span class="o">=</span><span class="s2">&quot;size&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_label</span><span class="o">=</span><span class="s2">&quot;PageRank (log)&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_size_range</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#e0e0e0&quot;</span><span class="p">,</span>            <span class="c1"># unannotated genes</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">edge_weight_to_opacity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">weight_opacity_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">simulation_strength</span><span class="o">=</span><span class="mi">12000</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">link_distance</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">warmup_ticks</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">show_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">show_ellipses</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">show_statistics</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">height</span><span class="o">=</span><span class="s2">&quot;720px&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">**</span><span class="n">COMMON</span><span class="p">,</span>                        <span class="c1"># pinned pathway colors</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;grn_pbmc_full.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With 10,000 edges behind 5,000 sizeable nodes, the edge layer has to get out of
+the way — hence the very low <code class="docutils literal notranslate"><span class="pre">weight_opacity_range</span></code>. The edges still do their
+job of holding the layout together and darkening where the graph is dense,
+without turning the picture into a gray wash.</p>
+<p>The top genes by PageRank are the same lineage markers the degree ranking
+found: <code class="docutils literal notranslate"><span class="pre">IL7R</span></code>, <code class="docutils literal notranslate"><span class="pre">LTB</span></code>, <code class="docutils literal notranslate"><span class="pre">ETS1</span></code>, <code class="docutils literal notranslate"><span class="pre">CD3D</span></code>, <code class="docutils literal notranslate"><span class="pre">NKG7</span></code>, <code class="docutils literal notranslate"><span class="pre">CD3E</span></code>, <code class="docutils literal notranslate"><span class="pre">CST7</span></code>, <code class="docutils literal notranslate"><span class="pre">CD79A</span></code>, <code class="docutils literal notranslate"><span class="pre">MS4A1</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Note what we are <em>not</em> doing: <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> has a <code class="docutils literal notranslate"><span class="pre">group_attraction</span></code> parameter
+that pulls same-group nodes toward a shared centroid. Turning it up would make
+the pathway groups look beautifully separated — but it would be manufacturing
+that separation from the labels rather than revealing it from the edges. We
+leave it at its default so that any clustering you see comes from the inferred
+network alone.</p>
+</div>
+<iframe src="_static/grn_pbmc_full.html" width="100%" height="740" style="border:1px solid #ddd;"></iframe>
+<p>Things worth trying in the widget above: hover a node to fade everything
+outside its immediate neighborhood, double-click a node to isolate its
+neighborhood entirely (double-click empty space or hit <code class="docutils literal notranslate"><span class="pre">Escape</span></code> to come back),
+and click a legend entry to focus one pathway group. Labels are off by default
+at this size — zoom in and they appear.</p>
+<section id="does-the-picture-actually-mean-anything">
+<h3>Does the picture actually mean anything?<a class="headerlink" href="#does-the-picture-actually-mean-anything" title="Link to this heading">#</a></h3>
+<p>Eyeballing a hairball is a good way to fool yourself, so it is worth checking
+the impression numerically. If functionally related genes really are wired
+together, edges should connect same-group genes more often than chance. Shuffle
+the pathway labels among annotated genes and compare:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">both</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="n">edges</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edges</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">groups</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sg</span><span class="p">,</span> <span class="n">tg</span> <span class="o">=</span> <span class="n">both</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span> <span class="n">both</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observed</span> <span class="o">=</span> <span class="p">(</span><span class="n">sg</span> <span class="o">==</span> <span class="n">tg</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keys</span><span class="p">,</span> <span class="n">vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">null</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="n">both</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="n">both</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">m</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">rng</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">vals</span><span class="p">)))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observed</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">observed</span> <span class="o">/</span> <span class="n">null</span>
+<span class="go">(0.197, 0.118, 1.67)</span>
+</pre></div>
+</div>
+<p>Same-group edges are <strong>1.67× more common than chance</strong> (z ≈ 10). Broken down by
+group — observed vs. its own shuffled null — the effect is very unevenly
+distributed:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Reactome group</p></th>
+<th class="head"><p>within-group</p></th>
+<th class="head"><p>null</p></th>
+<th class="head"><p>ratio</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DNA Repair</p></td>
+<td><p>0.052</p></td>
+<td><p>0.013</p></td>
+<td><p><strong>3.95</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Cell Cycle</p></td>
+<td><p>0.094</p></td>
+<td><p>0.030</p></td>
+<td><p><strong>3.10</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Immune System</p></td>
+<td><p>0.217</p></td>
+<td><p>0.094</p></td>
+<td><p><strong>2.32</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Vesicle-mediated transport</p></td>
+<td><p>0.024</p></td>
+<td><p>0.014</p></td>
+<td><p>1.63</p></td>
+</tr>
+<tr class="row-even"><td><p>Disease</p></td>
+<td><p>0.053</p></td>
+<td><p>0.034</p></td>
+<td><p>1.59</p></td>
+</tr>
+<tr class="row-odd"><td><p>Signal Transduction</p></td>
+<td><p>0.127</p></td>
+<td><p>0.085</p></td>
+<td><p>1.49</p></td>
+</tr>
+<tr class="row-even"><td><p>Transport of small molecules</p></td>
+<td><p>0.019</p></td>
+<td><p>0.014</p></td>
+<td><p>1.38</p></td>
+</tr>
+<tr class="row-odd"><td><p>Metabolism of RNA</p></td>
+<td><p>0.023</p></td>
+<td><p>0.026</p></td>
+<td><p>0.89</p></td>
+</tr>
+<tr class="row-even"><td><p>Metabolism of proteins</p></td>
+<td><p>0.035</p></td>
+<td><p>0.040</p></td>
+<td><p>0.87</p></td>
+</tr>
+<tr class="row-odd"><td><p>Metabolism</p></td>
+<td><p>0.066</p></td>
+<td><p>0.077</p></td>
+<td><p>0.86</p></td>
+</tr>
+<tr class="row-even"><td><p>Gene expression (Transcription)</p></td>
+<td><p>0.064</p></td>
+<td><p>0.079</p></td>
+<td><p>0.80</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developmental Biology</p></td>
+<td><p>0.007</p></td>
+<td><p>0.012</p></td>
+<td><p>0.55</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The coherent groups are exactly the ones that <em>should</em> be coherent in resting
+PBMCs: DNA repair and cell cycle are tightly co-regulated programs, and immune
+function is the biology this tissue is built around. The groups at or below 1.0
+are the broad grab-bag categories — <code class="docutils literal notranslate"><span class="pre">Metabolism</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Gene</span> <span class="pre">expression</span> <span class="pre">(Transcription)</span></code> each cover hundreds of genes spanning
+unrelated processes, so there is no reason for them to occupy one region of the
+graph, and they do not.</p>
+<p>In other words, the network is not uniformly “functionally organized”. It is
+organized around specific, tightly co-regulated programs, and the visualization
+is showing you something real rather than a layout artifact.</p>
+</section>
+<section id="should-you-filter-out-weak-edges">
+<h3>Should you filter out weak edges?<a class="headerlink" href="#should-you-filter-out-weak-edges" title="Link to this heading">#</a></h3>
+<p>Worth being clear about what <code class="docutils literal notranslate"><span class="pre">extract_edgelist(k=2)</span></code> does: it is a <em>per-gene
+rank</em> filter, not a strength filter. Every gene contributes its 2 best edges
+whether those edges are strong or barely there. Since the weight distribution is
+heavily skewed, that lets a lot of weak links in:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([ 1.136,  1.545,  2.102,  3.988,  7.578, 15.32 ])</span>
+</pre></div>
+</div>
+<p>Adding a weight threshold on top sharpens the functional signal considerably —
+here is the same-group enrichment from above, recomputed at increasing cutoffs:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>cutoff</p></th>
+<th class="head"><p>edges</p></th>
+<th class="head"><p>genes kept</p></th>
+<th class="head"><p>enrichment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>none</p></td>
+<td><p>10,000</p></td>
+<td><p>5,000</p></td>
+<td><p>1.67×</p></td>
+</tr>
+<tr class="row-odd"><td><p>25th pct (1.55)</p></td>
+<td><p>7,504</p></td>
+<td><p>3,921</p></td>
+<td><p>1.78×</p></td>
+</tr>
+<tr class="row-even"><td><p>median (2.10)</p></td>
+<td><p>5,007</p></td>
+<td><p>2,602</p></td>
+<td><p>2.00×</p></td>
+</tr>
+<tr class="row-odd"><td><p>75th pct (3.99)</p></td>
+<td><p>2,502</p></td>
+<td><p>1,291</p></td>
+<td><p>2.64×</p></td>
+</tr>
+<tr class="row-even"><td><p>90th pct (7.58)</p></td>
+<td><p>1,001</p></td>
+<td><p>525</p></td>
+<td><p>3.23×</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>It is tempting to read that column as “strong edges are simply more
+trustworthy” and threshold aggressively. Don’t — look at <em>which</em> genes survive
+before you believe it. Here is how each pathway group is thinned at each cutoff
+(percentage of the group’s genes still on the plot):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Reactome group</p></th>
+<th class="head"><p>none</p></th>
+<th class="head"><p>median</p></th>
+<th class="head"><p>75th pct</p></th>
+<th class="head"><p>90th pct</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Immune System</p></td>
+<td><p>403</p></td>
+<td><p>331 (82%)</p></td>
+<td><p>255 (63%)</p></td>
+<td><p>145 (36%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Signal Transduction</p></td>
+<td><p>366</p></td>
+<td><p>268 (73%)</p></td>
+<td><p>164 (45%)</p></td>
+<td><p>64 (17%)</p></td>
+</tr>
+<tr class="row-even"><td><p>Disease</p></td>
+<td><p>154</p></td>
+<td><p>103 (67%)</p></td>
+<td><p>56 (36%)</p></td>
+<td><p>27 (18%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developmental Biology</p></td>
+<td><p>64</p></td>
+<td><p>44 (69%)</p></td>
+<td><p>28 (44%)</p></td>
+<td><p>13 (20%)</p></td>
+</tr>
+<tr class="row-even"><td><p>Metabolism</p></td>
+<td><p>335</p></td>
+<td><p>165 (49%)</p></td>
+<td><p>74 (22%)</p></td>
+<td><p>29 (9%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gene expression (Transcription)</p></td>
+<td><p>338</p></td>
+<td><p>124 (37%)</p></td>
+<td><p>49 (14%)</p></td>
+<td><p>17 (5%)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Cell Cycle</strong></p></td>
+<td><p>142</p></td>
+<td><p>57 (40%)</p></td>
+<td><p>22 (15%)</p></td>
+<td><p><strong>2 (1%)</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>DNA Repair</strong></p></td>
+<td><p>66</p></td>
+<td><p>26 (39%)</p></td>
+<td><p>4 (6%)</p></td>
+<td><p><strong>1 (2%)</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Weight filtering is <strong>not</strong> biologically neutral. It preferentially keeps the
+dominant program of the tissue — in resting PBMCs, immune identity genes carry
+by far the largest weights — and it deletes Cell Cycle and DNA Repair almost
+entirely by the 90th percentile. Those are precisely the two groups with the
+<em>highest</em> functional coherence in the table above (3.10× and 3.95×).</p>
+<p>Which means the rising global enrichment is partly an artifact: the graph is
+collapsing onto one large, internally-consistent immune module, and “same-group
+edges” rises because one group is swallowing the plot. You are not making the
+picture more trustworthy so much as making it more about T and B cells.</p>
+</section>
+<section id="reduce-k-instead-of-thresholding">
+<h3>Reduce <code class="docutils literal notranslate"><span class="pre">k</span></code> instead of thresholding<a class="headerlink" href="#reduce-k-instead-of-thresholding" title="Link to this heading">#</a></h3>
+<p>There is a better lever, and it is the one <code class="docutils literal notranslate"><span class="pre">extract_edgelist</span></code> already gives
+you. Note what <code class="docutils literal notranslate"><span class="pre">k</span></code> actually does: for each <em>target</em> gene it keeps that gene’s
+<code class="docutils literal notranslate"><span class="pre">k</span></code> strongest regulators. It is a <strong>rank</strong> filter applied per gene, so it is
+invariant to the scale of any particular gene’s weights — a cell cycle gene
+keeps its best regulators even if those weights are small in absolute terms.
+(This is the same primitive as <code class="docutils literal notranslate"><span class="pre">select_top_n_per_target</span></code> in
+<a class="reference external" href="https://github.com/haozhu233/flashscenic">flashscenic</a>, which builds SCENIC
+modules on top of RegDiffusion and unions several rank-based selections
+precisely so that no single global cutoff decides what survives.)</p>
+<p>Compare the two ways of getting down to about 5,000 edges:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>edges</p></th>
+<th class="head"><p>genes kept</p></th>
+<th class="head"><p>Immune System</p></th>
+<th class="head"><p>Cell Cycle</p></th>
+<th class="head"><p>DNA Repair</p></th>
+<th class="head"><p>enrichment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">extract_edgelist(k=1)</span></code></p></td>
+<td><p>5,000</p></td>
+<td><p><strong>5,000</strong></p></td>
+<td><p>403</p></td>
+<td><p><strong>142</strong></p></td>
+<td><p><strong>66</strong></p></td>
+<td><p>1.71×</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">k=2</span></code> + median weight cut</p></td>
+<td><p>5,007</p></td>
+<td><p>2,602</p></td>
+<td><p>331</p></td>
+<td><p>57</p></td>
+<td><p>26</p></td>
+<td><p>2.05×</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Same edge budget. The rank-based version keeps <strong>every gene and every pathway
+group completely intact</strong>; the weight cut throws away half the genes and 60% of
+the cell cycle. The weight cut does score a somewhat higher enrichment (2.05×
+vs 1.71×) — but as established above, a good part of that is the compositional
+artifact of the immune program crowding out everything else, not a cleaner
+graph.</p>
+<p>So, practical guidance:</p>
+<ul class="simple">
+<li><p><strong>To make the plot sparser</strong> — lower <code class="docutils literal notranslate"><span class="pre">k</span></code>. It is scale-free, it costs you
+nothing in gene coverage, and no program silently vanishes.</p></li>
+<li><p><strong>To de-emphasize weak links without deleting them</strong> — keep every edge and
+let opacity carry the weight (<code class="docutils literal notranslate"><span class="pre">edge_weight_to_opacity=True</span></code>, as used above).</p></li>
+<li><p><strong>To threshold on weight anyway</strong> — check your program of interest survives
+first, and say so in the caption, because the composition of the figure
+changed and not only its density.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">GRN</span></code> has this built in, applied to the adjacency matrix before you extract
+anything:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">remove_weak_edges</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">2.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges_strong</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">remove_weak_edges</span></code> mutates the <code class="docutils literal notranslate"><span class="pre">GRN</span></code> in place and only ever raises
+the cutoff, so reload from HDF5 if you want to go back to a weaker threshold.</p>
+</section>
+</section>
+<section id="step-5-zoom-in-on-a-neighborhood">
+<h2>Step 5. Zoom in on a neighborhood<a class="headerlink" href="#step-5-zoom-in-on-a-neighborhood" title="Link to this heading">#</a></h2>
+<p>Whole-network views are good for gestalt, bad for specifics. For a claim you
+can check gene by gene, use <code class="docutils literal notranslate"><span class="pre">visualize_local_neighborhood</span></code>, which pulls the
+2.5-hop neighborhood around genes you name. Let us take the two B cell hubs
+from the degree ranking:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="s2">&quot;MS4A1&quot;</span><span class="p">,</span> <span class="s2">&quot;CD79A&quot;</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;640px&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">**</span><span class="n">COMMON</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;grn_pbmc_bcell.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<iframe src="_static/grn_pbmc_bcell.html" width="100%" height="660" style="border:1px solid #ddd;"></iframe>
+<p>The two genes you asked about are drawn at double size, and edge width follows
+the absolute regulatory strength of each link. The neighborhood comes back with
+16 genes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">BANK1</span><span class="p">,</span> <span class="n">CD22</span><span class="p">,</span> <span class="n">CD79A</span><span class="p">,</span> <span class="n">CD79B</span><span class="p">,</span> <span class="n">HLA</span><span class="o">-</span><span class="n">DQA1</span><span class="p">,</span> <span class="n">IGHD</span><span class="p">,</span> <span class="n">IGHM</span><span class="p">,</span> <span class="n">IGKC</span><span class="p">,</span> <span class="n">LINC00926</span><span class="p">,</span>
+<span class="n">MEF2C</span><span class="p">,</span> <span class="n">MS4A1</span><span class="p">,</span> <span class="n">PAX5</span><span class="p">,</span> <span class="n">RALGPS2</span><span class="p">,</span> <span class="n">TCL1A</span><span class="p">,</span> <span class="n">TNFRSF13C</span><span class="p">,</span> <span class="n">VPREB3</span>
+</pre></div>
+</div>
+<p>Every one of these is a B cell gene. <code class="docutils literal notranslate"><span class="pre">CD79A</span></code>/<code class="docutils literal notranslate"><span class="pre">CD79B</span></code>/<code class="docutils literal notranslate"><span class="pre">CD22</span></code>/<code class="docutils literal notranslate"><span class="pre">MS4A1</span></code> are B cell
+receptor complex and surface markers; <code class="docutils literal notranslate"><span class="pre">IGHD</span></code>/<code class="docutils literal notranslate"><span class="pre">IGHM</span></code>/<code class="docutils literal notranslate"><span class="pre">IGKC</span></code> are immunoglobulin
+chains; <code class="docutils literal notranslate"><span class="pre">PAX5</span></code> and <code class="docutils literal notranslate"><span class="pre">MEF2C</span></code> are the master transcription factors of B cell
+commitment; <code class="docutils literal notranslate"><span class="pre">TCL1A</span></code> and <code class="docutils literal notranslate"><span class="pre">VPREB3</span></code> mark naive and pre-B stages; <code class="docutils literal notranslate"><span class="pre">TNFRSF13C</span></code>
+(BAFF-R) drives B cell survival. Not a single T cell, myeloid, or NK gene got
+pulled in, even though the run had 5,000 genes to choose from and no cell type
+labels were used to build the neighborhood.</p>
+<p>Note also that <code class="docutils literal notranslate"><span class="pre">LINC00926</span></code> and <code class="docutils literal notranslate"><span class="pre">RALGPS2</span></code> sit right in this module. Neither
+carries a Reactome annotation, so both render in the neutral gray — but their
+company is a strong hint, and the literature bears it out.
+<a class="reference external" href="https://doi.org/10.3324/haematol.2025.287524"><code class="docutils literal notranslate"><span class="pre">LINC00926</span></code> is a lncRNA whose expression is restricted to the B cell
+lineage</a> (highest in naive B
+cells, down-regulated on activation), and the Human Protein Atlas classifies
+<a class="reference external" href="https://www.proteinatlas.org/ENSG00000116191-RALGPS2/immune+cell"><code class="docutils literal notranslate"><span class="pre">RALGPS2</span></code> as B cell group enriched</a>
+among immune cells. This is the practical payoff of an inferred GRN: it places
+genes your annotation database has nothing to say about right next to the ones
+it does.</p>
+</section>
+<section id="step-6-a-different-cell-type-a-different-network">
+<h2>Step 6. A different cell type, a different network<a class="headerlink" href="#step-6-a-different-cell-type-a-different-network" title="Link to this heading">#</a></h2>
+<p>Everything above was inferred across all 30 PBMC cell types at once, so the
+strongest signal in the data is lineage identity — which is why the hubs are T
+and B cell markers. A good way to check that the method is reading biology
+rather than reproducing one fixed answer is to run it inside a <em>single</em> cell
+type, where lineage identity is constant and cannot dominate.</p>
+<p>CD14+ monocytes are the largest population here (42,690 cells) and about as far
+from the T/B axis as this dataset goes. The pipeline is identical, with two
+changes: highly variable genes are re-selected <em>within</em> monocytes, so they
+capture variation across monocyte states rather than between lineages, and
+there is no cell type covariate left to condition on.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">open_soma</span><span class="p">(</span><span class="n">census_version</span><span class="o">=</span><span class="s2">&quot;2023-12-15&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">census</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mono</span> <span class="o">=</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">get_anndata</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">census</span><span class="p">,</span> <span class="n">organism</span><span class="o">=</span><span class="s2">&quot;Homo sapiens&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_value_filter</span><span class="o">=</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dataset_id == &#39;</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">&#39; and is_primary_data == True &quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>                          <span class="s2">&quot;and cell_type == &#39;CD14-positive monocyte&#39;&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ...same gene filtering, normalization and HVG selection as Step 1...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">X_mono</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>   <span class="c1"># no cell_types</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mono_grn</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">get_grn</span><span class="p">(</span><span class="n">mono</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The monocyte figure below is rendered with the same <code class="docutils literal notranslate"><span class="pre">**COMMON</span></code> colors, which is
+what makes it comparable to the whole-PBMC one: <code class="docutils literal notranslate"><span class="pre">Immune</span> <span class="pre">System</span></code> is the same red
+in both, <code class="docutils literal notranslate"><span class="pre">Cell</span> <span class="pre">Cycle</span></code> the same violet. Two groups differ between the runs —
+<code class="docutils literal notranslate"><span class="pre">DNA</span> <span class="pre">Repair</span></code> drops out of the monocyte top twelve and <code class="docutils literal notranslate"><span class="pre">Cellular</span> <span class="pre">responses</span> <span class="pre">to</span> <span class="pre">stimuli</span></code> enters — and because <code class="docutils literal notranslate"><span class="pre">group_order</span></code> reserves a slot per group, that
+swap changes nothing else on screen.</p>
+<p>Only 2,739 of the 5,000 genes overlap with the all-PBMC run, so this is
+genuinely a different gene space. The hubs change completely:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>top genes by PageRank</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>All PBMC</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IL7R</span></code>, <code class="docutils literal notranslate"><span class="pre">LTB</span></code>, <code class="docutils literal notranslate"><span class="pre">ETS1</span></code>, <code class="docutils literal notranslate"><span class="pre">CD3D</span></code>, <code class="docutils literal notranslate"><span class="pre">NKG7</span></code>, <code class="docutils literal notranslate"><span class="pre">CD3E</span></code>, <code class="docutils literal notranslate"><span class="pre">CST7</span></code>, <code class="docutils literal notranslate"><span class="pre">CD79A</span></code>, <code class="docutils literal notranslate"><span class="pre">MS4A1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>CD14+ monocytes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">S100A8</span></code>, <code class="docutils literal notranslate"><span class="pre">TXNIP</span></code>, <code class="docutils literal notranslate"><span class="pre">S100A9</span></code>, <code class="docutils literal notranslate"><span class="pre">IL1B</span></code>, <code class="docutils literal notranslate"><span class="pre">HLA-DPA1</span></code>, <code class="docutils literal notranslate"><span class="pre">HLA-DPB1</span></code>, <code class="docutils literal notranslate"><span class="pre">MNDA</span></code>, <code class="docutils literal notranslate"><span class="pre">CD74</span></code>, <code class="docutils literal notranslate"><span class="pre">HLA-DRA</span></code>, <code class="docutils literal notranslate"><span class="pre">S100A12</span></code>, <code class="docutils literal notranslate"><span class="pre">VCAN</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Not a single gene in common, and the monocyte list is textbook myeloid biology:
+the <code class="docutils literal notranslate"><span class="pre">S100A8</span></code>/<code class="docutils literal notranslate"><span class="pre">S100A9</span></code>/<code class="docutils literal notranslate"><span class="pre">S100A12</span></code> alarmins, <code class="docutils literal notranslate"><span class="pre">IL1B</span></code> for inflammatory activation,
+and the MHC class II machinery (<code class="docutils literal notranslate"><span class="pre">HLA-DRA</span></code>, <code class="docutils literal notranslate"><span class="pre">HLA-DPA1</span></code>, <code class="docutils literal notranslate"><span class="pre">HLA-DPB1</span></code>, <code class="docutils literal notranslate"><span class="pre">CD74</span></code>) that
+monocytes use to present antigen.</p>
+<iframe src="_static/grn_mono_full.html" width="100%" height="740" style="border:1px solid #ddd;"></iframe>
+<p>The pathway coherence analysis from Step 4 tells the sharper story. Overall
+enrichment is essentially unchanged — 1.63× in monocytes vs 1.67× across all
+PBMCs — so both networks are organized to the <em>same degree</em>. But <strong>which</strong>
+programs are coherent is almost entirely different:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Reactome group</p></th>
+<th class="head"><p>monocytes</p></th>
+<th class="head"><p>all PBMC</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Cellular responses to stimuli</p></td>
+<td><p><strong>4.64×</strong></p></td>
+<td><p>not in top 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>Transport of small molecules</p></td>
+<td><p><strong>2.71×</strong></p></td>
+<td><p>1.28×</p></td>
+</tr>
+<tr class="row-even"><td><p>Immune System</p></td>
+<td><p>2.16×</p></td>
+<td><p>2.27×</p></td>
+</tr>
+<tr class="row-odd"><td><p>Metabolism of RNA</p></td>
+<td><p>1.46×</p></td>
+<td><p>0.92×</p></td>
+</tr>
+<tr class="row-even"><td><p>Signal Transduction</p></td>
+<td><p>1.33×</p></td>
+<td><p>1.52×</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Cell Cycle</strong></p></td>
+<td><p><strong>1.00×</strong></p></td>
+<td><p><strong>3.12×</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>DNA Repair</p></td>
+<td><p>too few edges</p></td>
+<td><p>4.12×</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Cell cycle coherence collapses from 3.12× to exactly chance, and DNA repair
+does not even have enough edges left to test. That is the correct answer:
+circulating monocytes are terminally differentiated and essentially
+non-proliferating, so there is no coordinated cell cycle program for the model
+to find. What replaces it at the top is <em>Cellular responses to stimuli</em> at
+4.64× — stress and stimulus response, which is precisely what distinguishes one
+circulating monocyte from another.</p>
+<p>The method is not applying a fixed template. Run it on a mixed population with
+proliferating cells and cell cycle comes out coherent; run it inside a
+post-mitotic population and that structure correctly disappears.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Two of the monocyte hubs are worth treating with suspicion rather than
+excitement. <code class="docutils literal notranslate"><span class="pre">XIST</span></code> is the X-inactivation lncRNA — it is a hub because the
+donors differ in sex, not because of monocyte regulation. <code class="docutils literal notranslate"><span class="pre">MTRNR2L8</span></code> is a
+mitochondrially-derived transcript that frequently reflects technical
+variation. Neither was regressed out here. Whenever a GRN hub is a sex-linked
+or mitochondrial gene, check whether it is tracking a covariate of your donors
+before building a story on it.</p>
+</div>
+</section>
+<section id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Swap the Reactome roll-up for a finer level of the hierarchy when you zoom
+into a neighborhood — top-level pathways are coarse, and a 16-gene module
+deserves more resolution.</p></li>
+<li><p>Pass <code class="docutils literal notranslate"><span class="pre">node_group_dict='auto'</span></code> to let <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> detect communities from
+topology alone, then check how well those communities line up with your
+functional annotation.</p></li>
+<li><p>Raise <code class="docutils literal notranslate"><span class="pre">k</span></code> in <code class="docutils literal notranslate"><span class="pre">extract_edgelist</span></code> for a denser whole-network view. <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code>
+will keep up well past the 10,000 edges used here.</p></li>
+<li><p>The full <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> API (analytics, layouts, styling, export) is documented
+in its <a class="reference external" href="https://haozhu233.github.io/lightgraph/vignette_python.html">Python vignette</a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="quick_tour.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Get Started</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="large_networks.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Working with Large Gene Networks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-get-the-data">Step 1. Get the data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-infer-the-network">Step 2. Infer the network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-group-genes-by-function">Step 3. Group genes by function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#give-the-pathways-fixed-meaningful-colors">Give the pathways fixed, meaningful colors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-look-at-the-whole-network">Step 4. Look at the whole network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#does-the-picture-actually-mean-anything">Does the picture actually mean anything?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#should-you-filter-out-weak-edges">Should you filter out weak edges?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reduce-k-instead-of-thresholding">Reduce <code class="docutils literal notranslate"><span class="pre">k</span></code> instead of thresholding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-zoom-in-on-a-neighborhood">Step 5. Zoom in on a neighborhood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-6-a-different-cell-type-a-different-network">Step 6. A different cell type, a different network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-go-next">Where to go next</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Hao Zhu, Donna Slonim
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Hao Zhu, Donna Slonim.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

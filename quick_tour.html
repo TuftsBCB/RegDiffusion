@@ -46,7 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'quick_tour';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Working with Large Gene Networks" href="large_networks.html" />
+    <link rel="next" title="Visualizing Inferred GRN" href="visualizing_grn.html" />
     <link rel="prev" title="RegDiffusion" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -160,6 +160,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
 </ul>
@@ -463,16 +464,27 @@ document.write(`
 </section>
 <section id="step-2-visualize-the-local-network-around-the-selected-gene">
 <h3>Step 2. Visualize the local network around the selected gene<a class="headerlink" href="#step-2-visualize-the-local-network-around-the-selected-gene" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">visualize_local_neighborhood</span></code> method of an <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using <code class="docutils literal notranslate"><span class="pre">pyvis</span></code>/<code class="docutils literal notranslate"><span class="pre">vis.js</span></code>. The default <code class="docutils literal notranslate"><span class="pre">k</span></code> here is 20. However, in cases when the regulatory relationships are strong and bidirectional, <code class="docutils literal notranslate"><span class="pre">k=20</span></code> only gives a very simple network. You may increase the magnitude of <code class="docutils literal notranslate"><span class="pre">k</span></code> to find some meaningful results to you. Keep in mind that, if your <code class="docutils literal notranslate"><span class="pre">k</span></code> is too small, you won’t be able to see some relatively strong links.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">visualize_local_neighborhood</span></code> method of an <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using <a class="reference external" href="https://haozhu233.github.io/lightgraph/"><code class="docutils literal notranslate"><span class="pre">lightgraph</span></code></a>. The default <code class="docutils literal notranslate"><span class="pre">k</span></code> here is 20. However, in cases when the regulatory relationships are strong and bidirectional, <code class="docutils literal notranslate"><span class="pre">k=20</span></code> only gives a very simple network. You may increase the magnitude of <code class="docutils literal notranslate"><span class="pre">k</span></code> to find some meaningful results to you. Keep in mind that, if your <code class="docutils literal notranslate"><span class="pre">k</span></code> is too small, you won’t be able to see some relatively strong links.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">([</span><span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="s1">&#39;MCM3&#39;</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>  <span class="c1"># renders inline in a notebook</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>  <span class="c1"># or write a standalone HTML file</span>
 </pre></div>
 </div>
+<p>Edge width reflects the absolute regulatory strength of each link, and the two
+genes you asked about are drawn at double size. <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> renders on an HTML
+canvas, so the same call stays responsive when you widen <code class="docutils literal notranslate"><span class="pre">k</span></code> or move on to the
+whole-network views in <a class="reference internal" href="visualizing_grn.html"><span class="std std-doc">Visualizing Inferred GRN</span></a>.</p>
 <p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs.png" /></p>
 </section>
 <section id="optional-step-3-node-clustering">
 <h3>(Optional) Step 3. Node clustering<a class="headerlink" href="#optional-step-3-node-clustering" title="Link to this heading">#</a></h3>
-<p>Here we have a fairly obvious bipartisan graph. It also makes sense to use some clustering methods to automatically assign nodes into partitions. You can use any clustering methods that you like (and works). Here is an example of using <code class="docutils literal notranslate"><span class="pre">node2vec</span></code> for this task.</p>
+<p>Here we have a fairly obvious bipartisan graph. It also makes sense to use some clustering methods to automatically assign nodes into partitions.</p>
+<p>The quickest option is to let <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> detect communities for you by passing
+<code class="docutils literal notranslate"><span class="pre">node_group_dict='auto'</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span><span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also bring your own clustering, using any method that you like (and works). Here is an example of using <code class="docutils literal notranslate"><span class="pre">node2vec</span></code> for this task.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">node2vec</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node2Vec</span>
@@ -507,7 +519,7 @@ document.write(`
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="n">gene_group_dict</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs_cluster.png" /></p>
@@ -543,11 +555,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="large_networks.html"
+       href="visualizing_grn.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Working with Large Gene Networks</p>
+        <p class="prev-next-title">Visualizing Inferred GRN</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

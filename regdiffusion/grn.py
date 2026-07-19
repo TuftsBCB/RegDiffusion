@@ -5,9 +5,9 @@ from datetime import datetime
 from collections import deque, Counter
 from scipy.sparse import csr_matrix
 import h5py
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Optional
 import concurrent.futures
-from .plot import plot_pyvis
+from .plot import plot_lightgraph
 
 class GRN:
     """
@@ -118,9 +118,14 @@ class GRN:
                 ) for g in list(self.gene_names)]
         
             all_edges = [
-                future.result() for future in 
+                future.result() for future in
                 concurrent.futures.as_completed(futures)]
-        return pd.concat(all_edges).reset_index(drop=True)
+        edgelist = pd.concat(all_edges)
+        # Top-k selection returns k entries per gene even when fewer than k
+        # are non-zero, so a gene whose edges were all zeroed out (say by
+        # remove_weak_edges) would otherwise come back with phantom edges.
+        edgelist = edgelist[edgelist.weight != 0]
+        return edgelist.reset_index(drop=True)
 
     def get_edgelist(self, k: int = 100, workers: int = 4) -> pd.DataFrame:
         """
@@ -357,34 +362,40 @@ class GRN:
 
     def visualize_local_neighborhood(
         self, genes: Union[str, List[str]], k: int = 20, hops: str = "2.5",
-        edge_widths: List[int] = [2, 1, 0.5], 
-        plot_engine: str = 'pyvis', *args, **kwargs):
+        edge_widths: Optional[List[float]] = None,
+        plot_engine: str = 'lightgraph', *args, **kwargs):
         """
-        Generate a vis.js network visualization of the local neighborhood 
-        (2-hop) around selected gene(s). 
+        Generate an interactive network visualization of the local
+        neighborhood (2-hop) around selected gene(s).
 
         Args:
             gene (str): A single gene to inspect.
             k (int): Top-k edges to inspect on each node. If k=-1, export all.
             hops (str): Number of hops of the neighborhood to explore. Default
-            is "2.5". 
-            edge_widths (List): The widths for edges for different edge width
-            levels.
+            is "2.5".
+            edge_widths (List): Deprecated and ignored. Edge width is now
+            scaled by the absolute regulatory strength of each edge rather
+            than by hop level.
             plot_engine (str): Choose which network plot engine to use. Default
-            is "pyvis". 
-            **kwargs: Keyword arguments to be passed to ``plot_pyvis``.
+            is "lightgraph".
+            **kwargs: Keyword arguments to be passed to ``plot_lightgraph``.
         """
+        if edge_widths is not None:
+            import warnings
+            warnings.warn(
+                "edge_widths is deprecated and ignored. Edge width is now "
+                "scaled by absolute regulatory strength.",
+                DeprecationWarning
+            )
         if isinstance(genes, str):
             genes = [genes]
         local_adj_table = self.extract_local_neighborhood(genes, k, hops)
-        local_adj_table['edge_width'] = local_adj_table.hop.map(
-            lambda x: edge_widths[x])
 
-        if plot_engine == 'pyvis':
-            g = plot_pyvis(
-                pandas_edgelist = local_adj_table, 
+        if plot_engine == 'lightgraph':
+            g = plot_lightgraph(
+                pandas_edgelist = local_adj_table,
                 star_genes = genes, *args, **kwargs)
-        else: 
+        else:
             raise Exception("Not implemented yet")
         return g
 
@@ -399,7 +410,9 @@ class GRN:
             as_sparse (bool): Whether to save as sparse matrix
         """
         if as_sparse:
-            sp_adj = csr_matrix(self.adj_matrix)
+            # scipy.sparse has no float16 support, but the stored data is
+            # downcast to float16 below anyway.
+            sp_adj = csr_matrix(self.adj_matrix.astype(np.float32))
         if not file_path.endswith('.hdf5'):
             file_path += '.hdf5'
 
@@ -655,6 +668,8 @@ def read_hdf5(file_path: str):
             adj_matrix = sparse_dt.toarray().astype(np.float16)
         else:
             adj_matrix = f['adj_matrix']['data'][:]
-        gene_names = f['gene_names'][:]
-        tf_names = f['tf_names'][:]
+        # h5py hands back bytes for variable-length strings; decode so gene
+        # names round-trip as real str and stay joinable against annotations.
+        gene_names = f['gene_names'].asstr()[:]
+        tf_names = f['tf_names'].asstr()[:]
         return GRN(adj_matrix, gene_names, tf_names)    

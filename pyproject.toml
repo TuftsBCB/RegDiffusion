@@ -26,7 +26,7 @@ dependencies = [
     "scanpy",
     "scikit-learn",
     "h5py",
-    "pyvis"
+    "lightgraph>=1.2.0"
 ]
 
 [project.urls]

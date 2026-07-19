@@ -1,4 +1,4 @@
-from .pyvis import plot_pyvis
+from .interactive import plot_lightgraph
 from .static import (
     plot_network,
     plot_heatmap,
@@ -7,7 +7,7 @@ from .static import (
 )
 
 __all__ = [
-    'plot_pyvis',
+    'plot_lightgraph',
     'plot_network',
     'plot_heatmap',
     'plot_degree_distribution',

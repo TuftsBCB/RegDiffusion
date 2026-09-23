@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Get Started &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>Get Started &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -37,19 +37,33 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/documentation_options.js?v=6808a718"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'quick_tour';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/quick_tour.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Visualizing Inferred GRN" href="visualizing_grn.html" />
-    <link rel="prev" title="RegDiffusion" href="index.html" />
+    <link rel="prev" title="RegDiffusion: Gene Regulatory Network Inference" href="index.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="Learn how to infer, evaluate, export, and visualize a gene regulatory network from single-cell expression data using the RegDiffusion Python API.">
+<meta property="og:title" content="Get Started">
+<meta property="og:description" content="Learn how to infer, evaluate, export, and visualize a gene regulatory network from single-cell expression data using the RegDiffusion Python API.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/quick_tour.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -139,8 +153,8 @@
       
     
     
-    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -163,6 +177,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -390,23 +405,23 @@ document.write(`
 <p>Here we use the <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data from the BEELINE benchmark. The <code class="docutils literal notranslate"><span class="pre">mESC</span></code> data comes from <a class="reference external" href="https://www.nature.com/articles/s41467-018-02866-0">Mouse embryonic stem cells</a>. It has 421 cells and 1,620 genes.</p>
 <p>If you want to see the inference on a larger network with 14,000+ genes and 8,000+ cells, check out the other example.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bl_dt</span><span class="p">,</span> <span class="n">bl_gt</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load_beeline</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">&#39;mESC&#39;</span><span class="p">,</span> <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">&#39;1000_STRING&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">benchmark_data</span><span class="o">=</span><span class="s1">'mESC'</span><span class="p">,</span> <span class="n">benchmark_setting</span><span class="o">=</span><span class="s1">'1000_STRING'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">load_beeline</span></code> gives you a tuple, where the first element is an anndata of the single cell experession data and the second element is an array of all the ground truth links (based on the STRING network in this case).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bl_dt</span>
 <span class="go">AnnData object with n_obs × n_vars = 421 × 1620</span>
-<span class="go">    obs: &#39;cell_type&#39;, &#39;cell_type_index&#39;</span>
+<span class="go">    obs: 'cell_type', 'cell_type_index'</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bl_gt</span>
-<span class="go">array([[&#39;KLF6&#39;, &#39;JUN&#39;],</span>
-<span class="go">       [&#39;JUN&#39;, &#39;KLF6&#39;],</span>
-<span class="go">       [&#39;KLF6&#39;, &#39;ATF3&#39;],</span>
+<span class="go">array([['KLF6', 'JUN'],</span>
+<span class="go">       ['JUN', 'KLF6'],</span>
+<span class="go">       ['KLF6', 'ATF3'],</span>
 <span class="go">       ...,</span>
-<span class="go">       [&#39;SIN3A&#39;, &#39;TET1&#39;],</span>
-<span class="go">       [&#39;MEF2C&#39;, &#39;TCF12&#39;],</span>
-<span class="go">       [&#39;TCF12&#39;, &#39;MEF2C&#39;]], dtype=object)</span>
+<span class="go">       ['SIN3A', 'TET1'],</span>
+<span class="go">       ['MEF2C', 'TCF12'],</span>
+<span class="go">       ['TCF12', 'MEF2C']], dtype=object)</span>
 </pre></div>
 </div>
 </section>
@@ -424,11 +439,11 @@ document.write(`
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">GRNEvaluator</span><span class="p">(</span><span class="n">bl_gt</span><span class="p">,</span> <span class="n">bl_dt</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inferred_adj</span> <span class="o">=</span> <span class="n">rd_trainer</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">inferred_adj</span><span class="p">)</span>
-<span class="go">{&#39;AUROC&#39;: 0.6114549433214784,</span>
-<span class="go"> &#39;AUPR&#39;: 0.051973534439936624,</span>
-<span class="go"> &#39;AUPRR&#39;: 2.4439084980230183,</span>
-<span class="go"> &#39;EP&#39;: 755,</span>
-<span class="go"> &#39;EPR&#39;: 4.1870197171394254}</span>
+<span class="go">{'AUROC': 0.6114549433214784,</span>
+<span class="go"> 'AUPR': 0.051973534439936624,</span>
+<span class="go"> 'AUPRR': 2.4439084980230183,</span>
+<span class="go"> 'EP': 755,</span>
+<span class="go"> 'EPR': 4.1870197171394254}</span>
 </pre></div>
 </div>
 </section>
@@ -441,11 +456,11 @@ document.write(`
 </pre></div>
 </div>
 <p>You can easily export the GRN object as a HDF5 file. Right now, HDF5 is the only supported export format but more formats will be added in the future.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s1">&#39;demo_mESC_grn.hdf5&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s1">'demo_mESC_grn.hdf5'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Saving the GRN object as hdf5 makes it easy to distribute your inferred networks (or simply move it from a cloud GPU machine to your local desktop for more analysis. You can read the exported file using <code class="docutils literal notranslate"><span class="pre">read_hdf5()</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recovered_grn</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s1">&#39;demo_mESC_grn.hdf5&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recovered_grn</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s1">'demo_mESC_grn.hdf5'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If size is an issue, you may consider to transform some small numbers in the adjacency matrix to zero using <code class="docutils literal notranslate"><span class="pre">top_gene_percentile</span></code> and then in the <code class="docutils literal notranslate"><span class="pre">to_hdf5</span></code> function, export <code class="docutils literal notranslate"><span class="pre">as_sparse</span></code>.</p>
@@ -458,16 +473,16 @@ document.write(`
 <h3>Step 1. Discover target genes<a class="headerlink" href="#step-1-discover-target-genes" title="Link to this heading">#</a></h3>
 <p>There are many ways to discover target genes to study the local networks. For example, you can put your lens on the most varied genes or the top genes that are up/down regulated, using any methods you prefer. Here, we simply pick the gene that has the strongest single regulation based on the inferred adjacency matrix.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">gene_names</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">grn</span><span class="o">.</span><span class="n">adj_matrix</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span>
-<span class="go">&#39;HIST1H1D&#39;</span>
+<span class="go">'HIST1H1D'</span>
 </pre></div>
 </div>
 </section>
 <section id="step-2-visualize-the-local-network-around-the-selected-gene">
 <h3>Step 2. Visualize the local network around the selected gene<a class="headerlink" href="#step-2-visualize-the-local-network-around-the-selected-gene" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">visualize_local_neighborhood</span></code> method of an <code class="docutils literal notranslate"><span class="pre">GRN</span></code> object extracts the 2-hop top-k neighborhood around a selected gene and visualize it using <a class="reference external" href="https://haozhu233.github.io/lightgraph/"><code class="docutils literal notranslate"><span class="pre">lightgraph</span></code></a>. The default <code class="docutils literal notranslate"><span class="pre">k</span></code> here is 20. However, in cases when the regulatory relationships are strong and bidirectional, <code class="docutils literal notranslate"><span class="pre">k=20</span></code> only gives a very simple network. You may increase the magnitude of <code class="docutils literal notranslate"><span class="pre">k</span></code> to find some meaningful results to you. Keep in mind that, if your <code class="docutils literal notranslate"><span class="pre">k</span></code> is too small, you won’t be able to see some relatively strong links.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">([</span><span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="s1">&#39;MCM3&#39;</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">([</span><span class="s1">'HIST1H1D'</span><span class="p">,</span> <span class="s1">'MCM3'</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>  <span class="c1"># renders inline in a notebook</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>  <span class="c1"># or write a standalone HTML file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">'view.html'</span><span class="p">)</span>  <span class="c1"># or write a standalone HTML file</span>
 </pre></div>
 </div>
 <p>Edge width reflects the absolute regulatory strength of each link, and the two
@@ -481,7 +496,7 @@ whole-network views in <a class="reference internal" href="visualizing_grn.html"
 <p>Here we have a fairly obvious bipartisan graph. It also makes sense to use some clustering methods to automatically assign nodes into partitions.</p>
 <p>The quickest option is to let <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code> detect communities for you by passing
 <code class="docutils literal notranslate"><span class="pre">node_group_dict='auto'</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span><span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span><span class="s1">'HIST1H1D'</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="s1">'auto'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also bring your own clustering, using any method that you like (and works). Here is an example of using <code class="docutils literal notranslate"><span class="pre">node2vec</span></code> for this task.</p>
@@ -489,7 +504,7 @@ whole-network views in <a class="reference internal" href="visualizing_grn.html"
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">node2vec</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node2Vec</span>
 <span class="gp">&gt;&gt;&gt; </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adj_table</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">extract_local_neighborhood</span><span class="p">(</span><span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adj_table</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">extract_local_neighborhood</span><span class="p">(</span><span class="s1">'HIST1H1D'</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nxg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_pandas_edgelist</span><span class="p">(</span><span class="n">adj_table</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">node2vec</span> <span class="o">=</span> <span class="n">Node2Vec</span><span class="p">(</span><span class="n">nxg</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">walk_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">num_walks</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> 
@@ -501,11 +516,11 @@ whole-network views in <a class="reference internal" href="visualizing_grn.html"
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">node_embeddings</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">node_labels</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">labels_</span>
 <span class="gp">&gt;&gt;&gt; </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clusters:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">"Clusters:"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">cluster_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">node_labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">cluster_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">nxg</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">node_labels</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">cluster_id</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cluster </span><span class="si">{</span><span class="n">cluster_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cluster_nodes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cluster </span><span class="si">{</span><span class="n">cluster_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cluster_nodes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="go">Clusters:</span>
 <span class="go">Cluster 0: HIST1H1D,HIST1H2BN,HIST1H2BK,HIST1H1B,HIST1H2BL,HIST1H2AK,HIST1H1A,HIST1H2AC,HIST1H2BF,HIST1H4K,HIST1H3H,HIST1H2AF,HIST1H2AI,HIST1H2AG,HIST1H2BB,DNMT1,BRCA1,KNTC1,RAD54B,GM44335,FBXO5,TAF1,ABTB1,DEK,KANK3</span>
 <span class="go">Cluster 1: MCM10,TIMELESS,RAD51,RBBP4,RRM2,MCM6,PCNA,E2F1,UHRF1,MCM4,MCM5,UNG,MCM7,MCM3,ZFP367,EZH2,BARD1</span>
@@ -517,9 +532,9 @@ whole-network views in <a class="reference internal" href="visualizing_grn.html"
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gene_group_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gene_group_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">nxg</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">node_labels</span><span class="p">)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;HIST1H1D&#39;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="n">gene_group_dict</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'HIST1H1D'</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="n">gene_group_dict</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;view.html&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">'view.html'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><img alt="" src="https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/mecs_cluster.png" /></p>
@@ -551,7 +566,7 @@ whole-network views in <a class="reference internal" href="visualizing_grn.html"
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">RegDiffusion</p>
+        <p class="prev-next-title">RegDiffusion: Gene Regulatory Network Inference</p>
       </div>
     </a>
     <a class="right-next"

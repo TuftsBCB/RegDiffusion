@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Building Sphinx Documentation &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>RegDiffusion FAQ: single-cell gene regulatory network inference &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -37,17 +37,33 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/documentation_options.js?v=6808a718"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'BUILD';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'faq';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/faq.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="main Interface" href="main_api.html" />
+    <link rel="prev" title="Fast SCENIC GRN Analysis with RegDiffusion" href="downstream_with_pyscenic.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="RegDiffusion questions answered: input data, sparse matrices, GPU and CPU support, pySCENIC integration, benchmarks, and citation.">
+<meta property="og:title" content="RegDiffusion FAQ: single-cell gene regulatory network inference">
+<meta property="og:description" content="RegDiffusion questions answered: input data, sparse matrices, GPU and CPU support, pySCENIC integration, benchmarks, and citation.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/faq.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -108,8 +124,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -139,8 +153,8 @@
       
     
     
-    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -158,11 +172,12 @@
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started:</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="quick_tour.html">Get Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -255,7 +270,7 @@
       
       
       
-      <li><a href="_sources/BUILD.md" target="_blank"
+      <li><a href="_sources/faq.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -339,7 +354,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Building Sphinx Documentation</h1>
+    <h1>RegDiffusion FAQ: single-cell gene regulatory network inference</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -349,21 +364,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-commands">Common Commands</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-html-documentation">Build HTML Documentation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clean-build-directory">Clean Build Directory</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#view-available-build-targets">View Available Build Targets</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-build-formats">Other Build Formats</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-make-command-is-not-found">If <code class="docutils literal notranslate"><span class="pre">make</span></code> command is not found:</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-dependencies-are-missing">If dependencies are missing:</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-autodoc-fails-to-import-modules">If autodoc fails to import modules:</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-structure">File Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-regdiffusion">What is RegDiffusion?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-input-data-does-regdiffusion-need">What input data does RegDiffusion need?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#does-regdiffusion-require-a-gpu">Does RegDiffusion require a GPU?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#can-regdiffusion-handle-large-or-sparse-single-cell-datasets">Can RegDiffusion handle large or sparse single-cell datasets?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#can-i-use-regdiffusion-with-pyscenic">Can I use RegDiffusion with pySCENIC?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-regdiffusion-relate-to-genie3-and-grnboost2">How does RegDiffusion relate to GENIE3 and GRNBoost2?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#are-inferred-edges-experimentally-validated-regulatory-interactions">Are inferred edges experimentally validated regulatory interactions?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-should-i-cite-regdiffusion">How should I cite RegDiffusion?</a></li>
 </ul>
             </nav>
         </div>
@@ -375,83 +383,74 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="building-sphinx-documentation">
-<h1>Building Sphinx Documentation<a class="headerlink" href="#building-sphinx-documentation" title="Link to this heading">#</a></h1>
-<section id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
-<p>To rebuild the documentation, navigate to the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> directory and run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
-make<span class="w"> </span>html
-</pre></div>
-</div>
-<p>The built HTML documentation will be available in <code class="docutils literal notranslate"><span class="pre">docs/_build/html/</span></code>. Open <code class="docutils literal notranslate"><span class="pre">docs/_build/html/index.html</span></code> in your browser to view it.</p>
+  <section id="regdiffusion-faq-single-cell-gene-regulatory-network-inference">
+<h1>RegDiffusion FAQ: single-cell gene regulatory network inference<a class="headerlink" href="#regdiffusion-faq-single-cell-gene-regulatory-network-inference" title="Link to this heading">#</a></h1>
+<section id="what-is-regdiffusion">
+<h2>What is RegDiffusion?<a class="headerlink" href="#what-is-regdiffusion" title="Link to this heading">#</a></h2>
+<p>RegDiffusion is an open-source Python package that uses probabilistic diffusion
+models to infer gene regulatory networks (GRNs) from single-cell RNA-seq gene
+expression data. Training does not require a ground-truth network. The package
+also provides network evaluation, export, and visualization tools.</p>
+<p>The method is described in <a class="reference external" href="https://doi.org/10.1089/cmb.2024.0607">Zhu and Slonim (2024), <em>From Noise to Knowledge</em></a>.</p>
 </section>
-<section id="common-commands">
-<h2>Common Commands<a class="headerlink" href="#common-commands" title="Link to this heading">#</a></h2>
-<section id="build-html-documentation">
-<h3>Build HTML Documentation<a class="headerlink" href="#build-html-documentation" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>html
-</pre></div>
-</div>
+<section id="what-input-data-does-regdiffusion-need">
+<h2>What input data does RegDiffusion need?<a class="headerlink" href="#what-input-data-does-regdiffusion-need" title="Link to this heading">#</a></h2>
+<p>The Python <code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code> API expects a <strong>log-transformed expression
+matrix with cells as rows and genes as columns</strong>. It accepts NumPy arrays and
+SciPy sparse matrices, including a suitably preprocessed <code class="docutils literal notranslate"><span class="pre">adata.X</span></code>. Remove
+genes that are not expressed before training, and preserve the column order
+when providing gene names for the inferred network.</p>
+<p>The command-line interface instead accepts <strong>raw counts</strong> in CSV or H5AD
+files and applies the log transformation itself. Do not pass already
+log-transformed data to the CLI. See the <a class="reference internal" href="quick_tour.html"><span class="std std-doc">quick tour</span></a> and
+<a class="reference internal" href="main_api.html"><span class="std std-doc">API reference</span></a> for Python usage.</p>
 </section>
-<section id="clean-build-directory">
-<h3>Clean Build Directory<a class="headerlink" href="#clean-build-directory" title="Link to this heading">#</a></h3>
-<p>If you encounter issues, clean the build directory first:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>clean
-make<span class="w"> </span>html
-</pre></div>
-</div>
+<section id="does-regdiffusion-require-a-gpu">
+<h2>Does RegDiffusion require a GPU?<a class="headerlink" href="#does-regdiffusion-require-a-gpu" title="Link to this heading">#</a></h2>
+<p>No. Set <code class="docutils literal notranslate"><span class="pre">device='cpu'</span></code> in <code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code> to use a CPU. A CUDA-capable
+NVIDIA GPU accelerates training. The project reports under five minutes on an
+A100 GPU and roughly three hours on a 12-core CPU for a 15,000-gene network;
+these are example timings, not guarantees for every dataset or configuration.</p>
 </section>
-<section id="view-available-build-targets">
-<h3>View Available Build Targets<a class="headerlink" href="#view-available-build-targets" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span><span class="nb">help</span>
-</pre></div>
-</div>
+<section id="can-regdiffusion-handle-large-or-sparse-single-cell-datasets">
+<h2>Can RegDiffusion handle large or sparse single-cell datasets?<a class="headerlink" href="#can-regdiffusion-handle-large-or-sparse-single-cell-datasets" title="Link to this heading">#</a></h2>
+<p>Yes. Sparse expression input avoids materializing the entire normalized
+cells-by-genes matrix. The inferred gene-by-gene adjacency matrix is still
+dense, so its memory cost grows quadratically with the number of genes.
+Set <code class="docutils literal notranslate"><span class="pre">memory_efficient=True</span></code> to reduce training memory use. The
+<a class="reference internal" href="large_networks.html"><span class="std std-doc">large-network guide</span></a> reports benchmark conditions, memory
+measurements, and gene-filtering options.</p>
 </section>
-<section id="other-build-formats">
-<h3>Other Build Formats<a class="headerlink" href="#other-build-formats" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">latexpdf</span></code> - Build PDF documentation</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">epub</span></code> - Build EPUB format</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">linkcheck</span></code> - Check all external links</p></li>
-</ul>
+<section id="can-i-use-regdiffusion-with-pyscenic">
+<h2>Can I use RegDiffusion with pySCENIC?<a class="headerlink" href="#can-i-use-regdiffusion-with-pyscenic" title="Link to this heading">#</a></h2>
+<p>Yes. RegDiffusion can supply inferred network edges for downstream pySCENIC
+analysis. Follow the <a class="reference internal" href="downstream_with_pyscenic.html"><span class="std std-doc">pySCENIC tutorial</span></a> for the
+workflow. RegDiffusion performs network inference; downstream motif analysis
+and regulon activity scoring remain separate steps.</p>
 </section>
+<section id="how-does-regdiffusion-relate-to-genie3-and-grnboost2">
+<h2>How does RegDiffusion relate to GENIE3 and GRNBoost2?<a class="headerlink" href="#how-does-regdiffusion-relate-to-genie3-and-grnboost2" title="Link to this heading">#</a></h2>
+<p>All three methods address gene regulatory network inference from expression
+data. RegDiffusion uses probabilistic diffusion models. For a method choice,
+consider your dataset, hardware, runtime budget, and evaluation against a
+relevant reference network. The <a class="reference external" href="https://doi.org/10.1089/cmb.2024.0607">RegDiffusion paper</a>
+provides the method’s evaluation; the package includes a <code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code> and
+<a class="reference internal" href="data_module.html"><span class="std std-doc">BEELINE dataset loaders</span></a> for your own comparisons.</p>
 </section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
-<section id="if-make-command-is-not-found">
-<h3>If <code class="docutils literal notranslate"><span class="pre">make</span></code> command is not found:<a class="headerlink" href="#if-make-command-is-not-found" title="Link to this heading">#</a></h3>
-<p>Use the Python module directly:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>sphinx<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>.<span class="w"> </span>_build/html
-</pre></div>
-</div>
+<section id="are-inferred-edges-experimentally-validated-regulatory-interactions">
+<h2>Are inferred edges experimentally validated regulatory interactions?<a class="headerlink" href="#are-inferred-edges-experimentally-validated-regulatory-interactions" title="Link to this heading">#</a></h2>
+<p>An inferred edge is a model prediction for follow-up analysis. It does not by
+itself establish causality or experimental validation. Use reference networks,
+biological context, and independent experiments to assess specific edges.</p>
 </section>
-<section id="if-dependencies-are-missing">
-<h3>If dependencies are missing:<a class="headerlink" href="#if-dependencies-are-missing" title="Link to this heading">#</a></h3>
-<p>Install required packages:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>sphinx<span class="w"> </span>sphinx-book-theme<span class="w"> </span>sphinx-copybutton<span class="w"> </span>myst-parser<span class="w"> </span>sphinxext-napoleon
-</pre></div>
-</div>
-</section>
-<section id="if-autodoc-fails-to-import-modules">
-<h3>If autodoc fails to import modules:<a class="headerlink" href="#if-autodoc-fails-to-import-modules" title="Link to this heading">#</a></h3>
-<p>Make sure you’re in the correct conda environment and the package is installed:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>..
-</pre></div>
-</div>
-</section>
-</section>
-<section id="file-structure">
-<h2>File Structure<a class="headerlink" href="#file-structure" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">conf.py</span></code> - Sphinx configuration file</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">index.rst</span></code> - Main documentation entry point</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">*.rst</span></code> - ReStructuredText source files</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">*.md</span></code> - Markdown files (via myst-parser)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_build/</span></code> - Build output directory (generated)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_static/</span></code> - Static assets (images, CSS, etc.)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_templates/</span></code> - Custom templates</p></li>
-</ul>
+<section id="how-should-i-cite-regdiffusion">
+<h2>How should I cite RegDiffusion?<a class="headerlink" href="#how-should-i-cite-regdiffusion" title="Link to this heading">#</a></h2>
+<p>Zhu H, Slonim D. <strong>From Noise to Knowledge: Diffusion Probabilistic Model-Based
+Neural Inference of Gene Regulatory Networks.</strong> <em>Journal of Computational
+Biology</em>. 2024;31(11):1087–1103.
+<a class="reference external" href="https://doi.org/10.1089/cmb.2024.0607">doi:10.1089/cmb.2024.0607</a>.</p>
+<p>The <a class="reference external" href="https://github.com/TuftsBCB/RegDiffusion">GitHub repository</a> includes a
+<code class="docutils literal notranslate"><span class="pre">CITATION.cff</span></code> file for citation tools.</p>
 </section>
 </section>
 
@@ -466,6 +465,24 @@ make<span class="w"> </span>html
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="downstream_with_pyscenic.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Fast SCENIC GRN Analysis with RegDiffusion</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="main_api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">main Interface</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -482,21 +499,14 @@ make<span class="w"> </span>html
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-commands">Common Commands</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-html-documentation">Build HTML Documentation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clean-build-directory">Clean Build Directory</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#view-available-build-targets">View Available Build Targets</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-build-formats">Other Build Formats</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-make-command-is-not-found">If <code class="docutils literal notranslate"><span class="pre">make</span></code> command is not found:</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-dependencies-are-missing">If dependencies are missing:</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-autodoc-fails-to-import-modules">If autodoc fails to import modules:</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-structure">File Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-regdiffusion">What is RegDiffusion?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-input-data-does-regdiffusion-need">What input data does RegDiffusion need?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#does-regdiffusion-require-a-gpu">Does RegDiffusion require a GPU?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#can-regdiffusion-handle-large-or-sparse-single-cell-datasets">Can RegDiffusion handle large or sparse single-cell datasets?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#can-i-use-regdiffusion-with-pyscenic">Can I use RegDiffusion with pySCENIC?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-regdiffusion-relate-to-genie3-and-grnboost2">How does RegDiffusion relate to GENIE3 and GRNBoost2?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#are-inferred-edges-experimentally-validated-regulatory-interactions">Are inferred edges experimentally validated regulatory interactions?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-should-i-cite-regdiffusion">How should I cite RegDiffusion?</a></li>
 </ul>
   </nav></div>
 

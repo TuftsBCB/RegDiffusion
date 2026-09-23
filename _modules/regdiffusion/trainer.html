@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>regdiffusion.trainer &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>regdiffusion.trainer &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -36,17 +36,31 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="../../_static/documentation_options.js?v=6808a718"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/regdiffusion/trainer';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/_modules/regdiffusion/trainer.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="regdiffusion.trainer — RegDiffusion gene regulatory network inference documentation.">
+<meta property="og:title" content="regdiffusion.trainer">
+<meta property="og:description" content="regdiffusion.trainer — RegDiffusion gene regulatory network inference documentation.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/_modules/regdiffusion/trainer.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -138,8 +152,8 @@
       
     
     
-    <img src="../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -162,6 +176,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -322,7 +337,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set random seeds for reproducibility across PyTorch, NumPy, and CUDA.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set random seeds for reproducibility across PyTorch, NumPy, and CUDA."""</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -346,7 +361,7 @@ document.write(`
     <span class="k">return</span> <span class="n">beta_start</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta_end</span> <span class="o">-</span> <span class="n">beta_start</span><span class="p">)</span> <span class="o">*</span> <span class="n">poweredspace</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_SparseExpressionDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset that stores sparse expression data and normalizes on-the-fly.</span>
+<span class="w">    </span><span class="sd">"""Dataset that stores sparse expression data and normalizes on-the-fly.</span>
 
 <span class="sd">    Instead of materializing the full dense normalized matrix (which can be</span>
 <span class="sd">    100+ GB for 1M cells), this dataset keeps the original sparse matrix in</span>
@@ -355,7 +370,7 @@ document.write(`
 <span class="sd">    Normalization applied per sample:</span>
 <span class="sd">        1. Min-max per cell:  (x - cell_min) / cell_range</span>
 <span class="sd">        2. Z-score per gene:  (x - gene_mean) / gene_std</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparse_X</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">cell_min</span><span class="p">,</span> <span class="n">cell_range</span><span class="p">,</span>
                  <span class="n">gene_mean</span><span class="p">,</span> <span class="n">gene_std</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
@@ -382,7 +397,7 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RegDiffusionTrainer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Initialize and Train a RegDiffusion model.</span>
 
 <span class="sd">    For architecture and training details, please refer to our paper.</span>
@@ -433,8 +448,8 @@ document.write(`
 <span class="sd">        train_split_seed (int): Random seed for train/val partition. </span>
 <span class="sd">            Default: 123</span>
 <span class="sd">        device (str or torch.device): Device where the model is running. For </span>
-<span class="sd">            example, &quot;cpu&quot;, &quot;cuda&quot;, &quot;cuda:1&quot;, and etc. You are not recommended </span>
-<span class="sd">            to run this model on Apple&#39;s MPS chips. Default is &quot;cuda&quot; but if </span>
+<span class="sd">            example, "cpu", "cuda", "cuda:1", and etc. You are not recommended </span>
+<span class="sd">            to run this model on Apple's MPS chips. Default is "cuda" but if </span>
 <span class="sd">            you only has CPU, it will switch back to CPU.</span>
 <span class="sd">        compile (boolean): Whether to compile the model before training. </span>
 <span class="sd">            Compile the model is a good idea on large dataset and often improves</span>
@@ -465,7 +480,7 @@ document.write(`
 <span class="sd">            n_gene x n_gene matrix for L1 regularization). Default: False.</span>
 <span class="sd">        seed (int): Random seed for full reproducibility. When set, all</span>
 <span class="sd">            sources of randomness are seeded. Default: None (non-deterministic).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">T</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">start_noise</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">end_noise</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
@@ -476,16 +491,16 @@ document.write(`
         <span class="n">sparse_loss_coef</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">adj_dropout</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
         <span class="n">train_split</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
-        <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="nb">compile</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">evaluator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eval_on_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">gradient_accumulation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_amp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">memory_efficient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">seed</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">hp</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
-        <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;exp_array&#39;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;cell_types&#39;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">'exp_array'</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">'cell_types'</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">hp</span><span class="p">[</span><span class="s1">'logger'</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hp</span> <span class="o">=</span> <span class="n">hp</span>
 
         <span class="c1"># Seed for reproducibility</span>
@@ -495,17 +510,17 @@ document.write(`
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_generator</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;mps&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;We noticed unreliable training behavior on&quot;</span><span class="p">,</span> 
-                            <span class="s2">&quot;Apple&#39;s silicon. Consider using other devices.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s1">'mps'</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"We noticed unreliable training behavior on"</span><span class="p">,</span> 
+                            <span class="s2">"Apple's silicon. Consider using other devices."</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'cuda'</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;You specified cuda as your computing device but apprently&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;it&#39;s not available. Setting device to cpu for now. &quot;</span><span class="p">)</span>
-                <span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
+                    <span class="s2">"You specified cuda as your computing device but apprently"</span><span class="p">,</span> 
+                    <span class="s2">"it's not available. Setting device to cpu for now. "</span><span class="p">)</span>
+                <span class="n">device</span> <span class="o">=</span> <span class="s1">'cpu'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'device'</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
         
         <span class="c1"># Logger ---------------------------------------------------------------</span>
         <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -524,7 +539,7 @@ document.write(`
         <span class="c1"># Prepare Data ---------------------------------------------------------</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">batch_size</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Batch size needs to be smaller than the number of cells. &quot;</span>
+                <span class="s2">"Batch size needs to be smaller than the number of cells. "</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">cell_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cell_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
@@ -560,52 +575,52 @@ document.write(`
         <span class="c1"># Setup optimizer ------------------------------------------------------</span>
         <span class="k">if</span> <span class="n">lr_adj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">lr_adj</span> <span class="o">=</span> <span class="n">gene_reg_norm</span><span class="o">/</span><span class="mi">50</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;lr_adj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_adj</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'lr_adj'</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_adj</span>
         <span class="n">adj_params</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">non_adj_params</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;adj_A&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'adj_A'</span><span class="p">):</span>
                 <span class="n">adj_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">non_adj_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
-            <span class="p">[{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">non_adj_params</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">adj_params</span><span class="p">}],</span> 
+            <span class="p">[{</span><span class="s1">'params'</span><span class="p">:</span> <span class="n">non_adj_params</span><span class="p">},</span> <span class="p">{</span><span class="s1">'params'</span><span class="p">:</span> <span class="n">adj_params</span><span class="p">}],</span> 
             <span class="n">lr</span><span class="o">=</span><span class="n">lr_nn</span><span class="p">,</span> 
             <span class="n">weight_decay</span><span class="o">=</span><span class="n">weight_decay_nn</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_nn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_adj</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;weight_decay&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight_decay_adj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'lr'</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_nn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'lr'</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_adj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'weight_decay'</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight_decay_adj</span>
     
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">compile</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'cuda'</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">compile</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">original_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span><span class="o">=</span><span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">losses_on_gene</span><span class="o">=</span><span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;RegDiffusionME&#39;</span> <span class="k">if</span> <span class="n">memory_efficient</span> <span class="k">else</span> <span class="s1">&#39;RegDiffusion&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'RegDiffusionME'</span> <span class="k">if</span> <span class="n">memory_efficient</span> <span class="k">else</span> <span class="s1">'RegDiffusion'</span>
 
         <span class="c1"># AMP setup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="n">use_amp</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amp_device_type</span> <span class="o">=</span> <span class="s1">'cuda'</span> <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'cuda'</span><span class="p">)</span> <span class="k">else</span> <span class="s1">'cpu'</span>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_dense_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
                             <span class="n">train_split</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize dense numpy array and build TensorDataset (original path).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Normalize dense numpy array and build TensorDataset (original path)."""</span>
         <span class="n">cell_min</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">cell_max</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">cell_range</span> <span class="o">=</span> <span class="n">cell_max</span> <span class="o">-</span> <span class="n">cell_min</span>
         <span class="n">n_zero_cells</span> <span class="o">=</span> <span class="p">(</span><span class="n">cell_range</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">n_zero_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no genes are expressed.&#39;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no genes are expressed.'</span><span class="p">)</span>
         <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp_array</span> <span class="o">-</span> <span class="n">cell_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">cell_range</span>
         <span class="n">normalized_X_std</span> <span class="o">=</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">n_zero_genes</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X_std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">n_zero_genes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these genes from your data.&#39;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these genes from your data.'</span><span class="p">)</span>
         <span class="n">normalized_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalized_X</span> <span class="o">-</span> <span class="n">normalized_X</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="n">normalized_X_std</span>
 
         <span class="n">random_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">train_split_seed</span><span class="p">)</span>
@@ -642,13 +657,13 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_sparse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_array</span><span class="p">,</span> <span class="n">cell_types</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span>
                              <span class="n">train_split</span><span class="p">,</span> <span class="n">train_split_seed</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute normalization stats from sparse matrix in chunks, then build</span>
+<span class="w">        </span><span class="sd">"""Compute normalization stats from sparse matrix in chunks, then build</span>
 <span class="sd">        a _SparseExpressionDataset that normalizes on-the-fly per sample.</span>
 
 <span class="sd">        This never materializes the full dense normalized matrix, so memory</span>
 <span class="sd">        usage stays proportional to (sparse matrix size + one batch of dense</span>
 <span class="sd">        rows) rather than (n_cell * n_gene * 4 bytes).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">n_cell</span><span class="p">,</span> <span class="n">n_gene</span> <span class="o">=</span> <span class="n">exp_array</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">exp_array</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">exp_array</span><span class="p">)</span>  <span class="c1"># ensure CSR for fast row slicing</span>
 
@@ -669,8 +684,8 @@ document.write(`
         <span class="n">n_zero_cells</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="n">valid_mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">n_zero_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no &#39;</span>
-                <span class="s1">&#39;genes are expressed.&#39;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_zero_cells</span><span class="si">}</span><span class="s1"> cells are removed from analysis where no '</span>
+                <span class="s1">'genes are expressed.'</span><span class="p">)</span>
 
         <span class="c1"># --- Per-gene mean/std of min-max-normalized data (chunked) ---</span>
         <span class="n">n_valid</span> <span class="o">=</span> <span class="n">valid_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -698,8 +713,8 @@ document.write(`
         <span class="n">n_zero_genes</span> <span class="o">=</span> <span class="p">(</span><span class="n">gene_std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">n_zero_genes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these &#39;</span>
-                <span class="s1">&#39;genes from your data.&#39;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_zero_genes</span><span class="si">}</span><span class="s1"> genes have 0 variance. Please remove these '</span>
+                <span class="s1">'genes from your data.'</span><span class="p">)</span>
 
         <span class="c1"># --- Train/validation split (only among valid cells) ---</span>
         <span class="n">valid_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -739,7 +754,7 @@ document.write(`
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.forward_pass">[docs]</a>
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Forward diffusion process. Adds noise to the input according to the</span>
 <span class="sd">        diffusion schedule at the given timesteps.</span>
 
@@ -751,7 +766,7 @@ document.write(`
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: (x_t, noise) where x_t is the noised input and noise is</span>
 <span class="sd">                the sampled Gaussian noise that was added.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span>
         <span class="n">mean_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_schedule</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
         <span class="n">std_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_schedule</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
@@ -762,15 +777,15 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer.train">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.train">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Train the model. Dispatches to gradient accumulation or normal</span>
 <span class="sd">        training based on the ``gradient_accumulation`` setting.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            n_steps (int): Number of steps to train. If not provided, uses</span>
 <span class="sd">                the n_steps specified during initialization.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;gradient_accumulation&#39;</span><span class="p">]:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'gradient_accumulation'</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_train_with_gradient_accumulation</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="n">n_steps</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_train_normal</span><span class="p">(</span><span class="n">n_steps</span><span class="o">=</span><span class="n">n_steps</span><span class="p">)</span></div>
@@ -778,7 +793,7 @@ document.write(`
         
         
     <span class="k">def</span><span class="w"> </span><span class="nf">_train_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Train the initialized model for a number of steps. </span>
 
 <span class="sd">        Args:</span>
@@ -786,16 +801,16 @@ document.write(`
 <span class="sd">                train the model by the n_steps specified in class</span>
 <span class="sd">                initialization. Please read our paper to see how to identify</span>
 <span class="sd">                the convergence point.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-        <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span>
+        <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'eval_on_n_steps'</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">n_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;n_steps&#39;</span><span class="p">]</span>
+            <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'n_steps'</span><span class="p">]</span>
         <span class="n">sampled_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
                 <span class="n">epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">):</span>
                     <span class="n">x_0</span><span class="p">,</span> <span class="n">ct</span> <span class="o">=</span> <span class="n">batch</span>
@@ -803,7 +818,7 @@ document.write(`
                     <span class="n">ct</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
                     <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
-                        <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> 
+                        <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'T'</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> 
                         <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
         
@@ -814,7 +829,7 @@ document.write(`
                         <span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span>
                     <span class="p">):</span>
                         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
-                        <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+                        <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">'none'</span><span class="p">)</span>
                         <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
                         <span class="c1"># Only computed past the warmup window, where it is</span>
@@ -822,7 +837,7 @@ document.write(`
                         <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
                             <span class="n">loss_sparse</span> <span class="o">=</span> <span class="p">(</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sparse_loss</span><span class="p">()</span>
-                                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'sparse_loss_coef'</span><span class="p">]</span>
                             <span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
@@ -837,8 +852,8 @@ document.write(`
                     <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
                 <span class="n">sampled_adj</span> <span class="o">=</span> <span class="n">sampled_adj_new</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;Training loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, Change on Adj: </span><span class="si">{</span><span class="n">adj_diff</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">epoch_log</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train_loss&#39;</span><span class="p">:</span> <span class="n">train_loss</span><span class="p">,</span> <span class="s1">&#39;adj_change&#39;</span><span class="p">:</span> <span class="n">adj_diff</span><span class="p">}</span>
+                    <span class="sa">f</span><span class="s1">'Training loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, Change on Adj: </span><span class="si">{</span><span class="n">adj_diff</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+                <span class="n">epoch_log</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'train_loss'</span><span class="p">:</span> <span class="n">train_loss</span><span class="p">,</span> <span class="s1">'adj_change'</span><span class="p">:</span> <span class="n">adj_diff</span><span class="p">}</span>
                 <span class="k">if</span> <span class="n">epoch</span> <span class="o">%</span> <span class="n">eval_steps</span> <span class="o">==</span> <span class="n">eval_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">eval_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
@@ -846,9 +861,9 @@ document.write(`
                             <span class="p">)</span>
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">eval_result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;train_split&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'train_split'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
                         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
                             <span class="n">val_epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
                             <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">):</span>
@@ -856,7 +871,7 @@ document.write(`
                                 <span class="n">x_0</span> <span class="o">=</span> <span class="n">x_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">ct</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
-                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
+                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'T'</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
                                     <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
 
                                 <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
@@ -867,9 +882,9 @@ document.write(`
                                 <span class="p">):</span>
                                     <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
                                     <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
-                                        <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                                        <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                                 <span class="n">val_epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_val_loss</span><span class="p">)</span>
-                            <span class="n">epoch_log</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
+                            <span class="n">epoch_log</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epoch_log</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">losses_on_gene</span> <span class="o">=</span> <span class="n">loss_</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_time_cost</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span>
@@ -877,7 +892,7 @@ document.write(`
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_train_with_gradient_accumulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Train the initialized model using gradient accumulation. For each batch,</span>
 <span class="sd">        the gradient is computed for each sample individually and accumulated</span>
 <span class="sd">        before the optimizer step. This reduces memory but increases training time.</span>
@@ -886,13 +901,13 @@ document.write(`
 <span class="sd">            n_steps (int): Number of steps to train. If not provided, it will </span>
 <span class="sd">                train the model by the n_steps specified in class </span>
 <span class="sd">                initialization.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-        <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;eval_on_n_steps&#39;</span><span class="p">]</span>
+        <span class="n">eval_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'eval_on_n_steps'</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">n_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;n_steps&#39;</span><span class="p">]</span>
+            <span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'n_steps'</span><span class="p">]</span>
         
-        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'batch_size'</span><span class="p">]</span>
         <span class="n">sampled_adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sampled_adj_</span><span class="p">()</span>
         
         <span class="c1"># This will hold the per-gene losses from the final step</span>
@@ -900,8 +915,8 @@ document.write(`
 
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">step_idx</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="o">+</span> <span class="n">step_idx</span><span class="p">)</span>
                 <span class="c1"># Fetch a single batch for the current step</span>
                 <span class="n">x_0_batch</span><span class="p">,</span> <span class="n">ct_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">))</span>
                 <span class="n">x_0_batch</span> <span class="o">=</span> <span class="n">x_0_batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -919,7 +934,7 @@ document.write(`
                     <span class="n">ct</span> <span class="o">=</span> <span class="n">ct_batch</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
                     
                     <span class="c1"># Generate timestep for the single sample</span>
-                    <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'T'</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
 
                     <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
                     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span>
@@ -929,8 +944,8 @@ document.write(`
                     <span class="p">):</span>
                         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
 
-                        <span class="c1"># Calculate MSE loss, get per-gene loss with reduction=&#39;none&#39;</span>
-                        <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+                        <span class="c1"># Calculate MSE loss, get per-gene loss with reduction='none'</span>
+                        <span class="n">loss_</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">'none'</span><span class="p">)</span>
 
                     <span class="c1"># Accumulate per-gene loss values for the last step</span>
                     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
@@ -954,7 +969,7 @@ document.write(`
                     <span class="p">):</span>
                         <span class="n">loss_sparse</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_sparse_loss</span><span class="p">()</span>
-                            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;sparse_loss_coef&#39;</span><span class="p">]</span>
+                            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'sparse_loss_coef'</span><span class="p">]</span>
                         <span class="p">)</span>
 
                     <span class="n">loss_sparse</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
@@ -972,9 +987,9 @@ document.write(`
                 <span class="n">sampled_adj</span> <span class="o">=</span> <span class="n">sampled_adj_new</span>
 
                 <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;Training loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, Change on Adj: </span><span class="si">{</span><span class="n">adj_diff</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="sa">f</span><span class="s1">'Training loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">, Change on Adj: </span><span class="si">{</span><span class="n">adj_diff</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
                 
-                <span class="n">epoch_log</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train_loss&#39;</span><span class="p">:</span> <span class="n">train_loss</span><span class="p">,</span> <span class="s1">&#39;adj_change&#39;</span><span class="p">:</span> <span class="n">adj_diff</span><span class="p">}</span>
+                <span class="n">epoch_log</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'train_loss'</span><span class="p">:</span> <span class="n">train_loss</span><span class="p">,</span> <span class="s1">'adj_change'</span><span class="p">:</span> <span class="n">adj_diff</span><span class="p">}</span>
                 
                 <span class="k">if</span> <span class="n">step_idx</span> <span class="o">%</span> <span class="n">eval_steps</span> <span class="o">==</span> <span class="n">eval_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -982,9 +997,9 @@ document.write(`
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">eval_result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="n">epoch_log</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                     
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;train_split&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="n">step_idx</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'train_split'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'seed'</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_steps</span> <span class="o">+</span> <span class="n">step_idx</span><span class="p">)</span>
                         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
                             <span class="n">val_epoch_loss</span> <span class="o">=</span> <span class="p">[]</span>
                             <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">):</span>
@@ -992,7 +1007,7 @@ document.write(`
                                 <span class="n">x_0</span> <span class="o">=</span> <span class="n">x_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">ct</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
                                 <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span>
-                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
+                                    <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hp</span><span class="p">[</span><span class="s1">'T'</span><span class="p">],</span> <span class="p">(</span><span class="n">x_0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
                                     <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
 
                                 <span class="n">x_noisy</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">x_0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
@@ -1003,9 +1018,9 @@ document.write(`
                                 <span class="p">):</span>
                                     <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x_noisy</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ct</span><span class="p">)</span>
                                     <span class="n">step_val_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span>
-                                        <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                                        <span class="n">noise</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                                 <span class="n">val_epoch_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_val_loss</span><span class="p">)</span>
-                            <span class="n">epoch_log</span><span class="p">[</span><span class="s1">&#39;val_loss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
+                            <span class="n">epoch_log</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">val_epoch_loss</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epoch_log</span><span class="p">)</span>
                 <span class="n">final_losses_on_gene</span> <span class="o">=</span> <span class="n">accumulated_loss_on_gene</span> <span class="c1"># Save from the last step</span>
@@ -1018,31 +1033,31 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer.training_curves">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.training_curves">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">training_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot out the training curves on `train_loss` and `adj_change`. Check</span>
 <span class="sd">        out our paper for how to use `adj_change` to identify the convergence </span>
 <span class="sd">        point. </span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">log_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s1">&#39;train_loss&#39;</span> <span class="ow">in</span> <span class="n">log_df</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">'train_loss'</span> <span class="ow">in</span> <span class="n">log_df</span><span class="p">:</span>
             <span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">log_df</span><span class="p">[</span><span class="s1">&#39;train_loss&#39;</span><span class="p">])</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Steps&#39;</span><span class="p">)</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Training Loss&#39;</span><span class="p">)</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">log_df</span><span class="p">[</span><span class="s1">&#39;adj_change&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Steps&#39;</span><span class="p">)</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Amount of Change in Adj. Matrix&#39;</span><span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">log_df</span><span class="p">[</span><span class="s1">'train_loss'</span><span class="p">])</span>
+            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Steps'</span><span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Training Loss'</span><span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">log_df</span><span class="p">[</span><span class="s1">'adj_change'</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Steps'</span><span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Amount of Change in Adj. Matrix'</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s1">&#39;Training log and Adj Change are not available. Train your &#39;</span><span class="p">,</span> 
-                <span class="s1">&#39;model using the .train() method.&#39;</span><span class="p">)</span></div>
+                <span class="s1">'Training log and Adj Change are not available. Train your '</span><span class="p">,</span> 
+                <span class="s1">'model using the .train() method.'</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RegDiffusionTrainer.get_grn">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.get_grn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_grn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tf_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Obtain a GRN object. You need to provide the gene names.</span>
 
 <span class="sd">        Args:</span>
@@ -1058,7 +1073,7 @@ document.write(`
 
 <span class="sd">        Returns:</span>
 <span class="sd">            GRN: A GRN object containing the inferred regulatory network.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">adj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">GRN</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">tf_names</span><span class="p">,</span> <span class="n">top_gene_percentile</span><span class="p">)</span></div>
 
@@ -1066,14 +1081,14 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusionTrainer.get_adj">
 <a class="viewcode-back" href="../../_autosummary/regdiffusion.RegDiffusionTrainer.html#regdiffusion.RegDiffusionTrainer.get_adj">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Obtain the adjacency matrix. The values in this adjacency matrix have</span>
 <span class="sd">        been scaled using regulatory norm. You may expect strong links to go</span>
 <span class="sd">        beyond 5 or 10 in most cases.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: 2D adjacency matrix of shape (n_gene, n_gene).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_adj</span><span class="p">()</span></div>
 </div>
 

@@ -1,15 +1,26 @@
-RegDiffusion
-=============
+RegDiffusion: Gene Regulatory Network Inference
+===============================================
 
-RegDiffusion is a very fast regulatory network inference algorithm based on 
-probabilistic diffusion model. It works well on genes and is capable to rapidly
-predict biologically verifiable links from large single cell RNA-seq data with 
-10,000+ genes.
+RegDiffusion is an open-source Python package for **gene regulatory network
+(GRN) inference from single-cell RNA-seq data** using probabilistic diffusion
+models. It learns candidate regulatory relationships from gene expression data
+without requiring a ground-truth network for training, and includes tools to
+evaluate, export, and visualize inferred networks.
+
+Start with the :doc:`quick_tour`, explore :doc:`large_networks`, or use inferred
+edges for :doc:`downstream_with_pyscenic`. The :doc:`faq` explains input formats,
+hardware requirements, and how to interpret the results.
+
+`Source code <https://github.com/TuftsBCB/RegDiffusion>`_ ·
+`PyPI package <https://pypi.org/project/regdiffusion/>`_ ·
+`Research paper <https://doi.org/10.1089/cmb.2024.0607>`_
 
 Installation
 ------------
 
-``regdiffusion`` is available on pypi:
+``regdiffusion`` is available on PyPI:
+
+.. code-block:: bash
 
     pip install regdiffusion
 
@@ -25,7 +36,8 @@ consists of 4 components: the ``RegDiffusionTrainer`` class, the ``GRN`` class, 
 ``GRNEvaluator`` class, and the ``data`` module. 
 
 - ``RegDiffusionTrainer``: You can use it to train a ``RegDiffusion`` model by 
-  providing log transformed expression data in a ``numpy`` array. The training
+  providing log-transformed expression data in a NumPy array or SciPy sparse
+  matrix, with cells as rows and genes as columns. The training
   process could be either started or continued using the ``.train()`` method. You 
   can export the inferred ``GRN`` using the ``.get_grn()`` method.
 - ``GRN``: The ``GRN`` class provides a container to save the inferred adjacency
@@ -59,8 +71,8 @@ After the ``RegDiffusion`` model converges, what you get is simply an
 it's getting difficult to analyze matrix at that scale. In our paper, we 
 propose a way to analyze the local network by focusing on the genes you care 
 the most. Check out the tutorials on the left side for how to perform a similar 
-network analysis like the one we did in the paper. We are also working on an 
-interactive tool to analyze saved GRN object. 
+network analysis like the one we did in the paper. The :doc:`visualizing_grn`
+tutorial demonstrates interactive network exploration with ``lightgraph``.
 
 .. image:: https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_net.png?raw=true
     :width: 700
@@ -68,16 +80,23 @@ interactive tool to analyze saved GRN object.
 
 Inference Speed
 ---------------
-Inference on networks with 15,000 genes takes under 5 minutes on an A100 GPU. 
-In contrast, previous VAE based models would take more than 4 hours on the same 
-device. Even if you don't have access to those fancy GPU cards, RegDiffusion 
-still works. Inference on the same large network takes roughly 3 hours on a 
-mid-range 12-core CPU. 
+The project reports inference on a 15,000-gene network in under five minutes on
+an NVIDIA A100 GPU, or roughly three hours on a 12-core CPU. Runtime depends on
+dataset size, hardware, and training settings. See :doc:`large_networks` for
+memory benchmarks and the :doc:`quick_tour` for a worked inference example.
 
 
 Citation
 --------
-Please consider cite our work if you found it useful for your work.
+If you use RegDiffusion, please cite:
+
+Zhu H, Slonim D. **From Noise to Knowledge: Diffusion Probabilistic Model-Based
+Neural Inference of Gene Regulatory Networks.** *Journal of Computational
+Biology*. 2024;31(11):1087–1103.
+`doi:10.1089/cmb.2024.0607 <https://doi.org/10.1089/cmb.2024.0607>`_.
+
+The paper describes the method and evaluation. Inferred edges are hypotheses
+for follow-up analysis, not experimental proof of regulation.
 
 
 
@@ -89,6 +108,7 @@ Please consider cite our work if you found it useful for your work.
    visualizing_grn
    large_networks
    downstream_with_pyscenic
+   faq
 
 .. toctree::
    :caption: References:

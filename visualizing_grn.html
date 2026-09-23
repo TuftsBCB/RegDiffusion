@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Visualizing Inferred GRN &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>Visualizing Inferred GRN &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -37,19 +37,33 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/documentation_options.js?v=6808a718"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'visualizing_grn';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/visualizing_grn.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Working with Large Gene Networks" href="large_networks.html" />
     <link rel="prev" title="Get Started" href="quick_tour.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="Visualize RegDiffusion gene regulatory networks with lightgraph using a human PBMC example and Reactome pathway annotations.">
+<meta property="og:title" content="Visualizing Inferred GRN">
+<meta property="og:description" content="Visualize RegDiffusion gene regulatory networks with lightgraph using a human PBMC example and Reactome pathway annotations.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/visualizing_grn.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -139,8 +153,8 @@
       
     
     
-    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -163,6 +177,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -408,14 +423,14 @@ API:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">scanpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sc</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">DATASET_ID</span> <span class="o">=</span> <span class="s2">&quot;ed5d841d-6346-47d4-ab2f-7119ad7e3a35&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">DATASET_ID</span> <span class="o">=</span> <span class="s2">"ed5d841d-6346-47d4-ab2f-7119ad7e3a35"</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">open_soma</span><span class="p">(</span><span class="n">census_version</span><span class="o">=</span><span class="s2">&quot;2023-12-15&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">census</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">open_soma</span><span class="p">(</span><span class="n">census_version</span><span class="o">=</span><span class="s2">"2023-12-15"</span><span class="p">)</span> <span class="k">as</span> <span class="n">census</span><span class="p">:</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span> <span class="o">=</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">get_anndata</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">census</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">organism</span><span class="o">=</span><span class="s2">&quot;Homo sapiens&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_value_filter</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;dataset_id == &#39;</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">&#39; and is_primary_data == True&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cell_type&quot;</span><span class="p">,</span> <span class="s2">&quot;assay&quot;</span><span class="p">,</span> <span class="s2">&quot;donor_id&quot;</span><span class="p">,</span> <span class="s2">&quot;disease&quot;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">organism</span><span class="o">=</span><span class="s2">"Homo sapiens"</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_value_filter</span><span class="o">=</span><span class="sa">f</span><span class="s2">"dataset_id == '</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">' and is_primary_data == True"</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"cell_type"</span><span class="p">,</span> <span class="s2">"assay"</span><span class="p">,</span> <span class="s2">"donor_id"</span><span class="p">,</span> <span class="s2">"disease"</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(161764, 60664)</span>
@@ -424,21 +439,21 @@ API:</p>
 <p>Census ships raw counts indexed by Ensembl ID, so we switch to gene symbols
 (which is what pathway databases speak) and trim the gene families that soak up
 variance without carrying much regulatory signal:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;ensembl_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">"ensembl_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="p">[</span><span class="s2">"feature_name"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">var_names_make_unique</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MT-&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="o">|</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;RPL&quot;</span><span class="p">,</span> <span class="s2">&quot;RPS&quot;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="o">|</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^HB[ABDEGQZ]\d?$&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"MT-"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">|</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"RPL"</span><span class="p">,</span> <span class="s2">"RPS"</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">|</span> <span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^HB[ABDEGQZ]\d?$"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">adata</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">filter_genes</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">min_cells</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">adata</span><span class="o">.</span><span class="n">n_obs</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">normalize_total</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">target_sum</span><span class="o">=</span><span class="mf">1e4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">adata</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">highly_variable_genes</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_top_genes</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">flavor</span><span class="o">=</span><span class="s2">&quot;seurat&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">highly_variable_genes</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">n_top_genes</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">flavor</span><span class="o">=</span><span class="s2">"seurat"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">adata</span><span class="p">[:,</span> <span class="n">adata</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">highly_variable</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(161764, 5000)</span>
@@ -453,12 +468,12 @@ dataset.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">regdiffusion</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rd</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">todense</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">codes</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;cell_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">codes</span> <span class="o">=</span> <span class="n">adata</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s2">"cell_type"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"category"</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">cell_types</span><span class="o">=</span><span class="n">codes</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">get_grn</span><span class="p">(</span><span class="n">adata</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">&quot;pbmc_nygc_grn.hdf5&quot;</span><span class="p">,</span> <span class="n">as_sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grn</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">"pbmc_nygc_grn.hdf5"</span><span class="p">,</span> <span class="n">as_sparse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>On an RTX PRO 6000 the 1,000 training steps take about 13 seconds; loading and
@@ -469,11 +484,11 @@ itself.</p>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">extract_edgelist</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">edges</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">edges</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">abs</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">edges</span><span class="p">[[</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">edges</span><span class="p">[[</span><span class="s2">"source"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"weight"</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">deg</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">kv</span><span class="p">:</span> <span class="o">-</span><span class="n">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">12</span><span class="p">]</span>
-<span class="go">[(&#39;LTB&#39;, 306.0), (&#39;IL7R&#39;, 292.0), (&#39;ETS1&#39;, 203.0), (&#39;CD3D&#39;, 181.0),</span>
-<span class="go"> (&#39;NKG7&#39;, 149.0), (&#39;CD3E&#39;, 145.0), (&#39;LDHB&#39;, 144.0), (&#39;CD79A&#39;, 138.0),</span>
-<span class="go"> (&#39;EEF1B2&#39;, 138.0), (&#39;MS4A1&#39;, 131.0), (&#39;CST7&#39;, 129.0), (&#39;EEF1A1&#39;, 115.0)]</span>
+<span class="go">[('LTB', 306.0), ('IL7R', 292.0), ('ETS1', 203.0), ('CD3D', 181.0),</span>
+<span class="go"> ('NKG7', 149.0), ('CD3E', 145.0), ('LDHB', 144.0), ('CD79A', 138.0),</span>
+<span class="go"> ('EEF1B2', 138.0), ('MS4A1', 131.0), ('CST7', 129.0), ('EEF1A1', 115.0)]</span>
 </pre></div>
 </div>
 <p>That is a reassuring list: T cell identity (<code class="docutils literal notranslate"><span class="pre">CD3D</span></code>, <code class="docutils literal notranslate"><span class="pre">CD3E</span></code>, <code class="docutils literal notranslate"><span class="pre">IL7R</span></code>, <code class="docutils literal notranslate"><span class="pre">LTB</span></code>), B
@@ -498,16 +513,16 @@ unzip<span class="w"> </span>ReactomePathways.gmt.zip
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Counter</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">name</span><span class="p">,</span> <span class="n">gene2path</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;ReactomePathways.gmt&quot;</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">f</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"ReactomePathways.gmt"</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">f</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">name</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">gene2path</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parent</span><span class="p">,</span> <span class="n">children</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">),</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;ReactomePathwaysRelation.txt&quot;</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">p</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;R-HSA&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;R-HSA&quot;</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"ReactomePathwaysRelation.txt"</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">p</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"R-HSA"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"R-HSA"</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">parent</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="n">children</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
@@ -556,12 +571,12 @@ than dumping half the network into a colored bucket called “Other”:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">top12</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">groups_all</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">12</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">groups</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">groups_all</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">top12</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Counter</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span>
-<span class="go">[(&#39;Immune System&#39;, 403), (&#39;Signal Transduction&#39;, 366),</span>
-<span class="go"> (&#39;Gene expression (Transcription)&#39;, 338), (&#39;Metabolism&#39;, 335),</span>
-<span class="go"> (&#39;Metabolism of proteins&#39;, 179), (&#39;Disease&#39;, 154), (&#39;Cell Cycle&#39;, 142),</span>
-<span class="go"> (&#39;Metabolism of RNA&#39;, 125), (&#39;Vesicle-mediated transport&#39;, 76),</span>
-<span class="go"> (&#39;Transport of small molecules&#39;, 70), (&#39;DNA Repair&#39;, 66),</span>
-<span class="go"> (&#39;Developmental Biology&#39;, 64)]</span>
+<span class="go">[('Immune System', 403), ('Signal Transduction', 366),</span>
+<span class="go"> ('Gene expression (Transcription)', 338), ('Metabolism', 335),</span>
+<span class="go"> ('Metabolism of proteins', 179), ('Disease', 154), ('Cell Cycle', 142),</span>
+<span class="go"> ('Metabolism of RNA', 125), ('Vesicle-mediated transport', 76),</span>
+<span class="go"> ('Transport of small molecules', 70), ('DNA Repair', 66),</span>
+<span class="go"> ('Developmental Biology', 64)]</span>
 </pre></div>
 </div>
 <section id="give-the-pathways-fixed-meaningful-colors">
@@ -576,26 +591,26 @@ related pathways read as related — the two genome-maintenance groups are both
 violet, the three metabolism groups are all green, and so on:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PATHWAY_COLORS</span> <span class="o">=</span> <span class="p">{</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># defense and pathology</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Immune System&#39;</span><span class="p">:</span>                   <span class="s1">&#39;#e34948&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Disease&#39;</span><span class="p">:</span>                         <span class="s1">&#39;#ff756f&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Immune System'</span><span class="p">:</span>                   <span class="s1">'#e34948'</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Disease'</span><span class="p">:</span>                         <span class="s1">'#ff756f'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># stress / alert</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Cellular responses to stimuli&#39;</span><span class="p">:</span>   <span class="s1">&#39;#eda100&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Cellular responses to stimuli'</span><span class="p">:</span>   <span class="s1">'#eda100'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># genome maintenance</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Cell Cycle&#39;</span><span class="p">:</span>                      <span class="s1">&#39;#4a3aa7&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;DNA Repair&#39;</span><span class="p">:</span>                      <span class="s1">&#39;#918bff&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Cell Cycle'</span><span class="p">:</span>                      <span class="s1">'#4a3aa7'</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'DNA Repair'</span><span class="p">:</span>                      <span class="s1">'#918bff'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># metabolism</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Metabolism&#39;</span><span class="p">:</span>                      <span class="s1">&#39;#008300&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Metabolism of proteins&#39;</span><span class="p">:</span>          <span class="s1">&#39;#36a231&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Metabolism of RNA&#39;</span><span class="p">:</span>               <span class="s1">&#39;#56bf50&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Metabolism'</span><span class="p">:</span>                      <span class="s1">'#008300'</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Metabolism of proteins'</span><span class="p">:</span>          <span class="s1">'#36a231'</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Metabolism of RNA'</span><span class="p">:</span>               <span class="s1">'#56bf50'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># information flow</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Gene expression (Transcription)&#39;</span><span class="p">:</span> <span class="s1">&#39;#2a78d6&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Gene expression (Transcription)'</span><span class="p">:</span> <span class="s1">'#2a78d6'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># signaling</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Signal Transduction&#39;</span><span class="p">:</span>             <span class="s1">&#39;#e87ba4&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Signal Transduction'</span><span class="p">:</span>             <span class="s1">'#e87ba4'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># trafficking</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Vesicle-mediated transport&#39;</span><span class="p">:</span>      <span class="s1">&#39;#eb6834&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Transport of small molecules&#39;</span><span class="p">:</span>    <span class="s1">&#39;#ff8552&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Vesicle-mediated transport'</span><span class="p">:</span>      <span class="s1">'#eb6834'</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Transport of small molecules'</span><span class="p">:</span>    <span class="s1">'#ff8552'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># development</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">&#39;Developmental Biology&#39;</span><span class="p">:</span>           <span class="s1">&#39;#1baf7a&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="s1">'Developmental Biology'</span><span class="p">:</span>           <span class="s1">'#1baf7a'</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">GROUP_ORDER</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">PATHWAY_COLORS</span><span class="p">)</span>   <span class="c1"># union across every figure below</span>
 </pre></div>
@@ -635,17 +650,17 @@ the middle of the distribution across the size channel:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lightgraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">net_vis</span><span class="p">,</span> <span class="n">pagerank</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span> <span class="o">=</span> <span class="n">pagerank</span><span class="p">(</span><span class="n">edges</span><span class="p">[[</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span> <span class="o">=</span> <span class="n">pagerank</span><span class="p">(</span><span class="n">edges</span><span class="p">[[</span><span class="s2">"source"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"weight"</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">centrality</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pr</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">net_vis</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">edges</span><span class="o">=</span><span class="n">edges</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_metric</span><span class="o">=</span><span class="n">centrality</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_map</span><span class="o">=</span><span class="s2">&quot;size&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_label</span><span class="o">=</span><span class="s2">&quot;PageRank (log)&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_map</span><span class="o">=</span><span class="s2">"size"</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_label</span><span class="o">=</span><span class="s2">"PageRank (log)"</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">metric_size_range</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#e0e0e0&quot;</span><span class="p">,</span>            <span class="c1"># unannotated genes</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">node_color</span><span class="o">=</span><span class="s2">"#e0e0e0"</span><span class="p">,</span>            <span class="c1"># unannotated genes</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">edge_weight_to_opacity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">weight_opacity_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">simulation_strength</span><span class="o">=</span><span class="mi">12000</span><span class="p">,</span>
@@ -654,10 +669,10 @@ the middle of the distribution across the size channel:</p>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">show_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">show_ellipses</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">show_statistics</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">height</span><span class="o">=</span><span class="s2">&quot;720px&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">height</span><span class="o">=</span><span class="s2">"720px"</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">**</span><span class="n">COMMON</span><span class="p">,</span>                        <span class="c1"># pinned pathway colors</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;grn_pbmc_full.html&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"grn_pbmc_full.html"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>With 10,000 edges behind 5,000 sizeable nodes, the edge layer has to get out of
@@ -987,10 +1002,10 @@ can check gene by gene, use <code class="docutils literal notranslate"><span cla
 2.5-hop neighborhood around genes you name. Let us take the two B cell hubs
 from the degree ranking:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">grn</span><span class="o">.</span><span class="n">visualize_local_neighborhood</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="s2">&quot;MS4A1&quot;</span><span class="p">,</span> <span class="s2">&quot;CD79A&quot;</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;640px&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="s2">"MS4A1"</span><span class="p">,</span> <span class="s2">"CD79A"</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">node_group_dict</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">"640px"</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">**</span><span class="n">COMMON</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;grn_pbmc_bcell.html&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"grn_pbmc_bcell.html"</span><span class="p">)</span>
 </pre></div>
 </div>
 <iframe src="_static/grn_pbmc_bcell.html" width="100%" height="660" style="border:1px solid #ddd;"></iframe>
@@ -1031,11 +1046,11 @@ from the T/B axis as this dataset goes. The pipeline is identical, with two
 changes: highly variable genes are re-selected <em>within</em> monocytes, so they
 capture variation across monocyte states rather than between lineages, and
 there is no cell type covariate left to condition on.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">open_soma</span><span class="p">(</span><span class="n">census_version</span><span class="o">=</span><span class="s2">&quot;2023-12-15&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">census</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">open_soma</span><span class="p">(</span><span class="n">census_version</span><span class="o">=</span><span class="s2">"2023-12-15"</span><span class="p">)</span> <span class="k">as</span> <span class="n">census</span><span class="p">:</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">mono</span> <span class="o">=</span> <span class="n">cellxgene_census</span><span class="o">.</span><span class="n">get_anndata</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">census</span><span class="p">,</span> <span class="n">organism</span><span class="o">=</span><span class="s2">&quot;Homo sapiens&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_value_filter</span><span class="o">=</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dataset_id == &#39;</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">&#39; and is_primary_data == True &quot;</span>
-<span class="gp">&gt;&gt;&gt; </span>                          <span class="s2">&quot;and cell_type == &#39;CD14-positive monocyte&#39;&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">census</span><span class="p">,</span> <span class="n">organism</span><span class="o">=</span><span class="s2">"Homo sapiens"</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">obs_value_filter</span><span class="o">=</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dataset_id == '</span><span class="si">{</span><span class="n">DATASET_ID</span><span class="si">}</span><span class="s2">' and is_primary_data == True "</span>
+<span class="gp">&gt;&gt;&gt; </span>                          <span class="s2">"and cell_type == 'CD14-positive monocyte'"</span><span class="p">),</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># ...same gene filtering, normalization and HVG selection as Step 1...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span><span class="n">X_mono</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>   <span class="c1"># no cell_types</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>regdiffusion.models.regdiffusion &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>regdiffusion.models.regdiffusion &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -36,17 +36,31 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="../../../_static/documentation_options.js?v=6808a718"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/regdiffusion/models/regdiffusion';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/_modules/regdiffusion/models/regdiffusion.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="regdiffusion.models.regdiffusion — RegDiffusion gene regulatory network inference documentation.">
+<meta property="og:title" content="regdiffusion.models.regdiffusion">
+<meta property="og:description" content="regdiffusion.models.regdiffusion — RegDiffusion gene regulatory network inference documentation.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/_modules/regdiffusion/models/regdiffusion.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -138,8 +152,8 @@
       
     
     
-    <img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -162,6 +176,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -312,7 +327,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 
-<span class="n">torch</span><span class="o">.</span><span class="n">set_float32_matmul_precision</span><span class="p">(</span><span class="s1">&#39;high&#39;</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">set_float32_matmul_precision</span><span class="p">(</span><span class="s1">'high'</span><span class="p">)</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">SinusoidalPositionEmbeddings</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
@@ -363,7 +378,7 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusion">
 <a class="viewcode-back" href="../../../_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RegDiffusion</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A RegDiffusion model. For architecture details, please refer to our paper.</span>
 
 <span class="sd">    From noise to knowledge: probabilistic diffusion-based neural inference</span>
@@ -382,7 +397,7 @@ document.write(`
 <span class="sd">            during training. Default: 0.3.</span>
 <span class="sd">        init_coef (int): Coefficient to multiply with gene regulation norm</span>
 <span class="sd">            (1/(n_gene - 1)) to initialize the adjacency matrix. Default: 5.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">n_gene</span><span class="p">,</span> <span class="n">time_dim</span><span class="p">,</span> 
         <span class="n">n_celltype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">celltype_dim</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> 
@@ -404,10 +419,10 @@ document.write(`
         <span class="c1"># keys (the `_nonparam` suffix is vestigial, kept for checkpoint</span>
         <span class="c1"># compatibility).</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span>
-            <span class="s1">&#39;sampled_adj_row_nonparam&#39;</span><span class="p">,</span>
+            <span class="s1">'sampled_adj_row_nonparam'</span><span class="p">,</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_gene</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10000</span><span class="p">,)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span>
-            <span class="s1">&#39;sampled_adj_col_nonparam&#39;</span><span class="p">,</span>
+            <span class="s1">'sampled_adj_col_nonparam'</span><span class="p">,</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_gene</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10000</span><span class="p">,)))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">time_mlp</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
@@ -458,7 +473,7 @@ document.write(`
 <div class="viewcode-block" id="RegDiffusion.get_sparse_loss">
 <a class="viewcode-back" href="../../../_autosummary/regdiffusion.models.RegDiffusion.html#regdiffusion.models.RegDiffusion.get_sparse_loss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_sparse_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;L1 sparsity penalty: mean absolute value of the off-diagonal,</span>
+<span class="w">        </span><span class="sd">"""L1 sparsity penalty: mean absolute value of the off-diagonal,</span>
 <span class="sd">        soft-thresholded adjacency entries.</span>
 
 <span class="sd">        ``abs`` is required. Soft thresholding preserves sign, so a plain mean</span>
@@ -473,7 +488,7 @@ document.write(`
 <span class="sd">        The mean is taken over the n*(n-1) off-diagonal entries, since</span>
 <span class="sd">        ``get_adj_`` masks the diagonal to zero, so this agrees with</span>
 <span class="sd">        ``RegDiffusionME.get_sparse_loss``, its sampled approximation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_gene</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_adj_</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span></div>
 
@@ -506,7 +521,7 @@ document.write(`
             <span class="n">h_x</span> <span class="o">=</span> <span class="n">block</span><span class="p">(</span><span class="n">h_x</span><span class="p">,</span> <span class="n">h_time</span><span class="p">,</span> <span class="n">h_celltype</span><span class="p">)</span>
         
         <span class="n">I_minus_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">I_minus_A</span><span class="p">()</span>
-        <span class="n">hz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ogd,gh-&gt;ohd&#39;</span><span class="p">,</span> <span class="n">h_x</span><span class="p">,</span> <span class="n">I_minus_A</span><span class="p">)</span>
+        <span class="n">hz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">'ogd,gh-&gt;ohd'</span><span class="p">,</span> <span class="n">h_x</span><span class="p">,</span> <span class="n">I_minus_A</span><span class="p">)</span>
         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final</span><span class="p">(</span><span class="n">hz</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">z</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RegDiffusion &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>RegDiffusion: Gene Regulatory Network Inference &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -37,18 +37,34 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/documentation_options.js?v=6808a718"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/index.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Get Started" href="quick_tour.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="Infer gene regulatory networks from single-cell RNA-seq with RegDiffusion, an open-source Python package using diffusion models. Tutorials, API, and paper.">
+<meta property="og:title" content="RegDiffusion: Gene Regulatory Network Inference">
+<meta property="og:description" content="Infer gene regulatory networks from single-cell RNA-seq with RegDiffusion, an open-source Python package using diffusion models. Tutorials, API, and paper.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/index.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareSourceCode", "author": [{"@type": "Person", "name": "Hao Zhu"}, {"@type": "Person", "name": "Donna Slonim"}], "citation": {"@type": "ScholarlyArticle", "identifier": "10.1089/cmb.2024.0607", "name": "From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks", "url": "https://doi.org/10.1089/cmb.2024.0607"}, "codeRepository": "https://github.com/TuftsBCB/RegDiffusion", "description": "Gene regulatory network inference from single-cell RNA-seq using diffusion models", "downloadUrl": "https://pypi.org/project/regdiffusion/", "license": "https://www.apache.org/licenses/LICENSE-2.0", "name": "RegDiffusion", "programmingLanguage": "Python", "url": "https://tuftsbcb.github.io/RegDiffusion/", "version": "0.2.3"}</script>
+
+
   </head>
   
   
@@ -140,8 +156,8 @@
       
     
     
-    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -164,6 +180,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -340,7 +357,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>RegDiffusion</h1>
+    <h1>RegDiffusion: Gene Regulatory Network Inference</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -369,18 +386,25 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="regdiffusion">
-<h1>RegDiffusion<a class="headerlink" href="#regdiffusion" title="Link to this heading">#</a></h1>
-<p>RegDiffusion is a very fast regulatory network inference algorithm based on
-probabilistic diffusion model. It works well on genes and is capable to rapidly
-predict biologically verifiable links from large single cell RNA-seq data with
-10,000+ genes.</p>
+  <section id="regdiffusion-gene-regulatory-network-inference">
+<h1>RegDiffusion: Gene Regulatory Network Inference<a class="headerlink" href="#regdiffusion-gene-regulatory-network-inference" title="Link to this heading">#</a></h1>
+<p>RegDiffusion is an open-source Python package for <strong>gene regulatory network
+(GRN) inference from single-cell RNA-seq data</strong> using probabilistic diffusion
+models. It learns candidate regulatory relationships from gene expression data
+without requiring a ground-truth network for training, and includes tools to
+evaluate, export, and visualize inferred networks.</p>
+<p>Start with the <a class="reference internal" href="quick_tour.html"><span class="doc">Get Started</span></a>, explore <a class="reference internal" href="large_networks.html"><span class="doc">Working with Large Gene Networks</span></a>, or use inferred
+edges for <a class="reference internal" href="downstream_with_pyscenic.html"><span class="doc">Fast SCENIC GRN Analysis with RegDiffusion</span></a>. The <a class="reference internal" href="faq.html"><span class="doc">RegDiffusion FAQ: single-cell gene regulatory network inference</span></a> explains input formats,
+hardware requirements, and how to interpret the results.</p>
+<p><a class="reference external" href="https://github.com/TuftsBCB/RegDiffusion">Source code</a> ·
+<a class="reference external" href="https://pypi.org/project/regdiffusion/">PyPI package</a> ·
+<a class="reference external" href="https://doi.org/10.1089/cmb.2024.0607">Research paper</a></p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> is available on pypi:</p>
-<blockquote>
-<div><p>pip install regdiffusion</p>
-</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">regdiffusion</span></code> is available on PyPI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>regdiffusion
+</pre></div>
+</div>
 </section>
 <section id="quick-tour">
 <h2>Quick Tour<a class="headerlink" href="#quick-tour" title="Link to this heading">#</a></h2>
@@ -393,7 +417,8 @@ consists of 4 components: the <code class="docutils literal notranslate"><span c
 <code class="docutils literal notranslate"><span class="pre">GRNEvaluator</span></code> class, and the <code class="docutils literal notranslate"><span class="pre">data</span></code> module.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">RegDiffusionTrainer</span></code>: You can use it to train a <code class="docutils literal notranslate"><span class="pre">RegDiffusion</span></code> model by
-providing log transformed expression data in a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array. The training
+providing log-transformed expression data in a NumPy array or SciPy sparse
+matrix, with cells as rows and genes as columns. The training
 process could be either started or continued using the <code class="docutils literal notranslate"><span class="pre">.train()</span></code> method. You
 can export the inferred <code class="docutils literal notranslate"><span class="pre">GRN</span></code> using the <code class="docutils literal notranslate"><span class="pre">.get_grn()</span></code> method.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">GRN</span></code>: The <code class="docutils literal notranslate"><span class="pre">GRN</span></code> class provides a container to save the inferred adjacency
@@ -425,22 +450,27 @@ benchmarks and our preprocessed single cell datasets on mouse microglia.</p></li
 it’s getting difficult to analyze matrix at that scale. In our paper, we
 propose a way to analyze the local network by focusing on the genes you care
 the most. Check out the tutorials on the left side for how to perform a similar
-network analysis like the one we did in the paper. We are also working on an
-interactive tool to analyze saved GRN object.</p>
+network analysis like the one we did in the paper. The <a class="reference internal" href="visualizing_grn.html"><span class="doc">Visualizing Inferred GRN</span></a>
+tutorial demonstrates interactive network exploration with <code class="docutils literal notranslate"><span class="pre">lightgraph</span></code>.</p>
 <a class="reference internal image-reference" href="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_net.png?raw=true"><img alt="Inferred network around ApoE" src="https://github.com/TuftsBCB/RegDiffusion/blob/master/resources/apoe_net.png?raw=true" style="width: 700px;" />
 </a>
 </section>
 <section id="inference-speed">
 <h2>Inference Speed<a class="headerlink" href="#inference-speed" title="Link to this heading">#</a></h2>
-<p>Inference on networks with 15,000 genes takes under 5 minutes on an A100 GPU.
-In contrast, previous VAE based models would take more than 4 hours on the same
-device. Even if you don’t have access to those fancy GPU cards, RegDiffusion
-still works. Inference on the same large network takes roughly 3 hours on a
-mid-range 12-core CPU.</p>
+<p>The project reports inference on a 15,000-gene network in under five minutes on
+an NVIDIA A100 GPU, or roughly three hours on a 12-core CPU. Runtime depends on
+dataset size, hardware, and training settings. See <a class="reference internal" href="large_networks.html"><span class="doc">Working with Large Gene Networks</span></a> for
+memory benchmarks and the <a class="reference internal" href="quick_tour.html"><span class="doc">Get Started</span></a> for a worked inference example.</p>
 </section>
 <section id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Link to this heading">#</a></h2>
-<p>Please consider cite our work if you found it useful for your work.</p>
+<p>If you use RegDiffusion, please cite:</p>
+<p>Zhu H, Slonim D. <strong>From Noise to Knowledge: Diffusion Probabilistic Model-Based
+Neural Inference of Gene Regulatory Networks.</strong> <em>Journal of Computational
+Biology</em>. 2024;31(11):1087–1103.
+<a class="reference external" href="https://doi.org/10.1089/cmb.2024.0607">doi:10.1089/cmb.2024.0607</a>.</p>
+<p>The paper describes the method and evaluation. Inferred edges are hypotheses
+for follow-up analysis, not experimental proof of regulation.</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">

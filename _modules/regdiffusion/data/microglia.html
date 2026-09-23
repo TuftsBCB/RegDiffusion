@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>regdiffusion.data.microglia &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>regdiffusion.data.microglia &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -36,17 +36,31 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="../../../_static/documentation_options.js?v=6808a718"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/regdiffusion/data/microglia';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/_modules/regdiffusion/data/microglia.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="regdiffusion.data.microglia — RegDiffusion gene regulatory network inference documentation.">
+<meta property="og:title" content="regdiffusion.data.microglia">
+<meta property="og:description" content="regdiffusion.data.microglia — RegDiffusion gene regulatory network inference documentation.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/_modules/regdiffusion/data/microglia.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -138,8 +152,8 @@
       
     
     
-    <img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -162,6 +176,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../large_networks.html">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -314,8 +329,8 @@ document.write(`
 
 <div class="viewcode-block" id="load_atlas_microglia">
 <a class="viewcode-back" href="../../../_autosummary/regdiffusion.data.load_atlas_microglia.html#regdiffusion.data.load_atlas_microglia">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_atlas_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sc</span><span class="o">.</span><span class="n">AnnData</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_atlas_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sc</span><span class="o">.</span><span class="n">AnnData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load single cell for microglia from Broad Institute SCP795</span>
 
 <span class="sd">    Data Source: https://singlecell.broadinstitute.org/single_cell/study/SCP795/a-transcriptomic-atlas-of-the-mouse-cerebellum#study-summary</span>
@@ -335,21 +350,21 @@ document.write(`
 <span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
 <span class="sd">            does not exist, it will be created. Data will be saved in a</span>
 <span class="sd">            subdirectory under the provided path.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
-    <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/scp795_microglia/&#39;</span>
+    <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/scp795_microglia/'</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
-        <span class="n">download_regdiffusion_data</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">&#39;atlas_microglia.zip&#39;</span><span class="p">)</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_dir</span><span class="si">}</span><span class="s1">scp795_microglia.h5ad&#39;</span><span class="p">)</span>
+        <span class="n">download_regdiffusion_data</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">'atlas_microglia.zip'</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">file_dir</span><span class="si">}</span><span class="s1">scp795_microglia.h5ad'</span><span class="p">)</span>
     <span class="n">ann_dt</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
     <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
     <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">filter_genes</span><span class="p">(</span><span class="n">ann_dt</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Gm&#39;</span><span class="p">)]</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mt&#39;</span><span class="p">)]</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rpl&#39;</span><span class="p">)]</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rps&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'Gm'</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'mt'</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'Rpl'</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'Rps'</span><span class="p">)]</span>
     <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">ann_dt</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">ann_dt</span></div>
@@ -357,8 +372,8 @@ document.write(`
 
 <div class="viewcode-block" id="load_hammond_microglia">
 <a class="viewcode-back" href="../../../_autosummary/regdiffusion.data.load_hammond_microglia.html#regdiffusion.data.load_hammond_microglia">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_hammond_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_hammond_microglia</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="s1">'data'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load single cell for microglia from Hammond Microglia dataset</span>
 
 <span class="sd">    Data Source: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE121654</span>
@@ -385,33 +400,33 @@ document.write(`
 <span class="sd">        data_dir (str): Parent directory to save and load the data. If the path</span>
 <span class="sd">            does not exist, it will be created. Data will be saved in a</span>
 <span class="sd">            subdirectory under the provided path.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
-    <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/hammond_microglia/&#39;</span>
+    <span class="n">file_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s1">/hammond_microglia/'</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
-        <span class="n">download_regdiffusion_data</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">&#39;hammond_microglia.zip&#39;</span><span class="p">)</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_dir</span><span class="si">}</span><span class="s1">/hammond_male_p100_microglia.csv&#39;</span><span class="p">)</span>
+        <span class="n">download_regdiffusion_data</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">'hammond_microglia.zip'</span><span class="p">)</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">file_dir</span><span class="si">}</span><span class="s1">/hammond_male_p100_microglia.csv'</span><span class="p">)</span>
     <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
     <span class="n">sc</span><span class="o">.</span><span class="n">pp</span><span class="o">.</span><span class="n">filter_genes</span><span class="p">(</span><span class="n">ann_dt</span><span class="p">,</span> <span class="n">min_counts</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Gm&#39;</span><span class="p">)]</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mt&#39;</span><span class="p">)]</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rpl&#39;</span><span class="p">)]</span>
-    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Rps&#39;</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'Gm'</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'mt'</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'Rpl'</span><span class="p">)]</span>
+    <span class="n">ann_dt</span> <span class="o">=</span> <span class="n">ann_dt</span><span class="p">[:,</span> <span class="o">~</span><span class="n">ann_dt</span><span class="o">.</span><span class="n">var_names</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'Rps'</span><span class="p">)]</span>
 
     <span class="k">return</span> <span class="n">ann_dt</span></div>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">download_regdiffusion_data</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">remove_zip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;save_dir does not exist&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"save_dir does not exist"</span><span class="p">)</span>
     <span class="n">zip_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
     <span class="n">download_file</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s1">&#39;https://bcb.cs.tufts.edu/regdiffusion/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> 
+        <span class="sa">f</span><span class="s1">'https://bcb.cs.tufts.edu/regdiffusion/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> 
         <span class="n">zip_path</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Extracting&#39;</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">(),</span> 
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_path</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s1">'Extracting'</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">(),</span> 
                          <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">zip_ref</span><span class="o">.</span><span class="n">namelist</span><span class="p">())):</span>
             <span class="n">zip_ref</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">member</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">remove_zip</span><span class="p">:</span>

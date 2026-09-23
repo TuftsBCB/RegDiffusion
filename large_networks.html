@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working with Large Gene Networks &#8212; regdiffusion 0.0.9 documentation</title>
+    <title>Working with Large Gene Networks &#8212; RegDiffusion Documentation</title>
   
   
   
@@ -37,19 +37,33 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=39f6cbd5"></script>
+    <script src="_static/documentation_options.js?v=6808a718"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=4ea706d9"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'large_networks';</script>
+    <link rel="canonical" href="https://tuftsbcb.github.io/RegDiffusion/large_networks.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Fast SCENIC GRN Analysis with RegDiffusion" href="downstream_with_pyscenic.html" />
     <link rel="prev" title="Visualizing Inferred GRN" href="visualizing_grn.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+
+<meta name="description" content="Scale RegDiffusion to large gene regulatory networks with memory-efficient training, sparse expression matrices, and GPU memory benchmarks.">
+<meta property="og:title" content="Working with Large Gene Networks">
+<meta property="og:description" content="Scale RegDiffusion to large gene regulatory networks with memory-efficient training, sparse expression matrices, and GPU memory benchmarks.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+<meta property="og:url" content="https://tuftsbcb.github.io/RegDiffusion/large_networks.html">
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+
+
   </head>
   
   
@@ -139,8 +153,8 @@
       
     
     
-    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="regdiffusion 0.0.9 documentation - Home"/>
-    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="regdiffusion 0.0.9 documentation - Home"/>`);</script>
+    <img src="_static/rd_logo_horizontal.png" class="logo__image only-light" alt="RegDiffusion Documentation - Home"/>
+    <script>document.write(`<img src="_static/rd_logo_horizontal.png" class="logo__image only-dark" alt="RegDiffusion Documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -163,6 +177,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visualizing_grn.html">Visualizing Inferred GRN</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Working with Large Gene Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="downstream_with_pyscenic.html">Fast SCENIC GRN Analysis with RegDiffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">RegDiffusion FAQ: single-cell gene regulatory network inference</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -379,7 +394,7 @@ document.write(`
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span>
     <span class="n">exp_array</span><span class="p">,</span>
     <span class="n">memory_efficient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span>
+    <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span>
 <span class="p">)</span>
 <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 </pre></div>
@@ -507,7 +522,7 @@ document.write(`
     <span class="n">exp_array</span><span class="p">,</span>
     <span class="n">memory_efficient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">use_amp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cuda&#39;</span>
+    <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span>
 <span class="p">)</span>
 <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 </pre></div>
@@ -535,7 +550,7 @@ document.write(`
 <p>If you don’t have access to a GPU with enough memory, RegDiffusion also runs on CPU. It will be slower (but still much faster than GRNBoost2) but has no memory constraint from GPU VRAM.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">RegDiffusionTrainer</span><span class="p">(</span>
     <span class="n">exp_array</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">,</span>
     <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>

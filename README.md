@@ -4,7 +4,18 @@
 [![Downloads](https://static.pepy.tech/badge/regdiffusion/month)](https://pepy.tech/project/regdiffusion)
 ![PyPI - Version](https://img.shields.io/pypi/v/regdiffusion)
 
-RegDiffusion is a very fast unsupervised regulatory network inference algorithm (just like GENIE3 and GRNBoost2), based on probabilistic diffusion model. It works well on genes and is capable to rapidly (<5min) predict biologically verifiable links from large single cell RNA-seq data with 40,000+ genes.
+RegDiffusion is an open-source Python package for **gene regulatory network (GRN) inference from single-cell RNA-seq data** using probabilistic diffusion models. It learns candidate regulatory relationships from gene expression data without requiring a ground-truth network for training, and includes tools to evaluate, export, and visualize inferred networks.
+
+[Documentation](https://tuftsbcb.github.io/RegDiffusion/) · [Quick start](https://tuftsbcb.github.io/RegDiffusion/quick_tour.html) · [FAQ](https://tuftsbcb.github.io/RegDiffusion/faq.html) · [PyPI](https://pypi.org/project/regdiffusion/) · [Paper](https://doi.org/10.1089/cmb.2024.0607)
+
+## What can RegDiffusion do?
+
+- Infer GRNs from a cells-by-genes expression matrix with GPU acceleration or on CPU.
+- Accept log-transformed NumPy arrays or SciPy sparse matrices through the Python API. The CLI accepts raw counts in CSV or H5AD files and performs the log transformation.
+- Work with large gene sets using [memory-efficient training](https://tuftsbcb.github.io/RegDiffusion/large_networks.html).
+- Export inferred edges for [downstream pySCENIC analysis](https://tuftsbcb.github.io/RegDiffusion/downstream_with_pyscenic.html).
+
+The project reports inference on a 15,000-gene network in under five minutes on an NVIDIA A100 GPU. Runtime and memory use depend on dataset size, hardware, and training settings; see the [large-network guide](https://tuftsbcb.github.io/RegDiffusion/large_networks.html) for memory benchmarks. Inferred edges are hypotheses for follow-up analysis, not experimental proof of regulation.
 
 ```
 Zhu H, Slonim D. From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks. J Comput Biol. 2024 Nov;31(11):1087-1103. doi: 10.1089/cmb.2024.0607. Epub 2024 Oct 10. PMID: 39387266; PMCID: PMC11698671.
@@ -27,14 +38,14 @@ Check out [this tutorial](https://tuftsbcb.github.io/RegDiffusion/quick_tour.htm
 ## Inferred Networks from RegDiffusion
 Here are two examples of inferred networks from regdiffusion. The networks are coherent with existing literature and across datasets. 
 
-![](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/apoe_net.png)
+![Inferred gene regulatory networks around APOE](https://raw.githubusercontent.com/TuftsBCB/RegDiffusion/master/resources/apoe_net.png)
 
 ## Inference Speed
-Inference on networks with 15,000 genes takes under 5 minutes on an A100 GPU. 
-In contrast, previous VAE based models would take more than 4 hours on the same 
-device. Even if you don't have access to those fancy GPU cards, RegDiffusion 
-still works. Inference on the same large network takes roughly 3 hours on a 
-mid-range 12-core CPU. 
+The project reports inference on a 15,000-gene network in under five minutes on
+an NVIDIA A100 GPU, or roughly three hours on a 12-core CPU. These timings depend
+on the dataset and training settings. See the [paper](https://doi.org/10.1089/cmb.2024.0607)
+for the method's evaluation and the [large-network guide](https://tuftsbcb.github.io/RegDiffusion/large_networks.html)
+for memory benchmarks.
 
 ## CLI tool
 regdiffusion has a CLI tool now! It takes a count matrix as the input (different from the main API, which needs the data to be log transformed) and returns a table of inferred edges. 
@@ -69,6 +80,7 @@ If you find our package useful, consider citing our paper! =)
   number={11},
   pages={1087--1103},
   year={2024},
-  publisher={Mary Ann Liebert, Inc., publishers 140 Huguenot Street, 3rd Floor New~…}
+  doi={10.1089/cmb.2024.0607},
+  url={https://doi.org/10.1089/cmb.2024.0607}
 }
 ```

@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use RegDiffusion, please cite the paper listed below."
+type: software
+title: RegDiffusion
+abstract: "Gene regulatory network inference from single-cell RNA-seq using probabilistic diffusion models."
+authors:
+  - family-names: Zhu
+    given-names: Hao
+  - family-names: Slonim
+    given-names: Donna
+repository-code: "https://github.com/TuftsBCB/RegDiffusion"
+url: "https://tuftsbcb.github.io/RegDiffusion/"
+license: Apache-2.0
+keywords:
+  - gene regulatory network
+  - single-cell RNA-seq
+  - diffusion model
+preferred-citation:
+  type: article
+  title: "From Noise to Knowledge: Diffusion Probabilistic Model-Based Neural Inference of Gene Regulatory Networks"
+  authors:
+    - family-names: Zhu
+      given-names: Hao
+    - family-names: Slonim
+      given-names: Donna
+  journal: Journal of Computational Biology
+  year: 2024
+  volume: 31
+  issue: 11
+  start: 1087
+  end: 1103
+  doi: "10.1089/cmb.2024.0607"

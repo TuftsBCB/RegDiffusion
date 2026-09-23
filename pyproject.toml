@@ -14,7 +14,8 @@ maintainers = [
 readme = "README.md"
 license = {file = "LICENSE"}
 version = "0.2.3"
-description = "Gene Regulatory Networks Inference using diffusion model"
+description = "Gene regulatory network inference from single-cell RNA-seq using diffusion models"
+keywords = ["gene regulatory network", "GRN inference", "single-cell RNA-seq", "diffusion model", "bioinformatics"]
 
 classifiers = ["License :: OSI Approved :: Apache Software License"]
 
@@ -31,6 +32,10 @@ dependencies = [
 
 [project.urls]
 Home = "https://github.com/TuftsBCB/RegDiffusion"
+Documentation = "https://tuftsbcb.github.io/RegDiffusion/"
+Source = "https://github.com/TuftsBCB/RegDiffusion"
+Issues = "https://github.com/TuftsBCB/RegDiffusion/issues"
+Publication = "https://doi.org/10.1089/cmb.2024.0607"
 
 [project.scripts]
 regdiffusion = "regdiffusion.cli:main"

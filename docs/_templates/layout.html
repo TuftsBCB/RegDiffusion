@@ -1,0 +1,18 @@
+{% extends "!layout.html" %}
+
+{% block extrahead %}
+{{ super() }}
+{% set description = page_descriptions.get(pagename, (title | striptags) ~ ' — RegDiffusion gene regulatory network inference documentation.') %}
+<meta name="description" content="{{ description | e }}">
+<meta property="og:title" content="{{ title | striptags | e }}">
+<meta property="og:description" content="{{ description | e }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RegDiffusion">
+{% if pageurl %}<meta property="og:url" content="{{ pageurl | e }}">{% endif %}
+<meta property="og:image" content="https://tuftsbcb.github.io/RegDiffusion/_static/rd_logo_horizontal.png">
+<meta property="og:image:alt" content="RegDiffusion logo">
+<meta name="twitter:card" content="summary">
+{% if pagename == 'index' %}
+<script type="application/ld+json">{{ software_schema | tojson }}</script>
+{% endif %}
+{% endblock %}

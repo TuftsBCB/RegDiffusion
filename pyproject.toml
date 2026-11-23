@@ -13,7 +13,7 @@ maintainers = [
 ]
 readme = "README.md"
 license = {file = "LICENSE"}
-version = "0.2.3"
+version = "0.2.4"
 description = "Gene regulatory network inference from single-cell RNA-seq using diffusion models"
 keywords = ["gene regulatory network", "GRN inference", "single-cell RNA-seq", "diffusion model", "bioinformatics"]
 

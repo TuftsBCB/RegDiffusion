@@ -1,6 +1,26 @@
 # RegDiffusion News / Changelog
 
-## 0.2.3 [unreleased]
+## 0.2.4 [unreleased]
+
+### New Features
+- Replaced the `pyvis` visualization backend and dependency with `lightgraph>=1.2.0`. `GRN.visualize_local_neighborhood()` now uses `lightgraph`, and `regdiffusion.plot.plot_lightgraph()` supports notebook display and standalone HTML export via `.save(path)`.
+- Added automatic community grouping, node-size mapping from metrics, force and circular layouts, and edge-width or opacity scaling by absolute regulatory strength. Duplicate edges in visualizations are collapsed to the strongest copy.
+
+### API Changes
+- Removed `plot_pyvis()` and support for `plot_engine='pyvis'`. Use `plot_lightgraph()` or the default `GRN.visualize_local_neighborhood()` instead; plotting calls now return a `lightgraph.NetworkVisualization` object.
+- Deprecated `edge_widths` in `GRN.visualize_local_neighborhood()`. It is ignored with a deprecation warning; edge widths now reflect absolute regulatory strength rather than hop level.
+
+### Bug Fixes
+- Excluded zero-weight edges from `GRN.extract_edgelist()`, preventing removed edges from reappearing during top-k extraction.
+- Fixed sparse HDF5 export of float16 adjacency matrices by converting to float32 before constructing the SciPy sparse matrix.
+- Decoded gene and transcription-factor names as strings when reading HDF5 files, so they can be matched directly to annotations.
+
+### Documentation
+- Added a human PBMC network visualization tutorial with Reactome pathway annotations and interactive whole-network and local views, and updated the quick tour for `lightgraph`.
+- Added an FAQ and citation metadata, improved package and documentation metadata, and made the documentation version follow `pyproject.toml`.
+
+
+## 0.2.3
 
 ### New Features
 - Added a `seed` argument to `RegDiffusionTrainer` for fully reproducible runs. When set, Python, NumPy, and PyTorch RNGs are seeded and cuDNN is put in deterministic mode. Two runs with the same seed now produce bit-identical adjacency matrices, verified across separate processes and under AMP, `torch.compile`, gradient accumulation, and `train_split < 1.0`. Without a seed (the default), runs remain non-deterministic.

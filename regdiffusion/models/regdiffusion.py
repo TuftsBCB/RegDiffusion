@@ -194,7 +194,11 @@ class RegDiffusion(nn.Module):
             h_x = block(h_x, h_time, h_celltype)
         
         I_minus_A = self.I_minus_A()
-        hz = torch.einsum('ogd,gh->ohd', h_x, I_minus_A)
-        z = self.final(hz)
-        
-        return z.squeeze(-1)
+        # Project before gene mixing: (M.T @ H) @ w == M.T @ (H @ w).
+        # Keep the bias after mixing so it is not multiplied by I_minus_A.
+        projected = F.linear(h_x, self.final.weight, bias=None).squeeze(-1)
+        z = projected @ I_minus_A
+        if self.final.bias is not None:
+            # Preserve the linear output dtype under mixed precision.
+            z = z + self.final.bias.to(dtype=z.dtype)
+        return z

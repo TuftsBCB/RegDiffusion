@@ -1,6 +1,19 @@
 # RegDiffusion News / Changelog
 
-## 0.2.4 [unreleased]
+## 0.2.5 [unreleased]
+
+### Performance
+- Optimized both `RegDiffusion` and `RegDiffusionME` by applying the final feature projection before gene mixing. This algebraically equivalent ordering reduces the gene-mixing feature width from 15 to 1 with the default architecture, reducing forward and backward matrix multiplication work on all backends. The bias is still added after mixing, and existing parameter names, checkpoint shapes, and output shapes are preserved. Floating-point results need not be bit-identical.
+- On an Apple M1 with PyTorch 2.15.0, FP32 hESC profiling (1,410 genes, batch size 128) reduced mean training-step time from 136.3 ms to 107.0 ms across three warmed runs, about 21.5% less time. A full 1,000-step hESC run retained effectively unchanged AUROC/AUPRR and identical EPR. CUDA speedups have not yet been measured.
+
+### New Features
+- Re-enabled explicit Apple silicon GPU training with `device='mps'`, replacing the blanket rejection with an MPS availability check. Added CPU/MPS numerical and training regression tests and reproducible BEELINE and MPS profiling scripts. Verified FP32 training on all seven `1000_STRING` datasets before the projection optimization on PyTorch 2.15.0 / macOS 26.2; see the FAQ for the comparison settings and limits.
+
+### Bug Fixes
+- Fixed AMP device selection for MPS so `use_amp=True` uses MPS bfloat16 autocast instead of a CPU autocast context. FP32 training does not require autocast support. Device selection now also accepts `torch.device` objects as documented.
+
+
+## 0.2.4
 
 ### New Features
 - Replaced the `pyvis` visualization backend and dependency with `lightgraph>=1.2.0`. `GRN.visualize_local_neighborhood()` now uses `lightgraph`, and `regdiffusion.plot.plot_lightgraph()` supports notebook display and standalone HTML export via `.save(path)`.

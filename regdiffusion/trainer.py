@@ -15,6 +15,7 @@ from .logger import LightLogger
 import matplotlib.pyplot as plt
 import warnings
 import random
+from contextlib import nullcontext
 
 def set_seed(seed):
     """Set random seeds for reproducibility across PyTorch, NumPy, and CUDA."""
@@ -125,14 +126,15 @@ class RegDiffusionTrainer:
         train_split (float): Train partition. Default: 1.0.
         train_split_seed (int): Random seed for train/val partition. 
             Default: 123
-        device (str or torch.device): Device where the model is running. For 
-            example, "cpu", "cuda", "cuda:1", and etc. You are not recommended 
-            to run this model on Apple's MPS chips. Default is "cuda" but if 
-            you only has CPU, it will switch back to CPU.
+        device (str or torch.device): Device where the model is running, such
+            as "cpu", "cuda", "cuda:1", or "mps" for Apple silicon.
+            MPS must be selected explicitly and available in PyTorch.
+            Default is "cuda", falling back to CPU when CUDA is unavailable.
         compile (boolean): Whether to compile the model before training. 
             Compile the model is a good idea on large dataset and often improves
             inference speed when it works. For smaller dataset, eager execution
-            is often good enough.
+            is often good enough. Compilation is only enabled on CUDA;
+            MPS uses eager execution.
         evaluator (GRNEvaluator): (Optional) A defined GRNEvaluator if ground 
             truth data is available. Evaluation will be done every 100 steps by 
             default but you can change this setting through the eval_on_n_steps 
@@ -149,7 +151,8 @@ class RegDiffusionTrainer:
         use_amp (bool): Whether to use automatic mixed precision (bfloat16)
             during training at the cost of 2x training time. This is usually
             not recommended unless the last slice of memory is a bottleneck.
-            Requires a GPU with bfloat16 support (Ampere or newer).
+            Requires bfloat16 autocast support on the selected device (for
+            example, NVIDIA Ampere or newer, or a supported MPS/PyTorch setup).
             Default: False.
         memory_efficient (bool): Whether to use the memory-efficient model
             variant (RegDiffusionME). This uses a custom autograd function
@@ -188,9 +191,19 @@ class RegDiffusionTrainer:
         if seed is not None:
             self._sampler_generator.manual_seed(seed)
 
-        if device == 'mps':
-            raise Exception("We noticed unreliable training behavior on", 
-                            "Apple's silicon. Consider using other devices.")
+        device = str(torch.device(device))
+        if torch.device(device).type == 'mps':
+            if not torch.backends.mps.is_available():
+                raise RuntimeError(
+                    "MPS was requested but is not available. Check your "
+                    "PyTorch installation and Mac GPU support, or use device='cpu'."
+                )
+            if compile:
+                warnings.warn(
+                    "compile=True is only supported on CUDA; "
+                    "MPS will use eager execution.",
+                    stacklevel=2,
+                )
         elif device.startswith('cuda'):
             if not torch.cuda.is_available():
                 print(
@@ -280,7 +293,14 @@ class RegDiffusionTrainer:
 
         # AMP setup
         self.use_amp = use_amp
-        self.amp_device_type = 'cuda' if device.startswith('cuda') else 'cpu'
+        self.amp_device_type = torch.device(device).type
+
+    def _autocast_context(self):
+        # Avoid requiring backend autocast support for ordinary FP32 training.
+        if not self.use_amp:
+            return nullcontext()
+        return torch.autocast(
+            device_type=self.amp_device_type, dtype=torch.bfloat16)
 
 
     def _prepare_dense_data(self, exp_array, cell_types, batch_size,
@@ -495,11 +515,7 @@ class RegDiffusionTrainer:
                     ).long()
         
                     x_noisy, noise = self.forward_pass(x_0, t)
-                    with torch.autocast(
-                        device_type=self.amp_device_type,
-                        dtype=torch.bfloat16,
-                        enabled=self.use_amp
-                    ):
+                    with self._autocast_context():
                         z = self.model(x_noisy, t, ct)
                         loss_ = F.mse_loss(noise, z, reduction='none')
                         loss = loss_.mean()
@@ -547,11 +563,7 @@ class RegDiffusionTrainer:
                                     device=self.device).long()
 
                                 x_noisy, noise = self.forward_pass(x_0, t)
-                                with torch.autocast(
-                                    device_type=self.amp_device_type,
-                                    dtype=torch.bfloat16,
-                                    enabled=self.use_amp
-                                ):
+                                with self._autocast_context():
                                     z = self.model(x_noisy, t, ct)
                                     step_val_loss = F.mse_loss(
                                         noise, z, reduction='mean').item()
@@ -609,11 +621,7 @@ class RegDiffusionTrainer:
                     t = torch.randint(0, self.hp['T'], (1,), device=self.device).long()
 
                     x_noisy, noise = self.forward_pass(x_0, t)
-                    with torch.autocast(
-                        device_type=self.amp_device_type,
-                        dtype=torch.bfloat16,
-                        enabled=self.use_amp
-                    ):
+                    with self._autocast_context():
                         z = self.model(x_noisy, t, ct)
 
                         # Calculate MSE loss, get per-gene loss with reduction='none'
@@ -634,11 +642,7 @@ class RegDiffusionTrainer:
                 # Handle sparse loss once per effective batch. Only computed
                 # past the warmup window, where it is actually applied.
                 if step_idx > 10:
-                    with torch.autocast(
-                        device_type=self.amp_device_type,
-                        dtype=torch.bfloat16,
-                        enabled=self.use_amp
-                    ):
+                    with self._autocast_context():
                         loss_sparse = (
                             self.model.get_sparse_loss()
                             * self.hp['sparse_loss_coef']
@@ -683,11 +687,7 @@ class RegDiffusionTrainer:
                                     device=self.device).long()
 
                                 x_noisy, noise = self.forward_pass(x_0, t)
-                                with torch.autocast(
-                                    device_type=self.amp_device_type,
-                                    dtype=torch.bfloat16,
-                                    enabled=self.use_amp
-                                ):
+                                with self._autocast_context():
                                     z = self.model(x_noisy, t, ct)
                                     step_val_loss = F.mse_loss(
                                         noise, z, reduction='mean').item()

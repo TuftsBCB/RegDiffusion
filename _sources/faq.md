@@ -29,6 +29,58 @@ NVIDIA GPU accelerates training. The project reports under five minutes on an
 A100 GPU and roughly three hours on a 12-core CPU for a 15,000-gene network;
 these are example timings, not guarantees for every dataset or configuration.
 
+## Can I train on an Apple silicon GPU?
+
+Yes. Select the PyTorch MPS backend explicitly:
+
+```python
+import torch
+import regdiffusion as rd
+
+assert torch.backends.mps.is_available()
+trainer = rd.RegDiffusionTrainer(
+    expression_matrix, device='mps', use_amp=False, compile=False, seed=42)
+trainer.train()
+```
+
+An unavailable MPS device raises an error; use `device='cpu'` to run on the
+CPU instead. The default device remains CUDA, with a CPU fallback, so MPS
+is not selected automatically. `compile=True` is CUDA-only; on MPS it emits
+a warning and uses eager execution.
+
+Start with FP32 (`use_amp=False`). Optional `use_amp=True` uses bfloat16
+autocast on MPS and requires support in your PyTorch and macOS versions.
+Compatibility tests cover both model variants, dense and sparse input,
+gradient accumulation, validation, and AMP on PyTorch 2.15.0 / macOS 26.2.
+The same seed does not imply identical results across CPU and MPS, which
+use different random-number streams and numerical kernels.
+
+To compare inference quality on your machine, run the BEELINE benchmark
+from the repository root:
+
+```bash
+python -m test_scripts.benchmark_mps --data-dir data --seeds 42 142 242
+```
+
+It uses the seven `1000_STRING` datasets, 1,000 training steps per run, and
+the same trainer settings on CPU and MPS. Metrics, loss histories, and
+adjacency matrices are saved under `results/mps_beeline/`. This is separate
+from the small synthetic compatibility tests.
+
+Before the projection-first optimization in 0.2.5, a local FP32 check used
+seed 42, batch size 128, four CPU threads, and the software versions above.
+All seven datasets completed on both devices.
+MPS AUPRR differed from CPU by less than 1% on each dataset. Total measured
+training time was 932 seconds on MPS versus 1,148 seconds on CPU (about
+1.23x faster). These are single-run measurements on one Mac, not a guarantee
+of speed or identical inference results on other hardware or software.
+
+The largest single-seed AUROC difference was on mHSC-L (about 0.01).
+Repeating that dataset with seeds 42, 142, and 242 gave mean AUROC of
+0.6954 on CPU and 0.6939 on MPS, and mean AUPRR of 7.2051 and 7.2167,
+respectively. This limited comparison did not show a consistent quality
+regression; it does not establish statistical equivalence across devices.
+
 ## Can RegDiffusion handle large or sparse single-cell datasets?
 
 Yes. Sparse expression input avoids materializing the entire normalized
